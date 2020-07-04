@@ -1,0 +1,4 @@
+
+
+[Fact:assemblerlabels:Assembler labels]
+There is a block of data at #R$A425 which appears to have been left behind by the assembler. It contains labels and addresses for some some routines and data. These original labels have been retained in the disassmbly.
