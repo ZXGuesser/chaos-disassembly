@@ -5,8 +5,12 @@ GameDir=chaos
 [Game]
 Game=Chaos
 LogoImage=images/logo.png
-LinkInternalOperands=1
+LinkOperands=CALL,DEFW,DJNZ,JP,JR,LD
 Copyright=&#169; Games Workshop 1985. Disassembly by Guesser and szeliga &#169; 2020
+AddressAnchor={address:04X}
+
+[Paths]
+CodeFiles={address:04X}.html
 
 [Index:Reference:Reference]
 Facts

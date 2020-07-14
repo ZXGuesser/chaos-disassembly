@@ -1,50 +1,53 @@
-c $7D00
-C $7D00 jump to initialization routine
+@ $7D00 replace=|#mprintlink\((\i)\)|#R#(#EVAL($#N(#PEEK($CDD3+(\1*4)+1)*$100)+$#N(#PEEK($CDD3+(\1*4)))))
+@ $7D00 replace=|#m2printlink\((\i)\)|#R#(#EVAL($#N(#PEEK($8809+(\1*4)+1)*$100)+$#N(#PEEK($8809+(\1*4)))))
 
-b $7D03
+@ $7D00 label=start
+c $7D00 Start.
+C $7D00 Jump to initialization routine.
+
 @ $7D03 label=unknown1
+b $7D03
 
-c $7D04
-C $7D04 return if #R$7D03 is less than 6
-C $7D0A temporarily store address of #R$E01F(map area object code table) in #R$AC12 variable
-C $7D10 load B with 159 as loop counter
-C $7D12 stack loop counter
-C $7D13 load byte from cell in #R$E01F(map area object code table) into A
-C $7D14 jump to #R$7D3B if byte is less than 2 or greater than 33
-C $7D1E add $0281 to address to get address of same cell in #R$E2A0
-C $7D22 load byte from #R$E2A0 into A
-C $7D23 subtract 41 from byte read
-C $7D25 jump to #R$7D3B if result is equal to #R$AC0E variable
-C $7D2B load address of cell in #R$E01F(map area object code table) back into HL from #R$AC12 variable and add $01E1 to get address of same cell in #R$E200(???fourth map area table???)
-C $7D32 load byte from #R$E200 into A
-C $7D33 mod 8
-C $7D35 jump to #R$7D52 if result us equal to #R$AC0E variable
-C $7D3B pop loop counter
-C $7D3C increment #R$AC12 variable
-C $7D43 loop back to #R$7D12 158 times
-C $7D45 set HL to address of #R$AC1E
-C $7D48 add value of #R$AC0E variable as offset
-C $7D4F store $14 in byte pointed to by HL
-C $7D51 return
-C $7D52 pop loop counter
-C $7D53 set HL to address of #R$AC1E
-C $7D5B add value of #R$AC0E variable as offset
-C $7D5D store $00 in byte pointed to by HL
-C $7D5F return
+@ $7D04 label=routine01
+c $7D04 routine01 ???
+C $7D04 Return if #R$7D03 is less than 6.
+C $7D0A Temporarily store address of #R$E01F(map area object code table) in #R$AC12 variable.
+C $7D10 Load B with 159 as loop counter.
+C $7D12 Stack loop counter.
+C $7D13 Load byte from cell in #R$E01F(map area object code table) into A.
+C $7D14 Jump to #R$7D3B if byte is less than 2 or greater than 33.
+C $7D1E Add $0281 to address to get address of same cell in #R$E2A0.
+C $7D22 Load byte from #R$E2A0 into A.
+C $7D23 Subtract 41 from byte read.
+C $7D25 Jump to #R$7D3B if result is equal to #R$AC0E variable.
+C $7D2B Load address of cell in #R$E01F(map area object code table) back into HL from #R$AC12 variable and add $01E1 to get address of same cell in #R$E200.
+C $7D32 Load byte from #R$E200 into A.
+C $7D33 Mod 8.
+C $7D35 Jump to #R$7D52 if result is equal to #R$AC0E variable.
+C $7D3B Pop loop counter.
+C $7D3C Increment #R$AC12 variable.
+C $7D43 Loop back to #R$7D12 158 times.
+C $7D45 Set HL to address of #R$AC1E.
+C $7D48 Add value of #R$AC0E variable as offset.
+C $7D4F Store $14 in byte pointed to by HL and return.
+C $7D52 Pop loop counter.
+C $7D53 Set HL to address of #R$AC1E.
+C $7D5B Add value of #R$AC0E variable as offset.
+C $7D5D Store $00 in byte pointed to by HL and return.
 
-b $7D60 Spells table
 @ $7D60 label=spells_table
-D $7D60 5 bytes of spell data followed by address of spell routine
+b $7D60 Spells table.
+D $7D60 5 bytes of spell data followed by address of spell routine.
 B $7D60,5
 W $7D65,2
 L $7D60,7,$41
 
-b $7F27 S cursor sprite data
 @ $7F27 label=s_cursor_sprite
-B $7F27,$20,8 #HTML(#UDGARRAY2,,4;$7F27-$7F46-8(scursorsprite) )S cursor
+b $7F27 S cursor sprite data.
+B $7F27,$20,8 #HTML(#UDGARRAY2,,4;$7F27-$7F46-8(scursorsprite) )S cursor.
 
-b $7F47 table of posessed spells
 @ $7F47 label=posessed_spell_tables
+b $7F47 Table of posessed spells.
 B $7F47,$28 wizard 1
 B $7F6F,$28 wizard 2
 B $7F97,$28 wizard 3
@@ -55,249 +58,247 @@ B $8037,$28 wizard 7
 B $805F,$28 wizard 8
 
 @ $8087 label=unknown_table2
-b $8087 unknown_table2
+b $8087 unknown_table2.
 
-b $80B0 Modified wizard sprites data
+b $80B0 Modified wizard sprites data.
 @ $80B0 label=modwizardsprite0
-B $80B0,$20 #HTML(#UDGARRAY2,,4;$80B0-$80CF-8(modwizardsprite0*)) modwizardsprite0
+B $80B0,$20 #HTML(#UDGARRAY2,,4;$80B0-$80CF-8(modwizardsprite0*)) modwizardsprite0.
 @ $80D0 label=modwizardsprite1
-B $80D0,$20 #HTML(#UDGARRAY2,,4;$80D0-$80EF-8(modwizardsprite1*)) modwizardsprite1
+B $80D0,$20 #HTML(#UDGARRAY2,,4;$80D0-$80EF-8(modwizardsprite1*)) modwizardsprite1.
 @ $80F0 label=modwizardsprite2
-B $80F0,$20 #HTML(#UDGARRAY2,,4;$80F0-$810F-8(modwizardsprite2*)) modwizardsprite2
+B $80F0,$20 #HTML(#UDGARRAY2,,4;$80F0-$810F-8(modwizardsprite2*)) modwizardsprite2.
 @ $8110 label=modwizardsprite3
-B $8110,$20 #HTML(#UDGARRAY2,,4;$8110-$812F-8(modwizardsprite3*)) modwizardsprite3
+B $8110,$20 #HTML(#UDGARRAY2,,4;$8110-$812F-8(modwizardsprite3*)) modwizardsprite3.
 @ $8130 label=modwizardsprite4
-B $8130,$20 #HTML(#UDGARRAY2,,4;$8130-$814F-8(modwizardsprite4*)) modwizardsprite4
+B $8130,$20 #HTML(#UDGARRAY2,,4;$8130-$814F-8(modwizardsprite4*)) modwizardsprite4.
 @ $8150 label=modwizardsprite5
-B $8150,$20 #HTML(#UDGARRAY2,,4;$8150-$816F-8(modwizardsprite5*)) modwizardsprite5
+B $8150,$20 #HTML(#UDGARRAY2,,4;$8150-$816F-8(modwizardsprite5*)) modwizardsprite5.
 @ $8170 label=modwizardsprite6
-B $8170,$20 #HTML(#UDGARRAY2,,4;$8170-$818F-8(modwizardsprite6*)) modwizardsprite6
+B $8170,$20 #HTML(#UDGARRAY2,,4;$8170-$818F-8(modwizardsprite6*)) modwizardsprite6.
 @ $8190 label=modwizardsprite7
-B $8190,$20 #HTML(#UDGARRAY2,,4;$8190-$81AF-8(modwizardsprite7*)) modwizardsprite7
+B $8190,$20 #HTML(#UDGARRAY2,,4;$8190-$81AF-8(modwizardsprite7*)) modwizardsprite7.
 @ $81B0 label=modwizardsprite8
-B $81B0,$20 #HTML(#UDGARRAY2,,4;$81B0-$81CF-8(modwizardsprite8*)) modwizardsprite8
+B $81B0,$20 #HTML(#UDGARRAY2,,4;$81B0-$81CF-8(modwizardsprite8*)) modwizardsprite8.
 @ $81D0 label=modwizardsprite9
-B $81D0,$20 #HTML(#UDGARRAY2,,4;$81D0-$81EF-8(modwizardsprite9*)) modwizardsprite9
+B $81D0,$20 #HTML(#UDGARRAY2,,4;$81D0-$81EF-8(modwizardsprite9*)) modwizardsprite9.
 @ $81F0 label=modwizardspriteA
-B $81F0,$20 #HTML(#UDGARRAY2,,4;$81F0-$820F-8(modwizardspriteA*)) modwizardspriteA
+B $81F0,$20 #HTML(#UDGARRAY2,,4;$81F0-$820F-8(modwizardspriteA*)) modwizardspriteA.
 @ $8210 label=modwizardspriteB
-B $8210,$20 #HTML(#UDGARRAY2,,4;$8210-$822F-8(modwizardspriteB*)) modwizardspriteB
+B $8210,$20 #HTML(#UDGARRAY2,,4;$8210-$822F-8(modwizardspriteB*)) modwizardspriteB.
 @ $8230 label=modwizardspriteC
-B $8230,$20 #HTML(#UDGARRAY2,,4;$8230-$824F-8(modwizardspriteC*)) modwizardspriteC
+B $8230,$20 #HTML(#UDGARRAY2,,4;$8230-$824F-8(modwizardspriteC*)) modwizardspriteC.
 @ $8250 label=modwizardspriteD
-B $8250,$20 #HTML(#UDGARRAY2,,4;$8250-$826F-8(modwizardspriteD*)) modwizardspriteD
+B $8250,$20 #HTML(#UDGARRAY2,,4;$8250-$826F-8(modwizardspriteD*)) modwizardspriteD.
 @ $8270 label=modwizardspriteE
-B $8270,$20 #HTML(#UDGARRAY2,,4;$8270-$828F-8(modwizardspriteE*)) modwizardspriteE
+B $8270,$20 #HTML(#UDGARRAY2,,4;$8270-$828F-8(modwizardspriteE*)) modwizardspriteE.
 
-w $8290 table of pointers to modified wizard sprites
+w $8290 Table of pointers to modified wizard sprites.
 @ $8290 label=modwizard_pointers_1
-W $8290 #HTML(#UDGARRAY*modwizardsprite0;modwizardsprite1;modwizardsprite2;modwizardsprite1(modwizard0121)) animation cycle modwizard 0,1,2,1
+W $8290 #HTML(#UDGARRAY*modwizardsprite0;modwizardsprite1;modwizardsprite2;modwizardsprite1(modwizard0121)) Animation cycle modwizard 0,1,2,1.
 @ $8298 label=modwizard_pointers_2
-W $8298 #HTML(#UDGARRAY*modwizardsprite3;modwizardsprite4;modwizardsprite5;modwizardsprite4(modwizard3454)) animation cycle modwizard 3,4,5,4
+W $8298 #HTML(#UDGARRAY*modwizardsprite3;modwizardsprite4;modwizardsprite5;modwizardsprite4(modwizard3454)) Animation cycle modwizard 3,4,5,4.
 @ $82A0 label=modwizard_pointers_3
-W $82A0 #HTML(#UDGARRAY*modwizardsprite6(modwizardsprite6)) animation cycle modwizard 6,6,6,6
+W $82A0 #HTML(#UDGARRAY*modwizardsprite6(modwizardsprite6)) Animation cycle modwizard 6,6,6,6.
 @ $82A8 label=modwizard_pointers_4
-W $82A8 #HTML(#UDGARRAY*modwizardsprite7(modwizardsprite7)) animation cycle modwizard 7,7,7,7
+W $82A8 #HTML(#UDGARRAY*modwizardsprite7(modwizardsprite7)) Animation cycle modwizard 7,7,7,7.
 @ $82B0 label=modwizard_pointers_5
-W $82B0 #HTML(#UDGARRAY*modwizardsprite8;modwizardsprite9;modwizardspriteA;modwizardsprite9(modwizard89A9)) animation cycle modwizard 8,9,A,9
+W $82B0 #HTML(#UDGARRAY*modwizardsprite8;modwizardsprite9;modwizardspriteA;modwizardsprite9(modwizard89A9)) Animation cycle modwizard 8,9,A,9.
 @ $82B8 label=modwizard_pointers_6
-W $82B8 #HTML(#UDGARRAY*modwizardspriteB;modwizardspriteC;modwizardspriteD;modwizardspriteE(modwizardBCDE)) animation cycle modwizard B,C,D,E
+W $82B8 #HTML(#UDGARRAY*modwizardspriteB;modwizardspriteC;modwizardspriteD;modwizardspriteE(modwizardBCDE)) Animation cycle modwizard B,C,D,E.
 
-w $82C0 table of pointers to character sprite data
+w $82C0 Table of pointers to character sprite data.
 @ $82C0 label=character_1_sprite_pointers
-W $82C0 character 1
+W $82C0 Character 1.
 @ $82C8 label=character_2_sprite_pointers
-W $82C8 character 2
+W $82C8 Character 2.
 @ $82D0 label=character_3_sprite_pointers
-W $82D0 character 3
+W $82D0 Character 3.
 @ $82D8 label=character_4_sprite_pointers
-W $82D8 character 4
+W $82D8 Character 4.
 @ $82E0 label=character_5_sprite_pointers
-W $82E0 character 5
+W $82E0 Character 5.
 @ $82E8 label=character_6_sprite_pointers
-W $82E8 character 6
+W $82E8 Character 6.
 @ $82F0 label=character_7_sprite_pointers
-W $82F0 character 7
+W $82F0 Character 7.
 @ $82F8 label=character_8_sprite_pointers
-W $82F8 character 8
+W $82F8 Character 8.
 
-c $8300 get address of the wizard object data of the current player
-C $8300 preserve contents of HL
-C $8301 add 40 to #R$AC0E variable
-C $8308 multiply by two
-C $830A add to address of #R$E3E0 to give address of current player's object pointer in HL
-C $830F read address of wizard object into DE
-C $8312 swap address into HL and store in #R$89AA
-C $8319 add $17 to address and store in #R$8321
-C $831D restore contents of HL and return
+@ $8300 label=get_wizard_object
+c $8300 Get address of the wizard object data of the current player.
+C $8300 Preserve contents of HL.
+C $8301 Add 40 to #R$AC0E variable.
+C $8308 Multiply by two.
+C $830A Add to address of #R$E3E0(object address table) to give address of current player's object pointer in HL.
+C $830F Read address of wizard object into DE.
+C $8312 Swap address into HL and store in #R$89AA.
+C $8319 Add $17 to address and store in #R$8321.
+C $831D Restore contents of HL and return.
 
-b $831F 
 @ $831F label=current_character_pointer
-W $831F pointer to current character in #R$82C0(table of pointers to character sprite data)
+w $831F current_character_pointer
+W $831F Pointer to current character in #R$82C0(table of pointers to character sprite data).
+
 @ $8321 label=temp_variable
-@ $8321 ssub=DEFW $909F+$2
-W $8321 ???temp variable???
+w $8321 temp_variable
+W $8321 ???
+
 @ $8323 label=no_less_than_2_flag
-B $8323 flag that prevents entering a number less than 2
+b $8323 no_less_than_2_flag
+B $8323 Flag that prevents entering a number less than 2.
 
-c $8324
-C $8324 call #R$8300 to get address of first sprite pointer in wizard object data of current player
-C $8327 set B to four as a loop counter and push to stack
-C $832A set B to two as another counter and push to stack
-C $832D get #R$831F(pointer to current character in table of pointers to character sprite data) in HL
-C $8330 read low byte of sprite data pointer to A first time, high byte on second time around loop
-C $8331 increment HL and store back in #R$831F(pointer to current character in table of pointers to character sprite data)
-C $8335 store the low byte of sprite data pointer in wizard data object at the address held in #R$8321. Second time around loop high byte is stored
-C $8339 increment HL and store back in #R$8321
-C $833D pop loop counter and repeat inner loop.
-C $8340 increment address in #R$8321 because there is a byte gap between each sprite pointer in wizard object data
-C $8347 pop loop counter and repeat outer loop three times before returning
+@ $8324 label=routine02
+c $8324 routine02 ???
+C $8324 Get address of first sprite pointer in wizard object data of current player.
+C $8327 Set B to four as a loop counter and push to stack.
+C $832A Set B to two as another counter and push to stack.
+C $832D Get #R$831F in HL.
+C $8330 Read low byte of sprite data pointer to A first time, high byte on second time around loop.
+C $8331 Increment HL and store back in #R$831F.
+C $8335 Store the low byte of sprite data pointer in wizard data object at the address held in #R$8321. Second time around loop high byte is stored.
+C $8339 Increment HL and store back in #R$8321.
+C $833D Pop loop counter and repeat inner loop.
+C $8340 Increment address in #R$8321 because there is a byte gap between each sprite pointer in wizard object data.
+C $8347 Pop loop counter and repeat outer loop three times before returning.
 
-c $834B
-C $834B add #R$AC0E variable to address of #R$AC16
-C $8355 read byte from that address into A
-C $8356 return
+c $834B routine03 ???
+@ $834B label=routine03
+C $834B Add #R$AC0E variable to address of #R$AC16.
+C $8355 Read byte from that address into A and Return.
 
-c $8357
-C $8357 jump to #R$8360 if #R$AC2E is zero
-C $835D call #R$967A to display wizard name, spell being cast, spell casting range
-C $8360 call #R$9760 ???
-C $8363 call #R$97D1 ???
-C $8366 call #R$A18A ???
-C $8369 return
+@ $8357 label=routine04
+c $8357 routine04 ???
+C $8357 If player is human, display wizard name, spell being cast, and spell casting range.
+C $8360 Call #R$9760 ???
+C $8363 Call #R$97D1 ???
+C $8366 Call #R$A18A ??? and return.
 
 # spell names from comments on chaos
-c $836A MagicArmour spell
-C $836A load #R$AC2E into A
-C $836D jump to #R$837D if player is human
-C $8370 call #R$834B to get byte from #R$AC16
-C $8373 jump to #R$83AF if bit 7 is zero
-C $8377 write zero to #R$975F variable and return
-C $837D call #R$8357 ???
-C $8380 jump to #R$8395 if #R$9167(spell successful flag) is zero
-C $8386 set #R$831F(pointer to current character in table of pointers to character sprite data) to #R$82A0(third row of modified wizard sprite pointers table)
-C $838C call #R$8324 to copy sprite pointers to wizard data
-C $838F call #R$834B to get byte from #R$AC16
-C $8392 set bits 6 and 7
-C $8394 store result back in #R$AC16
-C $8395 call #R$C0DD ???
-C $8398 call #R$97A3 to display SPELL FAILS or SPELL SUCCEEDS message
-C $839B return
+@ $836A label=magic_armour_spell
+c $836A MagicArmour spell.
+C $836A Jump to #R$837D if player is human.
+C $8370 Else call #R$834B to get byte from #R$AC16.
+C $8373 Jump to #R$83AF if bit 7 is clear.
+C $8377 Set #R$975F variable to zero and return.
+C $837D Call #R$8357 ???
+C $8380 Jump to #R$8395 if #R$9167 is clear.
+C $8386 Set #R$831F to #R$82A0.
+C $838C Copy sprite pointers to wizard data.
+C $838F Get byte from #R$AC16.
+C $8392 Set bits 6 and 7.
+C $8394 Store result back in #R$AC16.
+C $8395 Call #R$C0DD ???
+C $8398 Display SPELL FAILS or SPELL SUCCEEDS message and return.
 
-c $839C MagicSword spell
-C $839C load #R$AC2E into A
-C $839F jump to #R$83AF if player is human
-C $83A2 call #R$834B to get byte from #R$AC16
-C $83A5 jump to #R$83AF if bit 2 is zero
-C $83A9 write zero to #R$975F variable and return
-C $83AF call #R$8357 ???
-C $83B2 jump to #R$83C9 if #R$9167(spell successful flag) is zero
-C $83B8 set #R$831F(pointer to current character in table of pointers to character sprite data) to #R$8290(first row of modified wizard sprite pointers table)
-C $83BE call #R$8324 to copy sprite pointers to wizard data
-C $83C1 call #R$834B to get byte from #R$AC16
-C $83C4 clear bits 0 and 1, and set bit 2
-C $83C8 store result back in #R$AC16
-C $83C9 call #R$C0DD ???
-C $83CC call #R$97A3 to display SPELL FAILS or SPELL SUCCEEDS message
-C $83CF return
+@ $839C label=magic_sword_spell
+c $839C MagicSword spell.
+C $839C Jump to #R$83AF if player is human.
+C $83A2 Else call #R$834B to get byte from #R$AC16.
+C $83A5 Jump to #R$83AF if bit 2 is clear.
+C $83A9 Set #R$975F variable to zero and return.
+C $83AF Call #R$8357 ???
+C $83B2 Jump to #R$83C9 if #R$9167 is clear.
+C $83B8 Set #R$831F to #R$8290.
+C $83BE Copy sprite pointers to wizard data.
+C $83C1 Get byte from #R$AC16.
+C $83C4 Clear bits 0 and 1, and set bit 2.
+C $83C8 Store result back in #R$AC16.
+C $83C9 Call #R$C0DD ???
+C $83CC Display SPELL FAILS or SPELL SUCCEEDS message and return.
 
-c $83D0 MagicKnife spell
-C $83D0 load #R$AC2E into A
-C $83D3 jump to #R$83E3 if player is human
-C $83D6 call #R$834B to get byte from #R$AC16
-C $83D9 jump to #R$83E3 if lowest three bits all zero
-C $83DD set #R$975F variable to zero and return
-C $83E3 call #R$8357 ???
-C $83E6 jump to #R$83FD if #R$9167(spell successful flag) is zero
-C $83EC set #R$831F(pointer to current character in table of pointers to character sprite data) to #R$8298(second row of modified wizard sprite pointers table)
-C $83F2 call #R$8324 to copy sprite pointers to wizard data
-C $83F5 call #R$834B to get byte from #R$AC16
-C $83F8 clear lowest three bits and set bit 1
-C $83FC store result back in #R$AC16
-C $83FD call #R$C0DD ???
-C $8400 call #R$97A3 to display SPELL FAILS or SPELL SUCCEEDS message
-C $8403 return
+@ $83D0 label=magic_knife_spell
+c $83D0 MagicKnife spell.
+C $83D0 Jump to #R$83E3 if player is human.
+C $83D6 Else call #R$834B to get byte from #R$AC16.
+C $83D9 Jump to #R$83E3 if lowest three bits are clear.
+C $83DD Set #R$975F variable to zero and return.
+C $83E3 Call #R$8357 ???
+C $83E6 Jump to #R$83FD if #R$9167 is clear.
+C $83EC Set #R$831F to #R$8298.
+C $83F2 Copy sprite pointers to wizard data.
+C $83F5 Get byte from #R$AC16.
+C $83F8 Clear bits 0 and 2, and set bit 1.
+C $83FC Store result back in #R$AC16.
+C $83FD Call #R$C0DD ???
+C $8400 Display SPELL FAILS or SPELL SUCCEEDS message and return.
 
-c $8404 MagicShield spell
-C $8404 load #R$AC2E into A
-C $8407 jump to #R$8417 if player is human
-C $840A call #R$834B to get byte from #R$AC16
-C $840D jump to #R$8417 if bit 6 zero
-C $8411 set #R$975F variable to zero and return
-C $8417 call #R$8357 ???
-C $841A jump to #R$8431 if #R$9167(spell successful flag) is zero
-C $8420 set #R$831F(pointer to current character in table of pointers to character sprite data) to #R$82A8(fourth row of modified wizard sprite pointers table)
-C $8426 call #R$8324 to copy sprite pointers to wizard data
-C $8429 call #R$834B to get byte from #R$AC16
-C $842C clear bit 7 and set bit 6 ???
-C $8430 store result back in #R$AC16
-C $8431 call #R$C0DD ???
-C $8434 call #R$97A3 to display SPELL FAILS or SPELL SUCCEEDS message
-C $8437 return
+@ $8404 label=magic_shield_spell
+c $8404 MagicShield spell.
+C $8404 Jump to #R$8417 if player is human.
+C $840A Else call #R$834B to get byte from #R$AC16.
+C $840D Jump to #R$8417 if bit 6 is clear.
+C $8411 Set #R$975F variable to zero and return.
+C $8417 Call #R$8357 ???
+C $841A Jump to #R$8431 if #R$9167 is clear.
+C $8420 Set #R$831F to #R$82A8.
+C $8426 Copy sprite pointers to wizard data.
+C $8429 Get byte from #R$AC16.
+C $842C Clear bit 7 and set bit 6.
+C $8430 Store result back in #R$AC16.
+C $8431 Call #R$C0DD ???
+C $8434 Display SPELL FAILS or SPELL SUCCEEDS message and return.
 
-c $8438 MagicWings spell
-C $8438 load #R$AC2E into A
-C $843B jump to #R$844B if player is human
-C $843E call #R$834B to get byte from #R$AC16
-C $8441 jump to #R$844B if bit 5 zero
-C $8445 set #R$975F variable to zero and return
-C $844B call #R$8357 ???
-C $844E jump to #R$8463 if #R$9167 is zero
-C $8454 set #R$831F(pointer to current character in table of pointers to character sprite data) to #R$82B0(fifth row of modified wizard sprite pointers table)
-C $845A call #R$8324 to copy sprite pointers to wizard data
-C $845D call #R$834B to get byte from #R$AC16
-C $8460 set bit 5 ???
-C $8462 store result back in #R$AC16
-C $8463 call #R$C0DD ???
-C $8466 call #R$97A3 to display SPELL FAILS or SPELL SUCCEEDS message
-C $8469 return
+@ $8438 label=magic_wings_spell
+c $8438 MagicWings spell.
+C $8438 Jump to #R$844B if player is human.
+C $843E Else call #R$834B to get byte from #R$AC16.
+C $8441 Jump to #R$844B if bit 5 is clear.
+C $8445 Set #R$975F variable to zero and return.
+C $844B Call #R$8357 ???
+C $844E Jump to #R$8463 if #R$9167 is clear.
+C $8454 Set #R$831F to #R$82B0.
+C $845A Copy sprite pointers to wizard data.
+C $845D Get byte from #R$AC16.
+C $8460 Set bit 5
+C $8462 Store result back in #R$AC16.
+C $8463 Call #R$C0DD ???
+C $8466 Display SPELL FAILS or SPELL SUCCEEDS message and return.
 
-c $846A MagicBow spell
-C $846A load #R$AC2E into A
-C $846D jump to #R$8486 if player is human
-C $8470 call #R$8300 to get address of the wizard object data of the current player
-C $8473 ensure the carry flag is clear
-C $8474 load address from #R$8321 into HL and subtract $0009
-C $847C if byte at resulting address is zero then jump to #R$8486
-C $8480 set #R$975F variable to zero and return
-C $8486 call #R$8357 ???
-C $8489 jump to #R$84A9 if #R$9167 is zero
-C $848F set #R$831F(pointer to current character in table of pointers to character sprite data) to #R$82B8(sixth row of modified wizard sprite pointers table)
-C $8495 call #R$8324 to copy sprite pointers to wizard data
-C $8498 call #R$8300 to get address of the wizard object data of the current player
-C $849B load address from #R$8321 into HL and subtract $0009
-C $84A4 store $03 at resulting address ???
-C $84A6 increment address and store $06 ???
-C $84A9 call #R$C0DD ???
-C $84AC call #R$97A3 to display SPELL FAILS or SPELL SUCCEEDS message
-C $84AF return
+@ $846A label=magic_bow_spell
+c $846A MagicBow spell.
+C $846A Jump to #R$8486 if player is human.
+C $8470 Else call #R$8300 to get address of the wizard object data of the current player.
+C $8473 Ensure the carry flag is clear.
+C $8474 Load address from #R$8321 into HL and subtract $0009.
+C $847C If byte at resulting address is zero then jump to #R$8486.
+C $8480 Set #R$975F variable to zero and return.
+C $8486 Call #R$8357 ???
+C $8489 Jump to #R$84A9 if #R$9167 is clear.
+C $848F Set #R$831F to #R$82B8.
+C $8495 Copy sprite pointers to wizard data.
+C $8498 Get address of the wizard object data of the current player.
+C $849B Load address from #R$8321 into HL and subtract $0009.
+C $84A4 Store $03 at resulting address ???
+C $84A6 Increment address and store $06 ???
+C $84A9 Call #R$C0DD ???
+C $84AC Display SPELL FAILS or SPELL SUCCEEDS message and return.
 
-c $84B0 ChaosOrLawSpell
-C $84B0 load #R$AC2E into A
-C $84B4 jump to #R$84B9 if player is human
-C $84B6 call #R$967A to display wizard name, spell being cast, spell casting range
-C $84B9 call #R$9760 ???
-C $84BC call #R$97A3 to display SPELL FAILS or SPELL SUCCEEDS message
-C $84BF return
+@ $84B0 label=chaos_law_spell
+c $84B0 ChaosOrLawSpell.
+C $84B0 Jump to #R$84B9 if player is human.
+C $84B6 Else display wizard name, spell being cast, and spell casting range.
+C $84B9 Call #R$9760 ???
+C $84BC Display SPELL FAILS or SPELL SUCCEEDS message and return.
 
-c $84C0 ShadowForm spell
-C $84C0 load #R$AC2E into A
-C $84C4 jump to #R$84D3 if player is human
-C $84C6 call #R$834B to get byte from #R$AC16
-C $84C9 jump to #R$84D3 if bit 5 zero
-C $84CD set #R$975F variable to zero and return
-C $84D3 call #R$8357 ???
-C $84D6 call #R$97A3 to display SPELL FAILS or SPELL SUCCEEDS message
-C $84D9 return if #R$9167(spell successful flag) is zero
-C $84DE call #R$8300 to get address of the wizard object data of the current player
-C $84E1 load address from #R$8321 into HL and add $0005
-C $84E8 store zero at resulting address ???
-C $84EA add $0006 to address and store zero at resulting address ???
-C $84F0 call #R$834B which reads a byte from somewhere into A ???
-C $84F3 set bit 3 and write back ???
-C $84F6 return
+@ $84C0 label=shadow_form_spell
+c $84C0 ShadowForm spell.
+C $84C0 Jump to #R$84D3 if player is human.
+C $84C6 Else call #R$834B to get byte from #R$AC16.
+C $84C9 Jump to #R$84D3 if bit 5 zero.
+C $84CD Set #R$975F variable to zero and return.
+C $84D3 Call #R$8357 ???
+C $84D6 Display SPELL FAILS or SPELL SUCCEEDS message.
+C $84D9 Return if #R$9167 is clear.
+C $84DE Get address of the wizard object data of the current player.
+C $84E1 Load address from #R$8321 into HL and add $0005.
+C $84E8 Store zero at resulting address ???
+C $84EA Add $0006 to address and store zero at resulting address ???
+C $84F0 Get byte from #R$AC16.
+C $84F3 Set bit 3. 
+C $84F5 Store result back in #R$AC16 and return.
 
-c $84F7 Subversion spell
+@ $84F7 label=subversion_spell
+c $84F7 Subversion spell.
 
 @ $8557 label=BART_L
 @ $8567 label=OK_SUB
@@ -305,7 +306,8 @@ c $84F7 Subversion spell
 @ $85A5 label=BALSUP
 @ $85CA label=TOFAIL
 
-c $85F6 RaiseDead spell
+@ $85F6 label=raise_dead_spell
+c $85F6 RaiseDead spell.
 @ $85D3 label=YESSUB 
 @ $8604 label=RAILOO
 @ $861A label=RAI_CH
@@ -321,38 +323,40 @@ c $86C3 RAISDO
 @ $86EB label=ENDRAS
 
 # spell name from comments on chaos
-c $86EF Turmoil spell
-C $86EF load #R$AC2E
-C $86F2 jump to #R$86F9 if set (player is computer controlled)
-C $86F5 else call #R$8741 then return
+@ $86EF label=turmoil_spell
+c $86EF Turmoil spell.
+C $86EF Jump to #R$86F9 if player is human.
+C $86F5 Else call #R$8741 and return.
 @ $86F9 label=TURART
-C $86F9 copy #R$AC14 into #R$C78B
-C $86FF call #R$C7BC
-C $8702 copy #R$C78B to #R$AC14
-C $8708 set #R$CD86 to address of #R$D3F2
-C $870E load #R$C7BB to A and add 1
-C $8712 call #R$C64C
-C $8715 set #R$A172 to zero
+C $86F9 Copy #R$AC14 into #R$C78B.
+C $86FF Call #R$C7BC.
+C $8702 Copy #R$C78B to #R$AC14.
+C $8708 Set #R$CD86 to address of #R$D3F2.
+C $870E Load #R$C7BB to A and add 1.
+C $8712 Call #R$C64C.
+C $8715 Set #R$A172 to zero.
 @ $871A label=LOOTUR
-C $871A load #R$CD86 into HL
-C $871D load byte from address in #R$CD86
-C $871E increment address in #R$CD86
-C $8722 if byte read is not zero jump to #R$872B
-C $8725 else set #R$975F to zero and return
+C $871A Load #R$CD86 into HL.
+C $871D Load byte from address in #R$CD86.
+C $871E Increment address in #R$CD86.
+C $8722 If byte read is not zero jump to #R$872B.
+C $8725 Else set #R$975F to zero and return.
 @ $872B label=ADD_ON
-C $872B 
+C $872B Add value in A to #R$872B.
+C $8730 If #R$872B < 30 then jump back to #R$871A.
+C $8735 Display wizard name, spell being cast, and spell casting range.
+C $8738 Call #R$8741 and return.
 
-b $873C variables
 @ $873C label=CRE000
-B $873C CRE000
+b $873C CRE000
 @ $873D label=FLA481
-B $873D FLA481
+b $873D FLA481
 @ $873E label=HID641
-B $873E HID641
+b $873E HID641
 @ $873F label=BOD801
-B $873F BOD801
+b $873F BOD801
 @ $8740 label=FRA321
-B $8740 FRA321
+b $8740 FRA321
 
 @ $8741 label=TUR_DO
 c $8741 TUR_DO
@@ -362,29 +366,27 @@ c $8741 TUR_DO
 @ $87EB label=FUCKIT
 
 @ $87EF label=M2PRIN
-c $87EF M2PRIN
-D $87EF Prints a message from #R$8809(game messages table 2)
-R $87EF A message number
-R $87EF BC coordinates
-C $87EF preserve HL, DE, and BC
-C $87F2 set HL to value in A (message number)
-C $87F5 multiply HL by four because each row is 4 bytes
-C $87F7 add address of #R$8809 to get address of desired row in #R$8809(game messages table 2)
-C $87FB load address of message into DE
-C $87FE load message length into C
-C $8800 swap DE into HL
-C $8801 copy message length into E
-C $8802 restore coordinates in BC
-C $8803 call #R$BAEE to print string
-C $8806 restore DE and HL
-C $8808 return
+c $87EF Print a message from #R$8809(game messages table 2).
+R $87EF A Message number
+R $87EF BC Coordinates
+C $87EF Preserve HL, DE, and BC.
+C $87F2 Set HL to value in A (message number).
+C $87F5 Multiply HL by four because each row is 4 bytes.
+C $87F7 Add address of #R$8809 to get address of desired row in #R$8809(game messages table 2).
+C $87FB Load address of message into DE.
+C $87FE Load message length into C.
+C $8800 Swap DE into HL.
+C $8801 Copy message length into E.
+C $8802 Restore coordinates in BC.
+C $8803 Print string.
+C $8806 Restore DE and HL, and return.
 
 @ $8809 label=M2ESAG
-b $8809 M2ESAG
-D $8809 game messages table 2
-D $8809 address,length
+b $8809 Game messages table 2
+D $8809 Address,Length
 W $8809,$50,4
-t $8859 game message strings 2
+
+t $8859 Game message strings 2
 @ $8859 label=M_1
 T $8859 M_1
 @ $8875 label=M_2
@@ -426,399 +428,390 @@ B $8987 M_19
 @ $8997 label=M_20
 B $8997 M_20
 
-b $89A7 variables
 @ $89A7 label=LEVEL
-B $89A7,1 LEVEL
+b $89A7 LEVEL
 @ $89A8 label=NUM
-B $89A8,1 NUM
+b $89A8 NUM
 @ $89A9 label=GAMTUN
-B $89A9,1 GAMTUN
+b $89A9 GAMTUN
 @ $89AA label=player_name_string
 @ $89AA ssub=DEFW $EA39+$23
-W $89AA,2 player name string pointer
+w $89AA player name string pointer
 @ $89AC label=POSPRI
-W $89AC,2 POSPRI
+w $89AC POSPRI
 @ $89AE label=string_length
-B $89AE,1 string length
+b $89AE string length
 @ $89AF label=KEY_P
-B $89AF,1 KEY_P
+b $89AF KEY_P
 
-c $89B0 
-D $89B0 get a number from user between 1-8 or 2-8 depending on state of flag, print it at coordinates in BC, and return number-1 in A
 @ $89B0 label=CHONUM
-C $89B0 preserve coordinates
+c $89B0 CHONUM
+D $89B0 Get a number from user between 1-8 or 2-8 depending on state of flag, print it at coordinates in BC, and return number-1 in A.
+C $89B0 Preserve coordinates.
 @ $89B1 label=KEYIT
-C $89B1 call KEYBOARD routine in Spectrum ROM
-C $89B4 jump back to #R$89B1 until a number between 1 and 9 is pressed
-C $89BE store key code in #R$89A8
-C $89C1 load flag byte that prevents entering a number less than 2 into A
-C $89C4 if flag is not set jump to #R$89CF
-C $89C7 load #R$89A8 into A (key code of key pressed)
-C $89CA jump back to #R$89B1 if the number was less than 2
+C $89B1 Call KEYBOARD routine in Spectrum ROM.
+C $89B4 Jump back to #R$89B1 until a number between 1 and 9 is pressed.
+C $89BE Store key code in #R$89A8.
+C $89C1 If #R$8323 is clear jump to #R$89CF.
+C $89C7 Else load #R$89A8 into A (key code of key pressed).
+C $89CA Jump back to #R$89B1 if the number was less than 2.
 @ $89CF label=NOADD
-C $89CF restore coordinates
-C $89D0 set ATTR-T to $47 (bright white on black)
-C $89D5 load #R$89A8 into A and call #R$BAD6 to print it at coordinates in BC
-C $89DB set HL to #R$89EF (key bloop sound effect) and call play_sound_effect_in_HL
-C $89E1 call #R$907B
-C $89E4 clear flag byte that prevents entering a number less than 2
-C $89E9 load #R$89A8 into A and subtract $31 so that A = number pressed-1
-C $89EE return
+C $89CF Restore coordinates.
+C $89D0 Set ATTR-T to $47 (bright white on black).
+C $89D5 Load #R$89A8 into A and call #R$BAD6 to print it at coordinates in BC.
+C $89DB Set HL to #R$89EF (key bloop sound effect) and call play_sound_effect_in_HL.
+C $89E1 Call #R$907B.
+C $89E4 Clear flag byte that prevents entering a number less than 2.
+C $89E9 Load #R$89A8 into A and subtract $31 so that A = number pressed-1 and return.
 
 @ $89EF label=S60
 b $89EF S60
-D $89EF key bloop sound effect
+D $89EF key bloop sound effect.
 
-c $89F9 initialization routine
-C $89F9 set border to black
-C $89FC set ATTR-T to black
-C $89FF set ATTR-P to black
-C $8A02 set MASK-P to all transparent
-C $8A07 set P-FLAGS to 3
-C $8A0C disable interrupts
-C $8A0D call #R$C5EE
-C $8A10 zero out 32 bytes at #R$AC16
+@ $89F9 label=init_routine
+c $89F9 Initialization routine.
+C $89F9 Set border to black.
+C $89FC Set ATTR-T to black.
+C $89FF Set ATTR-P to black.
+C $8A02 Set MASK-P to all transparent.
+C $8A07 Set P-FLAGS to 3.
+C $8A0C Disable interrupts.
+C $8A0D Call #R$C5EE ???
+C $8A10 Zero out 32 bytes at #R$AC16.
 @ $8A13 ssub=LD DE,$AC16+1
-C $8A1D zero out #R$7F47
+C $8A1D Zero out #R$7F47.
 @ $8A20 ssub=LD DE,$7F47+1
-C $8A2A zero out #R$E01F
+C $8A2A Zero out #R$E01F.
 @ $8A2D ssub=LD DE,$E01F+1
-C $8A37 zero out #R$E0C0(other five map area tables). These tables hold the data for what object are on the screen and their state
+C $8A37 Zero out #R$E0C0(other five map area tables). These tables hold the data for what object are on the screen and their state.
 @ $8A3A ssub=LD DE,$E0C0+1
-C $8A44 set #R$C3A4 to zero
-C $8A49 set ATTR-T to $5A (bright red on magenta) and call #R$BB57
-C $8A51 set ATTR-T to $43 (bright magenta on black)
-C $8A56 call #R$87EF with coordinates 2,2 and message #R$8859 "CHAOS -THE BATTLE OF WIZARDS"
-C $8A5E set ATTR-T to $42 (bright red on black)
-C $8A63 call #R$87EF with coordinates 8,4 and message #R$8875 "By Julian Gollop"
-C $8A6B set ATTR-T to $46 (bright yellow on black)
-C $8A70 call #R$87EF with coordinates 2,9 and message #R$8885 "How many wizards? "
-C $8A78 set ATTR-T to $44 (bright green on black)
-C $8A7D call #R$87EF with coordinates 2,11 and message #R$8941 "(Press 2 to 8)"
-C $8A85 set BC to coordinates 20,9
-C $8A88 set the flag variable to prevent numbers less than 2 in input
-C $8A8D call #R$89B0
-C $8A90 increment the number input and store in #R$AC0F
-C $8A94 set ATTR-T to $46 (bright yellow on black)
-C $8A99 call #R$87EF with coordinates 2,14 and message #R$88C7 "Level of computer wizards? "
-C $8AA1 set ATTR-T to $43 (bright magenta on black)
-C $8AA6 call #R$87EF with coordinates 2,16 and message #R$8897 "(Press 1 to 8) "
-C $8AAE call #R$89B0 with coordinates 29,14
-C $8AB4 store input in #R$89A7
-C $8AB7 multiply level by four and add fifteen
-C $8ABD store the result in #R$89A9
-C $8AC0 set B to ten as a loop counter
+C $8A44 Set #R$C3A4 to zero.
+C $8A49 Set ATTR-T to $5A (bright red on magenta) and call #R$BB57.
+C $8A51 Set ATTR-T to $43 (bright magenta on black).
+C $8A56 Print message #m2printlink($00) at coordinates 2,2.
+C $8A5E Set ATTR-T to $42 (bright red on black).
+C $8A63 Print message #m2printlink($01) at coordinates 8,4.
+C $8A6B Set ATTR-T to $46 (bright yellow on black).
+C $8A70 Print message #m2printlink($02) at coordinates 2,9.
+C $8A78 Set ATTR-T to $44 (bright green on black).
+C $8A7D Print message #m2printlink($0E) at coordinates 2,11.
+C $8A85 Set BC to coordinates 20,9.
+C $8A88 Set the flag to prevent numbers less than 2 in input.
+C $8A8D Call #R$89B0 ???
+C $8A90 Increment the number input and store in #R$AC0F.
+C $8A94 Set ATTR-T to $46 (bright yellow on black).
+C $8A99 Print message #m2printlink($08) at coordinates 2,14.
+C $8AA1 Set ATTR-T to $43 (bright magenta on black).
+C $8AA6 Print message #m2printlink($03) at coordinates 2,16.
+C $8AAE Call #R$89B0 with coordinates 29,14.
+C $8AB4 Store input in #R$89A7.
+C $8AB7 Multiply level by four and add fifteen.
+C $8ABD Store the result in #R$89A9.
+C $8AC0 Set B to ten as a loop counter.
 @ $8AC2 label=REPWAT
-C $8AC2 stack BC and call #R$96E6 then restore BC
-C $8AC7 repeat nine times
-C $8AC9 set #R$AC0E to zero (current player number 0-7)
-C $8ACE get #R$AC0F into B, and store #R$D3F2 in #R$CD86
+C $8AC2 Preserve BC and call #R$96E6 ??? then restore BC.
+C $8AC7 Repeat for ten iterations.
+C $8AC9 Set #R$AC0E to zero.
+C $8ACE Get #R$AC0F into B, and store #R$D3F2 in #R$CD86.
 @ $8AD8 label=STALOO
-D $8AD8 input all player names and settings
-C $8AD8 stack BC
-C $8AD9 call #R$C5EE
-C $8ADC set ATTR-T to $69 (bright cyan on black) and call #R$BB57
-C $8AE4 set ATTR-T to $46 (bright yellow on black) and call #R$87EF with coordinates 2,2 and message #R$88A6 "PLAYER "
-C $8AF1 get current player number variable, add $31 to convert to char value and call #R$BAD6
-C $8AF9 set ATTR-T to $43 (bright magenta on black) and call #R$87EF with coordinates 2,4 and message #R$88E2 "Enter name (12 letters max.)"
-C $8B06 get address of wizard object data for current player
-C $8B09 set #R$89AE variable to zero
-C $8B0E set #R$89AC to coordinates 2,6 and set ATTR-T to $45 (bright cyan on black)
+C $8AD8 Preserve BC.
+C $8AD9 call #R$C5EE ???
+C $8ADC Set ATTR-T to $69 (bright cyan on black) and call #R$BB57.
+C $8AE4 Set ATTR-T to $46 (bright yellow on black) and print message #m2printlink($04) at coordinates 2,2.
+C $8AF1 Get current player number, add $31 to convert to char value and call #R$BAD6.
+C $8AF9 Set ATTR-T to $43 (bright magenta on black) and print message #m2printlink($09) at 2,4.
+C $8B06 Get address of wizard object data for current player.
+C $8B09 Set #R$89AE to zero.
+C $8B0E Set #R$89AC to coordinates 2,6 and set ATTR-T to $45 (bright cyan on black).
 @ $8B19 label=INPLOO
-D $8B19 text input loop
-C $8B19 call KEYBOARD in Spectrum ROM
-C $8B1C store keypress in #R$89AF
-C $8B1F if key is 'enter' jump to #R$8B95
-C $8B24 if key is not 'delete' jump to #R$8B56
-C $8B28 test string length variable from #R$89AE if zero jump back to #R$8B19
-C $8B2E load #R$89AC into BC and decrement (move cursor left over letter to delete)
-C $8B33 call #R$BAD6 with A set to $20 (space) to blank out letter under cursor
-C $8B38 decrement #R$89AC again ready for next letter.
-C $8B3F decrement #R$89AE variable
-C $8B43 decrement #R$89AA pointer (move back over last character)
-C $8B4A set HL to #R$89EF (key bloop sound) and call #R$C2F9
-C $8B50 call #R$96E6 then jump back to #R$8B19
+C $8B19 Call KEYBOARD in Spectrum ROM.
+C $8B1C Store keypress in #R$89AF.
+C $8B1F If key is 'enter' jump to #R$8B95.
+C $8B24 If key is not 'delete' jump to #R$8B56.
+C $8B28 If #R$89AE is zero jump back to #R$8B19.
+C $8B2E Load #R$89AC into BC and decrement (move cursor left over letter to delete).
+C $8B33 Call #R$BAD6 ??? with A set to $20 (space) to blank out letter under cursor.
+C $8B38 Decrement #R$89AC again ready for next letter.
+C $8B3F Decrement #R$89AE.
+C $8B43 Decrement #R$89AA pointer (move back over last character).
+C $8B4A Set HL to #R$89EF (key bloop sound) and call #R$C2F9.
+C $8B50 Call #R$96E6 ??? then jump back to #R$8B19.
 @ $8B56 label=NO_DEL
-D $8B56 jump here if keypress is not 'delete'.
-C $8B56 if string length equals 11 jump back to #R$8B19
-C $8B5E if #R$89AF is 'space' jump to #R$8B6F
-C $8B65 if #R$89AF is less than 'A' or greater than 'z' jump back to #R$8B19
+C $8B56 If string length equals 11 jump back to #R$8B19.
+C $8B5E If #R$89AF is 'space' jump to #R$8B6F.
+C $8B65 If #R$89AF is less than 'A' or greater than 'z' jump back to #R$8B19.
 @ $8B6F label=SPACE
-D $8B6F jump here if keypress is space, with $20 (space) in A
-C $8B6F store space character at the position given by the #R$89AA pointer
-C $8B73 advance the #R$89AA pointer and store
-C $8B77 increment #R$89AE
-C $8B7B load #R$89AC into BC and call #R$BAD6 to print character still in A (space) at those coordinates
-C $8B82 increment #R$89AC
-C $8B89 set HL to #R$89EF (key bloop sound) and call #R$C2F9
-C $8B8F call #R$907B then jump back to #R$8B19
+C $8B6F Store space character at the position given by the #R$89AA pointer.
+C $8B73 Advance the #R$89AA pointer and store.
+C $8B77 Increment #R$89AE.
+C $8B7B Load #R$89AC into BC and call #R$BAD6 to print character still in A (space) at those coordinates.
+C $8B82 Increment #R$89AC.
+C $8B89 Play key bloop sound effect.
+C $8B8F Call #R$907B ??? then jump back to #R$8B19.
 @ $8B95 label=ENTER
-D $8B95 jump here if keypress is enter
-C $8B95 read string length into A. If zero jump back to #R$8B19
-C $8B9C set HL = #R$AC0E + $29
-C $8BA4 multiply result by four
-C $8BA6 add result to address of #R$CDD3(game messages table 1) to point at offset to relevant wizard data
-C $8BAA move past address word in table to wizard name length
-C $8BAC read #R$89AE variable again and write into table
-C $8BB0 call #R$907B
-C $8BB3 set ATTR-T to $43 (bright magenta on black) and call #R$87EF with coordinates 2,9 and message #R$88AD "Computer controlled? "
-C $8BC0 set ATTR-T to $46 (bright yellow on black)
-C $8BC5 set #R$AC2E to zero (current player is human)
+C $8B95 Read string length into A. If zero jump back to #R$8B19.
+C $8B9C Set HL = #R$AC0E + $29.
+C $8BA4 Multiply result by four.
+C $8BA6 Add result to address of #R$CDD3(game messages table 1) to point at offset to relevant wizard data.
+C $8BAA Move past address word in table to wizard name length.
+C $8BAC Read #R$89AE variable again and write into table.
+C $8BB0 Call #R$907B ???
+C $8BB3 Set ATTR-T to $43 (bright magenta on black) and print message #m2printlink($05) at coordinates 2,9.
+C $8BC0 Set ATTR-T to $46 (bright yellow on black).
+C $8BC5 Set #R$AC2E to zero (current player is human).
 @ $8BCA label=Y_OR_N
-C $8BCA call KEYBOARD in Spectrum ROM
-C $8BCD if keypress is 'Y' jump to #R$8BDF
-C $8BD1 if keypress is not 'N' jump back to #R$8BCA
-C $8BD5 call #R$87EF with coordinates 23,9 and message #R$88C5 "NO"
-C $8BDD jump to #R$8BF8
+C $8BCA Call KEYBOARD in Spectrum ROM.
+C $8BCD If keypress is 'Y' jump to #R$8BDF.
+C $8BD1 If keypress is not 'N' jump back to #R$8BCA.
+C $8BD5 Print message #m2printlink($07) at coordinates 23,9.
+C $8BDD Jump to #R$8BF8.
 @ $8BDF label=YES_CC
-C $8BDF call #R$87EF with coordinates 23,9 and message #R$88C2 "YES"
-C $8BE7 set HL to #R$AC26 + #R$AC0E
-C $8BF1 write $01 to #R$AC26 + #R$AC0E
-C $8BF3 set #R$AC2E
+C $8BDF Print message #m2printlink($08) at 23,9.
+C $8BE7 Set HL to #R$AC26 + #R$AC0E.
+C $8BF1 Write $01 to #R$AC26 + #R$AC0E.
+C $8BF3 Set #R$AC2E.
 @ $8BF8 label=NOT_CC
-C $8BF8 set HL to #R$89EF (key bloop sound) and call #R$C2F9
-C $8BFE call #R$907B
-C $8C01 set ATTR-T to $43 (bright magenta on black) and call #R$87EF with coordinates 2,11 and message #R$891A "Which character? "
-C $8C0E set ATTR-T to $45 (bright cyan on black) and call #R$87EF with coordinates 2,13 and message #R$892B "1  2  3  4  5  6  7  8"
-C $8C1B set #R$89AC to coordinates 3,13
-C $8C22 set #R$89A8 to zero
-C $8C27 set B to 8 as a loop counter
+C $8BF8 Play key bloop sound effect.
+C $8BFE Call #R$907B ???
+C $8C01 Set ATTR-T to $43 (bright magenta on black) and print message #m2printlink($0C) at coordinates 2,11.
+C $8C0E Set ATTR-T to $45 (bright cyan on black) and print message #m2printlink($0D) at coordinates 2,13.
+C $8C1B Set #R$89AC to coordinates 3,13.
+C $8C22 Set #R$89A8 to zero.
+C $8C27 Set B to eight as a loop counter.
 @ $8C29 label=P_WIZL
-C $8C29 stack the loop counter
-C $8C2A copy #R$89A8 to #R$90DF
-C $8C30 increment #R$89A8
-C $8C34 call #R$90F0 (print character sprite)
-C $8C37 add three to #R$89AC
-C $8C42 pop loop counter back
-C $8C43 loop back to #R$8C29 seven times
-C $8C45 call #R$89B0 with coordinates 19,11
-C $8C4B store number returned in #R$90DF
-C $8C4E set #R$89AC to coordinates 20,11 and call #R$90F0
-C $8C58 set HL to unknown data block at #R$82C0
-C $8C5B multiply #R$90DF by eight and add to #R$82C0 to give address of pointer to sprite data for selected character
-C $8C68 store result in variable at #R$831F
-C $8C6B copy pointers to sprite data of chosen character to wizard object data for current player
-C $8C6E set ATTR-T to $43 (bright magenta on black) and call #R$87EF with coordinates 2,16 and message #R$890C "Which colour? "
-C $8C7B set ATTR-T to $46 (bright yellow on black) and call #R$87EF with coordinates 2,18 and message #R$892B "1  2  3  4  5  6  7  8"
-C $8C88 set #R$89AC to coordinates 3,18
-C $8C8F set variable at #R$8321 to address of #R$90D7 (attribute table)
-C $8C95 set B to eight as loop counter
+C $8C29 Preserve the loop counter.
+C $8C2A Copy #R$89A8 to #R$90DF.
+C $8C30 Increment #R$89A8.
+C $8C34 Call #R$90F0 (print character sprite).
+C $8C37 Sdd three to #R$89AC.
+C $8C42 Restore loop counter.
+C $8C43 Loop back to #R$8C29 for eight iterations.
+C $8C45 Call #R$89B0 with coordinates 19,11.
+C $8C4B Store number returned in #R$90DF.
+C $8C4E Set #R$89AC to coordinates 20,11 and call #R$90F0.
+C $8C58 Set HL to unknown data block at #R$82C0.
+C $8C5B Multiply #R$90DF by eight and add to #R$82C0 to give address of pointer to sprite data for selected character.
+C $8C68 Store result at address in #R$831F.
+C $8C6B Copy pointers to sprite data of chosen character to wizard object data for current player.
+C $8C6E Set ATTR-T to $43 (bright magenta on black) and print message #m2printlink($0B) at coordinates 2,16.
+C $8C7B Set ATTR-T to $46 (bright yellow on black) and print message #m2printlink($0D) at coordinates 2,18.
+C $8C88 Set #R$89AC to coordinates 3,18.
+C $8C8F Set variable at #R$8321 to address of #R$90D7 (attribute table).
+C $8C95 Set B to eight as loop counter.
 @ $8C97 label=COLOO
-C $8C97 stack the loop counter
-C $8C98 read byte from address held in #R$8321
-C $8C9C store in ATTR-T
-C $8C9F increment HL and store back in #R$8321
-C $8CA3 call #R$90F0 (print character sprite)
-C $8CA6 add three to #R$89AC
-C $8CB0 restore loop counter from stack
-C $8CB1 loop back to #R$8C97 seven times
-C $8CB3 call #R$89B0 with coordinates 16,16
-C $8CB9 add number returned to address of #R$90D7 giving address of byte in attribute table corresponding to chosen colour
-C $8CC0 read attribute byte from attribute table and set ATTR-T
-C $8CC4 set #R$89AC to coordinates 17,16 and call #R$90F0
-C $8CCE call #R$8300 (get address of first sprite pointer in wizard object data of the current player)
-C $8CD1 load address of first sprite pointer in wizard object data from #R$8321 into HL and decrement (HL = address of first sprite pointer - 1)
-C $8CD5 set DE to three
-C $8CD8 read ATTR-T onto A
-C $8CDB set B to four as a loop counter
+C $8C97 Preserve the loop counter.
+C $8C98 Read byte from address held in #R$8321.
+C $8C9C Store in ATTR-T.
+C $8C9F Increment HL and store back in #R$8321.
+C $8CA3 Print character sprite.
+C $8CA6 Add three to #R$89AC.
+C $8CB0 Restore loop counter from stack.
+C $8CB1 Loop back to #R$8C97 for eight iterations.
+C $8CB3 Call #R$89B0 with coordinates 16,16 ???
+C $8CB9 Add number returned to address of #R$90D7 giving address of byte in attribute table corresponding to chosen colour.
+C $8CC0 Read attribute byte from attribute table and set ATTR-T.
+C $8CC4 Set #R$89AC to coordinates 17,16 and print character sprite.
+C $8CCE Get address of first sprite pointer in wizard object data of the current player).
+C $8CD1 load address of first sprite pointer in wizard object data from #R$8321 into HL and decrement (HL = address of first sprite pointer - 1).
+C $8CD5 Set DE to three.
+C $8CD8 Read ATTR-T onto A.
+C $8CDB Set B to four as a loop counter.
 @ $8CDD label=PUTATL
-D $8CDD loop around four times writing value of ATTR-T to every third byte (after each pointer to sprite data in the wizard object data)
-C $8CDD add three to HL to point at next attr byte in wizard data
-C $8CDE write attribute byte to wizard data
-C $8CDF loop back to #R$8CDD three times
-C $8CE1 set #R$9049 to zero
-C $8CE6 if #R$AC2E is clear then jump to #R$8CF2
-C $8CEC else copy #R$89A7 to #R$9049
+C $8CDD Add three to HL to point at next attr byte in wizard data
+C $8CDE Write attribute byte to wizard data.
+C $8CDF Loop back to #R$8CDD for four iterations.
+C $8CE1 Set #R$9049 to zero.
+C $8CE6 If player is human then jump to #R$8CF2.
+C $8CEC Else copy #R$89A7 to #R$9049.
 @ $8CF2 label=MAKCHR
-C $8CF2 get address of first sprite pointer in wizard object data of the current player
-C $8CF5 read #R$89AA into HL
-C $8CF8 move past player name string to player stats
-C $8CFD call #R$904B
-C $8D00 halve value in A and add one, add #R$9049 divided by two
-C $8D0A store calculated value in first byte of wizard stats (combat)
-C $8D0B set second and third bytes of wizard stats to zero (ranged combat and range)
-C $8D11 call #R$904B
-C $8D14 halve value, add one, add to #R$9049 divided by two
-C $8D1E store in fourth byte of wizard stats (defence)
-C $8D20 set fifth byte of wizard stats to one (movement allowance)
-C $8D23 call #R$904B
-C $8D26 halve value, add three, add to #R$9049 divided by four
-C $8D33 store in sixth byte of wizard stats (manouvre rating)
-C $8D35 call #R$904B
-C $8D38 divide value by four, add six and store in seventh byte of wizard stats (magic resistance)
-C $8D40 call #R$904B
-C $8D43 halve value, add eleven, add #R$9049
-C $8D4C if result is less than twenty one jump to #R$8D53 else set A to twenty. In other words limit the value to twenty
+C $8CF2 Get address of first sprite pointer in wizard object data of the current player.
+C $8CF5 Read #R$89AA into HL.
+C $8CF8 Move past player name string to player stats.
+C $8CFD Call #R$904B ???
+C $8D00 Halve value in A and add one, add #R$9049 divided by two.
+C $8D0A Store calculated value in first byte of wizard stats (combat).
+C $8D0B Set second and third bytes of wizard stats to zero (ranged combat and range).
+C $8D11 Call #R$904B ???
+C $8D14 Halve value, add one, add to #R$9049 divided by two.
+C $8D1E Store in fourth byte of wizard stats (defence).
+C $8D20 Set fifth byte of wizard stats to one (movement allowance).
+C $8D23 Call #R$904B ???
+C $8D26 Halve value, add three, add to #R$9049 divided by four.
+C $8D33 Store in sixth byte of wizard stats (manouvre rating).
+C $8D35 Call #R$904B ???
+C $8D38 Divide value by four, add six and store in seventh byte of wizard stats (magic resistance).
+C $8D40 Call #R$904B ???
+C $8D43 Halve value, add eleven, add #R$9049.
+C $8D4C If result is less than twenty one jump to #R$8D53 else set A to twenty. In other words limit the value to twenty.
 @ $8D53 label=NOTMOR
-C $8D53 store value in #R$904A and in eighth byte of wizard stats (spells)
-C $8D58 set ninth byte in wizard stats to zero (ability)
-C $8D5B halve #R$9049 and subtract from five
-C $8D64 store result in #R$A172
-C $8D67 call #R$904B
-C $8D6A compare returned value with #R$A172
-C $8D6F if random value is less than #R$A172 jump to #R$8D7A
-C $8D72 call #R$904B
-C $8D75 halve value and store in ninth byte of wizard stats (ability)
+C $8D53 Store value in #R$904A and in eighth byte of wizard stats (spells).
+C $8D58 Set ninth byte in wizard stats to zero (ability).
+C $8D5B Halve #R$9049 and subtract from five.
+C $8D64 Store result in #R$A172.
+C $8D67 Call #R$904B ???
+C $8D6A Compare returned value with #R$A172.
+C $8D6F If random value is less than #R$A172 jump to #R$8D7A.
+C $8D72 Call #R$904B ???
+C $8D75 Halve value and store in ninth byte of wizard stats (ability).
 @ $8D7A label=NOABIL
-C $8D7A call #R$92AA
-C $8D7D decrement #R$9154 to first byte in table of spells possesed by current wizard
-C $8D84 call #R$904B
-C $8D87 add twelve to value and store at address in #R$9154
-C $8D8D set first spell to $01 (disbelieve)
-C $8D90 set #R$9154 to next address
-C $8D94 set #R$CD86 to #R$D3F2
-C $8D9A get #R$904A into B
+C $8D7A call #R$92AA ???
+C $8D7D Decrement #R$9154 to first byte in table of spells possesed by current wizard.
+C $8D84 Call #R$904B ???
+C $8D87 Add twelve to value and store at address in #R$9154.
+C $8D8D Set first spell to $01 (disbelieve).
+C $8D90 Set #R$9154 to next address.
+C $8D94 Set #R$CD86 to #R$D3F2.
+C $8D9A Get #R$904A into B.
 @ $8D9E label=INSPLO
-C $8D9E stack BC
+C $8D9E Preserve BC.
 @ $8D9F label=RIND
-C $8D9F copy R register into A
-C $8DA1 mask lowest three bits
-C $8DA3 copy to H
-C $8DA4 get R register into L
-C $8DA7 read byte at address in HL
-C $8DA8 add byte at address held in #R$CD86
-C $8DAC mask lowest six bits
-C $8DAE jump back to #R$8D9F unless 1 < A < 66
-C $8DB8 increment #R$CD86
-C $8DB9 store A in #R$937B
-C $8DBF call #R$92F9
-C $8DC2 read fourth value from spell table at address in IX
-C $8DC5 store A at address held in #R$9154
-C $8DC9 increment address and copy #R$937B there
-C $8DCE increment address and update pointer in #R$9154
-C $8DD2 pop loop counter back into BC
-C $8DD3 loop back to #R$8D9E #R$904A-1 times
-C $8DD5 if #R$AC2E is zero jump to #R$8E08
-C $8DDB call #R$92AA
-C $8DDE set HL to address held in #R$9154 and decrement
-C $8DE2 set B to nineteen as outer loop counter
+C $8D9F Copy R register into A.
+C $8DA1 Mask lowest three bits.
+C $8DA3 Copy to H.
+C $8DA4 Get R register into L.
+C $8DA7 Read byte at address in HL.
+C $8DA8 Add byte at address held in #R$CD86.
+C $8DAC Mask lowest six bits.
+C $8DAE Jump back to #R$8D9F unless 1 < A < 66.
+C $8DB8 Increment #R$CD86.
+C $8DB9 Store A in #R$937B.
+C $8DBF Call #R$92F9 ???
+C $8DC2 Read fourth value from spell table at address in IX.
+C $8DC5 Store A at address held in #R$9154.
+C $8DC9 Increment address and copy #R$937B there.
+C $8DCE Increment address and update pointer in #R$9154.
+C $8DD2 Restore loop counter.
+C $8DD3 Loop back to #R$8D9E for #R$904A iterations.
+C $8DD5 If player is human, jump to #R$8E08.
+C $8DDB Call #R$92AA ???
+C $8DDE Set HL to address held in #R$9154 and decrement.
+C $8DE2 Set B to nineteen as outer loop counter.
 @ $8DE4 label=OUTL_
-C $8DE4 stack outer loop counter and address (#R$9154)-1
-C $8DE6 set B to nineteen as inner loop counter
+C $8DE4 Preserve outer loop counter and address (#R$9154)-1.
+C $8DE6 Set B to nineteen as inner loop counter.
 @ $8DE8 label=INL_
-C $8DE8 stack inner loop counter
-C $8DE9 read four bytes from address in HL into E, D, C, and B
-C $8DF0 move pointer back to the third byte
-C $8DF1 if byte in E (first byte read) is greater than or equal to C (third byte read) jump to #R$8E01
-C $8DF7 move pointer forwards again and write D to memory at pointer (fourth byte)
-C $8DF9 move pointer back and write E to third byte, B to second byte, and C to first byte
-C $8DFF move pointer back to the third byte read
+C $8DE8 Preserve inner loop counter.
+C $8DE9 Read four bytes from address in HL into E, D, C, and B.
+C $8DF0 Move pointer back to the third byte.
+C $8DF1 If byte in E (first byte read) is greater than or equal to C (third byte read) jump to #R$8E01.
+C $8DF7 Move pointer forwards again and write D to memory at pointer (fourth byte).
+C $8DF9 Move pointer back and write E to third byte, B to second byte, and C to first byte.
+C $8DFF Move pointer back to the third byte read.
 @ $8E01 label=NOBIGA
-C $8E01 pop inner loop counter and loop back to #R$8DE8 eighteen times
-C $8E04 pop address (#R$9154)-1 and outer loop counter and loop back to #R$8DE4 eighteen times
+C $8E01 Restore inner loop counter and loop back to #R$8DE8 for nineteen iterations.
+C $8E04 Restore address (#R$9154)-1 and outer loop counter and loop back to #R$8DE4 for nineteen iterations.
 @ $8E08 label=DONSOR
-C $8E08 increment #R$AC0E variable
-C $8E0F pop loop counter back to BC and jump back to #R$8AD8 #R$AC0F-1 times
-C $8E14 read #R$AC0F into A
-C $8E17 subtract two
-C $8E19 multiply by eight
-C $8E1F and add result to #R$909F to get address of row in table for selected number of players
-C $8E26 store this address in variable at #R$8321
-C $8E29 set #R$AC0E variable to zero
-C $8E2E read #R$AC0F into B as loop counter
+C $8E08 Increment #R$AC0E variable.
+C $8E0F Restore loop counter and jump back to #R$8AD8 for #R$AC0F iterations.
+C $8E14 Read #R$AC0F into A.
+C $8E17 Subtract two.
+C $8E19 Multiply by eight.
+C $8E1F And add result to #R$909F to get address of row in table for selected number of players.
+C $8E26 Store this address in variable at #R$8321.
+C $8E29 Set #R$AC0E variable to zero.
+C $8E2E Read #R$AC0F into B as loop counter.
 @ $8E32 label=PUTIBO
-C $8E32 read byte from address held in #R$8321 into A
-C $8E36 increment address in temporary variable at #R$8321
-C $8E3A set HL to #R$E01F
-C $8E3D calculate address in table by adding the value just read from current player data in #R$909F table
-C $8E41 add forty one to contents of #R$AC0E variable and store at calculated address (the wizards have object codes 41-48)
-C $8E47 add $1E1 to HL to get address of same position in table at #R$E200
-C $8E4B store contents of #R$AC0E variable at calculated address
-C $8E4F increment #R$AC0E variable
-C $8E53 loop back to #R$8E32 #R$AC0F-1 times
-C $8E55 set #R$7D03 variable to zero
-C $8E5A read #R$AC0F into A, double it, add 15 and copy the result to B as a loop counter
+C $8E32 Read byte from address held in #R$8321 into A.
+C $8E36 Increment address in temporary variable at #R$8321.
+C $8E3A Set HL to #R$E01F.
+C $8E3D Calculate address in table by adding the value just read from current player data in #R$909F table.
+C $8E41 Add forty one to contents of #R$AC0E variable and store at calculated address (the wizards have object codes 41-48).
+C $8E47 Add $1E1 to HL to get address of same position in table at #R$E200.
+C $8E4B Store contents of #R$AC0E variable at calculated address.
+C $8E4F Increment #R$AC0E variable.
+C $8E53 Loop back to #R$8E32 for #R$AC0F iterations.
+C $8E55 Set #R$7D03 variable to zero.
+C $8E5A Read #R$AC0F into A, double it, add 15 and copy the result to B as a loop counter.
 @ $8E62 label=TURLOO
-C $8E62 stack loop counter
-C $8E63 call #R$9168
-C $8E66 load #R$AC34 variable and increment it
-C $8E6A jump to #R$8E93 if #R$AC34 +1 is equal to #R$AC0F 
-C $8E70 call #R$9F50
-C $8E73 call #R$8F9A
-C $8E76 call #R$A173
-C $8E79 call routine at #R$AC36
-C $8E7C call routine at #R$FE56 (set IM 2 mode)
-C $8E7F Set B to ten as loop counter
+C $8E62 Preserve loop counter.
+C $8E63 call #R$9168 ???
+C $8E66 Load #R$AC34 variable and increment it.
+C $8E6A Jump to #R$8E93 if #R$AC34 + 1 is equal to #R$AC0F.
+C $8E70 Call #R$9F50 ???
+C $8E73 Call #R$8F9A ???
+C $8E76 Call #R$A173 ???
+C $8E79 Call #R$AC36 ???
+C $8E7C Switch to interrupt mode 2.
+C $8E7F Set B to ten as loop counter.
 @ $8E81 label=PAUS_L
-C $8E81 Stack BC, call #R$96E6, Restore BC
-C $8E86 loop back to #R$8E81 nine times
-C $8E88 Call routine at #R$FE60 (set IM 1 mode)
-C $8E8B read #R$AC34 variable into A and add one
-C $8E8F Compare #R$AC34 +1 with #R$AC0F
+C $8E81 Preserve BC, call #R$96E6, Restore BC.
+C $8E86 Loop back to #R$8E81 for ten iterations.
+C $8E88 Switch to interrupt mode 1.
+C $8E8B Read #R$AC34 variable into A and add one.
+C $8E8F Compare #R$AC34 +1 with #R$AC0F.
 @ $8E93 label=GO_END
-C $8E93 pop loop counter back
-C $8E94 jump to #R$8F04 if #R$AC34 +1 was equal to #R$AC0F
-C $8E96 increment variable #R$7D03
-C $8E9A loop back to #R$8E62 nine times
-C $8E9C call #R$C5EE
-C $8E9F set ATTR-T to $01 (dark blue on black)
+C $8E93 Restore loop counter.
+C $8E94 Jump to #R$8F04 if #R$AC34 + 1 was equal to #R$AC0F.
+C $8E96 Increment variable #R$7D03.
+C $8E9A Loop back to #R$8E62 for (#R$AC0F * 2) + 15 iterations.
+C $8E9C Call #R$C5EE ???
+C $8E9F Set ATTR-T to $01 (dark blue on black).
 @ $8EA4 label=LOOPY
-C $8EA4 call #R$8F8B
-C $8EA7 call #R$BB57
-C $8EAA call #R$8F8B
-C $8EAD call #R$87EF with coordinates 2,2 and message #R$895D "THE CONTEST IS DRAWN BETWEEN"
-C $8EB5 set HL to #R$AC16
-C $8EB8 set #R$89AC to coordinates 10,3
-C $8EBF set #R$AC0E variable to $29 (row in #R$CDD3(game messages table 1) for pointer to the first wizards name)
-C $8EC4 load #R$AC0F into B as loop counter
+C $8EA4 Call #R$8F8B ???
+C $8EA7 Call #R$BB57 ???
+C $8EAA Call #R$8F8B ???
+C $8EAD Print message #m2printlink($10) at coordinates 2,2.
+C $8EB5 Set HL to #R$AC16.
+C $8EB8 Set #R$89AC to coordinates 10,3.
+C $8EBF Set #R$AC0E variable to $29 (row in #R$CDD3(game messages table 1) for pointer to the first wizards name).
+C $8EC4 Load #R$AC0F into B as loop counter.
 @ $8EC8 label=ZAPEM
-C $8EC8 stack BC and HL
-C $8ECA jump to #R$8EE2 if bit 4 of byte at address in HL is not zero
-C $8ECE call #R$8F8B
-C $8ED1 load #R$AC0E variable back into A (message in message table 1)
-C $8ED5 load BC with #R$89AC and increment twice (move two columns right)
-C $8EDF call #R$BAFB to print the wizard name
+C $8EC8 Preserve BC and HL.
+C $8ECA Jump to #R$8EE2 if bit 4 of byte at address in HL is not zero.
+C $8ECE Call #R$8F8B ???
+C $8ED1 Load #R$AC0E variable back into A (message in message table 1).
+C $8ED5 Load BC with #R$89AC and increment twice (move two columns right).
+C $8EDF Print the wizard name.
 @ $8EE2 label=DEDED
-C $8EE2 pop HL back and increment it (next byte in 16 byte table)
-C $8EE4 increment #R$AC0E variable (next row in game message table 1)
-C $8EEB restore loop counter from stack
-C $8EEC loop back to #R$8EC8 #R$AC0F-1 times
-C $8EEE call #R$8F8B
-C $8EF1 call #R$BAFB with coordinates 0,22 and message $3D "         PRESS ANY KEY          "
-C $8EF9 call #R$96E6
-C $8EFC call KEY-SCAN in Spectrum ROM
-C $8EFF jump back to #R$8EA4 if no key is pressed
-C $8F03 return
+C $8EE2 Pop HL back and increment it (next byte in 16 byte table).
+C $8EE4 Increment #R$AC0E variable (next row in game message table 1).
+C $8EEB Restore loop counter from stack.
+C $8EEC Loop back to #R$8EC8 for #R$AC0F iterations.
+C $8EEE Call #R$8F8B ???
+C $8EF1 Print #mprintlink($3D) at coordinates 0,22.
+C $8EF9 Call #R$96E6 ???
+C $8EFC Call KEY-SCAN in Spectrum ROM.
+C $8EFF Jump back to #R$8EA4 if no key is pressed else return.
 @ $8F04 label=ENDGAM
-C $8F04 call #R$C5EE
-C $8F07 set ATTR-T to $01 (dark blue on black)
+C $8F04 Call #R$C5EE ???
+C $8F07 Set ATTR-T to $01 (dark blue on black).
 @ $8F0C label=LOPY2
-C $8F0C call #R$8F8B
-C $8F0F call #R$BB57
-C $8F12 call #R$8F8B
-C $8F15 call #R$87EF with coordinates 9,4 and message #R$8979 "THE WINNER IS:"
-C $8F1D call #R$8F8B
-C $8F20 call #R$87EF with coordinates 8,8 and message #R$8987
-C $8F28 call #R$87EF with coordinates 8,10 and message #R$8997
-C $8F30 call #R$87EF with coordinates 8,12 and message #R$8997
-C $8F38 call #R$87EF with coordinates 8,14 and message #R$8997
-C $8F40 call #R$87EF with coordinates 8,16 and message #R$8987
-C $8F48 call #R$8F8B
-C $8F4B set HL to address #R$AC16
-C $8F4E set B to $08 as loop counter
+C $8F0C Call #R$8F8B ???
+C $8F0F Call #R$BB57 ???
+C $8F12 Call #R$8F8B ???
+C $8F15 Print message #m2printlink($11) at coordinates 9,4.
+C $8F1D Call #R$8F8B ???
+C $8F20 Print message #m2printlink($12) at coordinates 8,8.
+C $8F28 Print message #m2printlink($13) at coordinates 8,10.
+C $8F30 Print message #m2printlink($13) at coordinates 8,12.
+C $8F38 Print message #m2printlink($13) at coordinates 8,14.
+C $8F40 Print message #m2printlink($12) at coordinates 8,16.
+C $8F48 Call #R$8F8B ???
+C $8F4B Set HL to address #R$AC16.
+C $8F4E Set B to eight as loop counter.
 @ $8F50 label=GRONK
-C $8F50 jump to #R$8F57 if bit 4 of byte at address in HL is set
-C $8F54 else move on to next byte
-C $8F55 loop back to #R$8F50 seven times
-@ $8F57 label=FOUDIM
-C $8F57 set A to forty nine - the row in #R$CDD3(game messages table 1) of wizard eight
-C $8F59 subtract loop counter to get row of wizard
-C $8F5A stack AF
-C $8F5B load BC with coordinates 10,12
-C $8F5E set HL to four times the value in A
-C $8F63 add offset to the address of #R$CDD3(game messages table 1)
-C $8F67 add two to resulting address to move to length byte
-C $8F69 read byte into A
-C $8F6A divide by two and copy result to E
-C $8F6D subtract E from sixteen and copy result to C
-C $8F71 pop row of #R$CDD3(game messages table 1) back into A
-C $8F72 call #R$BAFB to print wizard name centred in box
-C $8F75 call #R$8F8B
-C $8F78 call #R$BAFB with coordinates 0,22 and message $3D "  PRESS ANY KEY  "
-C $8F80 call #R$96E6
-C $8F83 call KEY-SCAN in ROM to see if a key was pressed
-C $8F88 loop back to #R$8F0C if no key was pressed
-C $8F8A else return (to BASIC)
+C $8F50 Jump to #R$8F57 if bit 4 of byte at address in HL is set.
+C $8F54 Else move on to next byte.
+C $8F55 Loop back to #R$8F50 for eight iterations.
+@ $8F57 Label=FOUDIM
+C $8F57 Set A to forty nine - the row in #R$CDD3(game messages table 1) of wizard eight.
+C $8F59 Subtract loop counter to get row of wizard.
+C $8F5A Preserve AF.
+C $8F5B Load BC with coordinates 10,12.
+C $8F5E Set HL to four times the value in A.
+C $8F63 Add offset to the address of #R$CDD3(game messages table 1).
+C $8F67 Add two to resulting address to move to length byte.
+C $8F69 Read byte into A.
+C $8F6A Divide by two and copy result to E.
+C $8F6D Subtract E from sixteen and copy result to C.
+C $8F71 Pop row of #R$CDD3(game messages table 1) back into A.
+C $8F72 Print wizard name centred in box.
+C $8F75 Call #R$8F8B ???
+C $8F78 Print message $3D at coordinates 0,22 (#mprintlink($3D)).
+C $8F80 Call #R$96E6 ???
+C $8F83 Call KEY-SCAN in ROM to see if a key was pressed.
+C $8F88 Loop back to #R$8F0C if no key was pressed.
+C $8F8A Else return (to BASIC).
 
 @ $8F8B label=ATTRDO
 c $8F8B ATTRDO
@@ -841,9 +834,9 @@ C $8FB2 store this byte in #R$A172
 C $8FB5 call #R$904B
 C $8FB8 if value is greater than 4 jump to #R$9031
 C $8FBD subtract 41 from #R$A172 and store result in #R$AC0E
-C $8FC5 set ATTR-T to $46 (bright yellow on black) and call #R$87EF with coordinates 0,22 and message #R$894F "NEW SPELL FOR "
+C $8FC5 set ATTR-T to $46 (bright yellow on black) and print message #m2printlink($0F) at coordinates 0,22.
 C $8FD2 move coordinates right one column
-C $8FD3 load #R$A172 into A and call #R$BAFB
+C $8FD3 Print message number in #R$A172
 C $8FD9 set HL to address of #R$903E and call routine to copy ten bytes to data block at #R$C2E8
 C $8FDF enable interrupts
 C $8FE0 load B with 10 as a loop counter
@@ -1027,7 +1020,7 @@ C $91B0 jump forwards to #R$9230 if #R$C3A4 is zero
 C $91B6 set BC to coordinates 7,7
 C $91B9 jump forwards to #R$91F6 if #R$C3A4 is positive
 C $91BC set ATTR-T to $46 (bright yellow on black)
-C $91C1 call #R$BAFB with message $47 ("(LAW ")
+C $91C1 Print #mprintlink($47)
 C $91C6 load #R$C3A4 into A and divide by four
 C $91CD jump forwards to #R$91EF if result is zero
 C $91D0 set #R$89AC to coordinates 7,7
@@ -1043,7 +1036,7 @@ C $91EB load #R$89AC into BC
 C $91EF call #R$BAD6 with ')' character and jump forwards to #R$9230
 @ $91F6 label=cast_s_chaotic
 C $91F6 set ATTR-T to $45 (bright cyan on black)
-C $91FB call #R$BAFB with message $46 ("(CHAOS ")
+C $91FB Print #mprintlink($46)
 C $9200 load #R$C3A4 into A
 C $9203 store BC in #R$89AC
 C $9207 negate A
@@ -1061,14 +1054,14 @@ C $922B call #R$BAD6 with character ')'
 C $9230 set ATTR-T to $46 (bright yellow on black)
 C $9235 load #R$AC0E into A
 C $9238 add $29 (first wizard name string in #R$CDD3(game messages table 1))
-C $923A call #R$BAFB with coordinates 7,5 and message $29 + #R$AC0E
+C $923A Print #mprintlink($29) at coordinates 7,5
 C $9240 set ATTR-T to $45 (bright cyan on black)
-C $9245 call #R$BAFB with coordinates 7,9 and message $59 ("1. EXAMINE SPELLS")
-C $924D call #R$BAFB with coordinates 7,11 and message $5A ("2. SELECT SPELL")
-C $9255 call #R$BAFB with coordinates 7,13 and message $5B ("3. EXAMINE BOARD")
-C $925D call #R$BAFB with coordinates 7,15 and message $5C ("4. CONTINUE WITH GAME")
+C $9245 Print #mprintlink($59) at coordinates 7,9
+C $924D Print #mprintlink($5A) at coordinates 7,11
+C $9255 Print #mprintlink($5B) at coordinates 7,13
+C $925D Print #mprintlink($5C) at coordinates 7,15
 C $9265 set ATTR-T to $56 (bright yellow on red)
-C $926A call #R$BAFB with coordinates 0,22 and message $57 ("  PRESS KEYS 1 TO 4  ")
+C $926A Print #mprintlink($57) at coordinates 0,22
 C $9272 call #R$92AA
 @ $9275 label=cast_s_key_loop
 C $9275 call KEYBOARD routine in ROM returning character code in A
@@ -1205,11 +1198,11 @@ C $9672 if #R$AC0E equals #R$AC0F then return else loop back to #R$95D7
 c $967A Display wizard name, spell being cast, spell casting range
 C $967A set ATTR-T to $46 (bright yellow on black)
 C $967F load value of #R$AC0E variable and add 41
-C $9684 call #R$BAFB with coordinates 0,22 to print wizard name
+C $9684 print wizard name at coordinates 0,22
 C $968A call routine at #R$96D1
 C $968D set ATTR-T to $44 (bright green on black)
 C $9692 load byte at IX+0
-C $9695 call #R$BAFB to display spell being cast
+C $9695 Print spell being cast
 C $9698 call routine at #R$96D1
 C $969B set ATTR-T to $47 (bright white on black)
 C $96A0 increment C to move right one column
@@ -1279,10 +1272,10 @@ C $97A3 call #R$BED7 to clear line 22 of the display
 C $97A6 jump to #R$97BB if spell successful flag is set
 C $97AC set ATTR-T to bright magenta on black
 C $97B1 set A to $54 ("SPELL FAILS" message)
-C $97B1 call #R$BAFB with coordinates 0,22 and message $54 ("SPELL FAILS")
+C $97B1 Print #mprintlink($54) at coordinates 0,22
 C $97B9 jump to #R$97C8
 C $97BB set ATTR-T to bright white on black
-C $97C0 call #R$BAFB with coordinates 0,22 and message $55 ("SPELL SUCCEEDS")
+C $97C0 Print #mprintlink($55) at coordinates 0,22
 C $97C8 set loop counter to $64
 C $97CA HALT
 C $97CB loop back to #R$97CA ninety-nine times (pause for two seconds)
@@ -1977,8 +1970,8 @@ C $AC64 else set #R$AC2E
 C $AC69 set ATTR-P to $46 (bright yellow on black)
 C $AC6E clear bottom row of screen (line 22)
 C $AC71 #R$AC0E into A and add $29 to get message number of player name in #R$CDD3(game messages table 1)
-C $AC76 call #R$BAFB with coordinates 0,22 to display wizard name
-C $AC7C call #R$BAFB with message $37 ("'S TURN")
+C $AC76 Print wizard name at coordinates 0,22
+C $AC7C Print #mprintlink($37)
 C $AC81 call #R$C0DD ???
 C $AC84 do nothing for two frames
 C $AC86 copy #R$AC0E into #R$D391 ???
@@ -2282,8 +2275,8 @@ C $BCBC call #R$C0DD ???
 C $BCBF wait for interrupt then call #R$D392 ???
 C $BCC3 load #R$D391 into A and add $29 as offset to wizards in #R$CDD3(game messages table 1)
 C $BCC8 set BC to coordinates (0,16) and set ATTR-T to $46 (bright yellow on black)
-C $BCD0 call #R$BAFB with message number of wizard name
-C $BCD3 call #R$BAFB with message $5F ("'S CREATIONS")
+C $BCD0 Print wizard name
+C $BCD3 Print #mprintlink($5F)
 C $BCD8 call KEY-SCAN routine in ROM
 C $BCDB if E is not $FF jump back to #R$BCC0. This prints messages again while key is held down.
 C $BCDE call #R$BED7 to clear bottom of screen
@@ -2348,10 +2341,10 @@ C $BEB2 preserve AF, BC
 C $BEB4 set #R$AC03 to zero
 C $BEB8 set #R$AC07 to one
 C $BEBD set ATTR-T to bright yellow on black
-C $BEC2 set A to $34 (message 52 - "ENGAGED TO ENEMY")
+C $BEC2 set A to message $34
 C $BEC4 set BC to coordinates 0,22
 C $BEC7 call #R$BED7 to clear line 22
-C $BECA call #R$BAFB to print message $34 at 0,22
+C $BECA Print #mprintlink($34) at coordinates 0,22
 C $BECD set HL to address of "ENGAGED TO ENEMY" sound effect
 C $BED0 call play_sound_effect_in_HL
 C $BED3 re-enable interrupts
@@ -2360,7 +2353,7 @@ C $BED6 return
 
 c $BED7 clear bottom of screen by printing 32 spaces on line 22
 C $BED7 preserve AF, DE, HL, BC
-C $BEDB call #R$BAFB to print first entry in game message strings table (line of 32 spaces) at coordinates 0,22
+C $BEDB Print #mprintlink($01) at coordinates 0,22
 C $BEE3 restore BC, HL, DE, AF
 C $BEE7 return
 
@@ -2571,14 +2564,14 @@ C $C5FC preserve AF
 C $C5FD skip to #R$C608 if #R$C3A0 flag is clear
 C $C603 call #R$BAD6 to print a comma
 C $C608 restore AF
-C $C609 call #R$BAFB to display current spell property (e.g. undead, flying, etc)
+C $C609 Print current spell property (e.g. undead, flying, etc)
 C $C60C set flag at #R$C3A0 so comma is printed next time
 C $C611 return
 
 c $C612 Print an attribute for a creature spell based on table at #R$C39D
 C $C612 load A with spell attribute message number from #R$C3A3
 C $C615 preserve AF
-C $C616 call #R$BAFB to print message number in A
+C $C616 Print creature attribute
 C $C619 restore AF
 C $C61A increment spell attribute message number at #R$C3A3
 C $C61E set ATTR-T to $47 (bright white on black)
