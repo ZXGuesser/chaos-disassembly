@@ -9,7 +9,7 @@ C $7D00 Jump to initialization routine.
 b $7D03
 
 @ $7D04 label=routine01
-c $7D04 routine01 ???
+c $7D04 routine01
 C $7D04 Return if #R$7D03 is less than 6.
 C $7D0A Temporarily store address of #R$E01F(map area object code table) in #R$AC12 variable.
 C $7D10 Load B with 159 as loop counter.
@@ -148,7 +148,7 @@ b $8323 no_less_than_2_flag
 B $8323 Flag that prevents entering a number less than 2.
 
 @ $8324 label=routine02
-c $8324 routine02 ???
+c $8324 routine02
 C $8324 Get address of first sprite pointer in wizard object data of current player.
 C $8327 Set B to four as a loop counter and push to stack.
 C $832A Set B to two as another counter and push to stack.
@@ -161,13 +161,13 @@ C $833D Pop loop counter and repeat inner loop.
 C $8340 Increment address in #R$8321 because there is a byte gap between each sprite pointer in wizard object data.
 C $8347 Pop loop counter and repeat outer loop three times before returning.
 
-c $834B routine03 ???
+c $834B routine03
 @ $834B label=routine03
 C $834B Add #R$AC0E variable to address of #R$AC16.
 C $8355 Read byte from that address into A and Return.
 
 @ $8357 label=routine04
-c $8357 routine04 ???
+c $8357 routine04
 C $8357 If player is human, display wizard name, spell being cast, and spell casting range.
 C $8360 Call #R$9760 ???
 C $8363 Call #R$97D1 ???
@@ -981,18 +981,17 @@ B $913F,$0A
 @ $9149 label=sound_effect_7
 B $9149,$0A
 
-b $9153
 @ $9153 label=chaos_law
-B $9153,1 current chaos/law*
+b $9153 current chaos/law*
 @ $9154 label=HISPEL
 @ $9154 ssub=DEFW $7F47+$2F
-W $9154 HISPEL
+w $9154 HISPEL
 @ $9156 label=cast_table
-B $9156,$10 sixteen byte table used by #R$9168
+b $9156 sixteen byte table used by #R$9168
 @ $9166 label=unknown
-B $9166,1 unknown ***
+b $9166 unknown ***
 @ $9167 label=spell_success_flag
-B $9167,1 spell successful flag
+b $9167 spell successful flag
 
 c $9168 CAST_S
 @ $9168 label=CAST_S
@@ -1092,6 +1091,7 @@ C $92B9 increment HL and store its value in #R$9154
 C $92BD return
 
 c $92BE user selected "Examine board" from options in #R$9168 routine
+@ $92BE label=examine_board
 C $92BE call #R$C5EE
 C $92C1 call #R$FE56 to switch to IM2 interrupt handler
 C $92C4 set ATTR-P to zero
@@ -1130,20 +1130,23 @@ W $9382 unknown7
 @ $9384 label=unknown8
 B $9384 unknown8
 
-c $9385
+c $9385 routine05
+@ $93CB label=routine05
 @ $93CB ssub=LD A,($937C+$1)
 @ $93D0 ssub=LD ($937C+1),A
 @ $949A ssub=LD HL,$9156+$8
 @ $94B6 ssub=LD HL,$E01F+$9F
 
-c $95B8 copy byte from #R$AC26 table for current player to flag variable
+c $95B8 Get player controlled flag from #R$AC26 table
+@ $95B8 label=get_player_controlled_flag
 C $95B8 set HL to address of #R$AC26 table
 C $95BB load #R$AC0E variable into A
 C $95BE add to #R$AC26 to get address in table
 C $95C2 copy byte from table into the #R$AC2E
 C $95C6 return
 
-c $95C7 ???
+c $95C7 routine06
+@ $95C7 label=routine06
 C $95C7 call #R$C5EE
 C $95CA switch to interrupt mode 2
 C $95CD call #R$C0DD ???
@@ -1193,9 +1196,8 @@ C $9668 set HL to address of #R$A172 and call #R$7D04 ???
 C $966E increment #R$AC0E variable
 C $9672 if #R$AC0E equals #R$AC0F then return else loop back to #R$95D7 
 
-
-
-c $967A Display wizard name, spell being cast, spell casting range
+c $967A Display wizard name, spell being cast, and spell casting range
+@ $967A label=display_wizard_spell_range
 C $967A set ATTR-T to $46 (bright yellow on black)
 C $967F load value of #R$AC0E variable and add 41
 C $9684 print wizard name at coordinates 0,22
@@ -1228,7 +1230,8 @@ C $96CD restore loop counter
 C $96CE loop back to #R$96C9 seven times
 C $96D0 return
 
-c $96D1
+c $96D1 routine07
+@ $96D1 label=routine07
 C $96D1 stack BC
 C $96D2 set HL to address of sound effect at #R$9117
 C $96D5 call play_sound_effect_in_HL
@@ -1242,7 +1245,6 @@ C $96E1 loop back to #R$96DB 254 times
 C $96E3 restore BC
 C $96E4 increment C and return
 
-
 c $96E6 PAUSER
 @ $96E6 label=PAUSER
 C $96E6 stack BC
@@ -1254,20 +1256,23 @@ C $96EE restore outer loop counter
 C $96EF loop back to #R$96E9 254 times
 C $96F1 pop BC and return
 
-c $96F3 ?
+c $96F3 routine08
+@ $96F3 label=routine08
 C $9732 Self modifying code
 @ $9732 ssub=LD ($9735+1),HL
-@ $9735 label=L9735
 C $9738
 
-b $975F
+b $975F unknown10
 @ $975F label=unknown10
 
-c $9760
+c $9760 routine09
+@ $9760 label=routine09
 
-c $9786
+c $9786 routine10
+@ $9786 label=routine10
 
-c $97A3
+c $97A3 routine11
+@ $97A3 label=routine11
 C $97A3 call #R$BED7 to clear line 22 of the display
 C $97A6 jump to #R$97BB if spell successful flag is set
 C $97AC set ATTR-T to bright magenta on black
@@ -1281,47 +1286,65 @@ C $97CA HALT
 C $97CB loop back to #R$97CA ninety-nine times (pause for two seconds)
 C $97CD return
 
-b $97CE
+b $97CE unknown11
 @ $97CE label=unknown11
-B $97CE unknown11
+
 @ $97CF label=unknown12
 @ $97CF ssub=DEFW $E01F+$9B
-W $97CF unknown12
+w $97CF unknown12
 
-c $97D1
+c $97D1 routine12
+@ $97D1 label=routine12
 
 c $980E OFBORD
+@ $980E label=OFBORD
 
-c $981A ?
+c $981A routine13
+@ $981A label=routine13
 
-c $98DB
+c $98DB routine14
+@ $98DB label=routine14
 
-c $98F1
+c $98F1 routine15
+@ $98F1 label=routine15
 
-# spell names from comments on chaos
-c $9975 CreatureCast spell
-
-b $9940
+b $9940 unknown79
 @ $9940 label=unknown79
 D $9940 unknown79
 
-c $9941
+c $9941 routine16
+@ $9941 label=routine16
+
+# spell names from comments on chaos
+c $9975 CreatureCast spell
+@ $9975 label=creature_cast_spell
 
 c $99F1 Disbelieve spell
+@ $99F1 label=disbelieve_spell
+
 c $9ADD Trees&Castles spell
+@ $9ADD label=trees_castles_spell
+
 c $9B76 Wall spell
+@ $9B76 label=wall_spell
 
-c $9B85
+c $9B85 routine17
+@ $9B85 label=routine17
 
-c $9BB3
+c $9BB3 routine18
+@ $9BB3 label=routine18
 
-@ $9C0E label=unknown80
 b $9C0E
+@ $9C0E label=unknown80
 
-c $9C0F
+c $9C0F routine19
+@ $9C0F label=routine19
 
 c $9C59 Lightning spell
+@ $9C59 label=lightning_spell
+
 c $9DE0 DarkPowerEtc spell
+@ $9DE0 label=dark_power_spell
 
 @ $9E43 ssub=LD HL,$D908-$100
 
@@ -1337,23 +1360,23 @@ c $A173 WALKYS
 @ $A173 label=WALKYS
 
 c $A17E GETPLA
+@ $A17E label=GETPLA
 C $A17E load word at #R$CD86 into HL
 C $A181 increment pointer and load byte into A
 C $A183 increment again and store back at #R$CD86
 C $A187 return
 
-w $A188
+w $A188 sprite pointer for explosion routine
 @ $A188 label=explosion_sprite_pointer
-W $A188 sprite pointer for explosion routine
 
-c $A18A
+c $A18A routine20
+@ $A18A label=routine20
 
 @ $A1E6 label=twirl_sprite_pointer
 w $A1E6 sprite pointer for twirl routine
 @ $A1E8 twirl_sprites_table
 w $A1E8 table of pointers to twirl sprites
 D $A1E8 #HTML(#UDGARRAY2,,4;$A20C-$A22B-8(*twirlsprite0)) #HTML(#UDGARRAY2,,4;$A22C-$A24B-8(*twirlsprite1)) #HTML(#UDGARRAY2,,4;$A24C-$A26B-8(*twirlsprite2)) #HTML(#UDGARRAY2,,4;$A26C-$A28B-8(*twirlsprite3)) #HTML(#UDGARRAY2,,4;$A28C-$A2AB-8(*twirlsprite4)) #HTML(#UDGARRAY2,,4;$A2AC-$A2CB-8(*twirlsprite5)) #HTML(#UDGARRAY2,,4;$A2CD-$A2EC-8(*twirlsprite6)) #HTML(#UDGARRAY2,,4;$A2E5-$A304-8(*twirlsprite7)) #HTML(#UDGARRAY2,,4;$A305-$A324-8(*twirlsprite8)) #HTML(#UDGARRAY2,,4;$A325-$A344-8(*twirlsprite9)) #HTML(#UDGARRAY*twirlsprite0,5;twirlsprite1;twirlsprite2;twirlsprite3;twirlsprite0;twirlsprite1;twirlsprite2;twirlsprite3;twirlsprite0;twirlsprite1;twirlsprite2;twirlsprite3;twirlsprite4;twirlsprite5;twirlsprite6;twirlsprite7;twirlsprite8;twirlsprite9,100(twirlsprite)) animation cycle twirlsprite 0,1,2,3,0,1,2,3,0,1,2,3,4,5,6,7,8,9
-
 
 b $A20C sprite data for casting twirl
 @ $A20C label=twirlsprite0
@@ -1396,7 +1419,7 @@ B $A3E5,$20 explosion 5 #HTML(#UDGARRAY*explosionsprite5(explosionsprite5))
 @ $A405 label=explosion6
 B $A405,$20 explosion 6 #HTML(#UDGARRAY*explosionsprite6(explosionsprite6))
 
-b $A425 data left behind by editor/assembler
+u $A425 data left behind by editor/assembler
 D $A425 contains original names of functions and variables
 B $A425 
 T $A427 SUB_DO
@@ -1884,78 +1907,77 @@ W $ABDD
 B $ABDF
 
 
-b $ABFC variables
 @ $ABFC label=unknown13
-B $ABFC unknown13
+b $ABFC unknown13
 @ $ABFD label=unknown14
 @ $ABFD ssub=DEFW $E01F+$9F
-W $ABFD unknown14
+w $ABFD unknown14
 @ $ABFF label=unknown15
-B $ABFF unknown15
+b $ABFF unknown15
 @ $AC00 label=unknown16
-B $AC00 unknown16
+b $AC00 unknown16
 @ $AC01 label=unknown17
-B $AC01 unknown17
+b $AC01 unknown17
 @ $AC02 label=movement_x2
-B $AC02 movement points multiplied by two
+b $AC02 movement points multiplied by two
 @ $AC03 label=unknown18
-B $AC03 unknown18
+b $AC03 unknown18
 @ $AC04 label=unknown19
-W $AC04 unknown19
+w $AC04 unknown19
 @ $AC06 label=unknown20
-B $AC06 unknown20
+b $AC06 unknown20
 @ $AC07 label=unknown21
-B $AC07 unknown21
+b $AC07 unknown21
 @ $AC08 label=unknown22
-B $AC08 unknown22
+b $AC08 unknown22
 @ $AC09 label=unknown23
-B $AC09 unknown23
+b $AC09 unknown23
 @ $AC0A label=unknown24
-W $AC0A unknown24
+w $AC0A unknown24
 @ $AC0C label=unknown25
-B $AC0C unknown25
+b $AC0C unknown25
 @ $AC0D label=unknown26
-B $AC0D unknown26
+b $AC0D unknown26
 @ $AC0E label=current_player
-B $AC0E current player (0-7)
+b $AC0E current player (0-7)
 @ $AC0F label=NO_PLA
-B $AC0F NO_PLA
+b $AC0F NO_PLA
 @ $AC10 label=unknown27
-B $AC10 unknown27
+b $AC10 unknown27
 @ $AC11 label=unknown28
-B $AC11 unknown28
+b $AC11 unknown28
 @ $AC12 label=cursor_position
 @ $AC12 ssub=DEFW $E01F+$9F
-W $AC12 position of cursor
+w $AC12 position of cursor
 @ $AC14 ssub=DEFW $E01F+$9E
 @ $AC14 label=D_ADD
-W $AC14 D_ADD
+w $AC14 D_ADD
 @ $AC16 label=unknown_table_3
-B $AC16 ???unknown table 3???
+b $AC16 unknown table 3
 @ $AC1E label=unknown_table_4
-B $AC1E ???unknown table 4???
+b $AC1E unknown table 4
 @ $AC26 label=WIZCON
-B $AC26 WIZCON table
+b $AC26 WIZCON table
 @ $AC2E label=computer_player_flag
-B $AC2E current player is computer controlled flag
+b $AC2E current player is computer controlled flag
 
 u $AC2F
 
-b $AC30 variables
 @ $AC30 label=unknown29
-B $AC30 unknown29
+b $AC30 unknown29
 @ $AC31 label=unknown30
-B $AC31 unknown30
+b $AC31 unknown30
 @ $AC32 label=unknown31
-B $AC32 unknown31
+b $AC32 unknown31
 @ $AC33 label=unknown32
-B $AC33 unknown32
+b $AC33 unknown32
 @ $AC34 label=unknown33
-B $AC34 unknown33
+b $AC34 unknown33
 @ $AC35 label=unknown34
-B $AC35 unknown34
+b $AC35 unknown34
 
-c $AC36
+c $AC36 routine21
+@ $AC36 label=routine21
 C $AC36 load #R$AC0F into B as loop counter
 C $AC3A preserve BC
 C $AC3B load #R$AC0F into A
@@ -1991,7 +2013,8 @@ C $ACBA decrement loop counter and loop back to #R$AC3A if not zero
 C $ACBE set "something" to zero ???
 C $ACC3 set Interrupt Mode 1 and return
 
-c $ACC6
+c $ACC6 routine22
+@ $ACC6 label=routine22
 C $ACC6 set system variable "UDG" to #R$C33D
 C $ACCC call routine at #R$BC96
 C $ACCF preserve BC
@@ -2008,66 +2031,72 @@ C $ACE8 call play_sound_effect_in_HL
 C $ACEB enable interrupts
 C $ACEC return
 
-c $ACED
+c $ACED routine23
+@ $ACED label=routine23
 
 c $AECC COUNTL
 @ $AECC label=COUNTL
 
-c $B0A8
+c $B0A8 routine24
+@ $B0A8 label=routine24
 
-b $B161 variables
 @ $B161 label=unknown35
-B $B161 unknown35
+b $B161 unknown35
 @ $B162 label=unknown36
-B $B162 unknown36
+b $B162 unknown36
 @ $B163 label=unknown37
-B $B163 unknown37
+b $B163 unknown37
 @ $B164 label=unknown38
-B $B164 unknown38
+b $B164 unknown38
 @ $B165 label=unknown39
-B $B165 unknown39
+b $B165 unknown39
 @ $B166 label=unknown40
-W $B166 unknown40
+w $B166 unknown40
 
-c $B168
+c $B168 routine25
+@ $B168 label=routine25
 
-b $B374
+b $B374 unknown41
 @ $B374 label=unknown41
-B $B374 unknown41
-c $B375
 
-b $B3C3
+c $B375 routine26
+@ $B375 label=routine26
+
 @ $B3C3 label=unknown42
-B $B3C3 unknown42
+b $B3C3 unknown42
 @ $B3C4 label=unknown43
-B $B3C4 unknown43
+b $B3C4 unknown43
 @ $B3C5 label=unknown44
-B $B3C5 unknown44
+b $B3C5 unknown44
 @ $B3C6 label=unknown45
-B $B3C6 unknown45
+b $B3C6 unknown45
 @ $B3C7 label=unknown46
-B $B3C7 unknown46
+b $B3C7 unknown46
 @ $B3C8 label=unknown47
-B $B3C8 unknown47
+b $B3C8 unknown47
 
-c $B3C9
+c $B3C9 WIZKIL
 @ $B3C9 label=WIZKIL
 
-b $B60B
 @ $B60B label=unknown48
-B $B60B unknown48
+b $B60B unknown48
 @ $B60C label=unknown49
-B $B60C unknown49
-c $B60D
-c $B626
+b $B60C unknown49
 
-c $B746
+c $B60D routine27
+@ $B60D label=routine27
 
-b $B754
+c $B626 routine28
+@ $B626 label=routine28
+
+c $B746 routine29
+@ $B746 label=routine29
+
+b $B754 LOF_D
 @ $B754 label=LOF_D
-B $B754 LOF_D
 
 c $B755 test_pixel
+@ $B755 label=test_pixel
 D $B755 enter with coordinates in BC
 C $B755 store BC in COORDS system variable (x-coordinate of last point plotted)
 C $B759 call PIXEL-ADD in Spectrum ROM (get pixel address in HL)
@@ -2077,35 +2106,41 @@ C $B75F rotate A left 'B' times
 C $B762 return if LSB is zero
 C $B765 else store $01 in #R$B754 and return
 
-b $B769
 @ $B769 label=unknown50
-B $B769 unknown50
+b $B769 unknown50
 @ $B76A label=unknown51
-B $B76A unknown51
-@ $B76B label=unknown52
-W $B76B unknown52
+b $B76A unknown51
+@ $B76b label=unknown52
+w $B76b unknown52
 @ $B76D label=unknown_table_5
-B $B76D unknown_table_5
+b $B76D unknown_table_5
 
-c $B7D3
+c $B7D3 routine30
+@ $B7D3 label=routine30
 @ $B7E4 ssub=LD HL,$B76D+99
 @ $B7E7 ssub=LD DE,$B76D+101
 
-c $B7FD
+c $B7FD routine31
+@ $B7FD label=routine31
 
-c $B81C
+c $B81C routine32
+@ $B81C label=routine32
 
-b $B844
+b $B844 unknown54
 @ $B844 label=unknown54
-B $B844 unknown54
-c $B845
-c $B8BD
-c $B8DD
 
-w $BA75
+c $B845 routine33
+@ $B845 label=routine33
+
+c $B8BD routine34
+@ $B8BD label=routine34
+
+c $B8DD routine35
+@ $B8DD label=routine35
+
+w $BA75 unknown55
 @ $BA75 label=unknown55
 @ $BA75 ssub=DEFW $E01F+$9E
-W $BA75 unknown55
 
 c $BA77 TEMP_C
 @ $BA77 label=TEMP_C
@@ -2126,7 +2161,8 @@ C $BAB9 restore loop counter
 C $BABA execute loop 160 times
 C $BABC re-enable interrupts and return
 
-c $BABE
+c $BABE routine36
+@ $BABE label=routine36
 C $BABE preserve map object byte in A register
 C $BABF load table entry address from #R$BA75
 C $BAC2 store address in #R$E005 and call #R$E007 ???
@@ -2150,6 +2186,7 @@ C $BAEC increment C to move right to next column
 C $BAED return
 
 c $BAEE Print string loop
+@ $BAEE label=print_string_loop
 R $BAEE HL Address
 R $BAEE E length
 C $BAEE load byte from address in HL
@@ -2180,6 +2217,7 @@ C $BB12 restore DE and HL
 C $BB14 return
 
 b $BB15 border graphic data
+@ $BB15 label=border_graphics
 B $BB15 #HTML(#UDG$BB15(bordersprite0))
 B $BB1D #HTML(#UDG$BB1D(bordersprite1))
 B $BB25 #HTML(#UDG$BB25(bordersprite2))
@@ -2190,11 +2228,13 @@ B $BB45 #HTML(#UDG$BB45(bordersprite6))
 B $BB4D #HTML(#UDG$BB4D(bordersprite7))
 
 w $BB55 address of border graphics table
+@ $BB55 label=border_graphics_pointer
 
 c $BB57 ZRDR_P
 @ $BB57 label=ZRDR_P
 
-c $BBB0 wait for a key and sets SEED based on how long no key is pressed
+c $BBB0 wait for a key and set SEED based on how long no key is pressed
+@ $BBB0 label=wait_key_seed
 C $BBB0 preserve HL, DE, BC
 C $BBB3 skip to end of routine if current player is not human
 C $BBB9 preserve BC
@@ -2207,6 +2247,7 @@ C $BBC8 restore BC, DE, HL
 C $BBCB return
 
 c $BBCC wait for no key to be pressed and set SEED based on how long a key is pressed
+@ $BBCC label=wait_no_key_seed
 C $BBCC preserve HL, DE, BC
 C $BBCF skip to end of routine if current player is not human
 C $BBD5 preserve BC
@@ -2219,6 +2260,7 @@ C $BBE3 restore BC, DE, HL
 C $BBE6 return
 
 c $BBE7 Move cursor on screen depending on direction key pressed
+@ $BBE7 label=move_cursor
 D $BBE7 Movement points variable holds the number of points multiplied by two. It is set to 2 for non-diagonal movement, and 3 for diagonal movement.
 C $BBE7 preserve HL, DE
 C $BBE9 set CAPS mode
@@ -2246,11 +2288,17 @@ C $BC5E 'C' pressed - set movement points to 3 - increment x & y coords
 C $BC69 restore DE, HL
 C $BC6B return
 
+c $BC6C routine37
+@ $BC6C label=routine37
 
-c $BC6C
-c $BC72
-c $BC7D
-c $BC83
+c $BC72 routine38
+@ $BC72 label=routine38
+
+c $BC7D routine39
+@ $BC7D label=routine39
+
+c $BC83 routine40
+@ $BC83 label=routine40
 
 c $BC8D GET_LC
 @ $BC8D label=GET_LC
@@ -2258,10 +2306,11 @@ C $BC8D double contents of B and subtract one
 C $BC90 double contents of C and subtract one
 C $BC93 return
 
-w $BC94
-W $BC94 cursor coordinates
+w $BC94 cursor coordinates
+@ $BC94 cursor_coordinates
 
-c $BC96
+c $BC96 routine41
+@ $BC96 label=routine41
 C $BC96 call KEYBOARD in ROM
 C $BC99 if decoded key is not 'I' then jump to #R$BCA3
 C $BC9D otherwise call #R$C3B3
@@ -2288,12 +2337,8 @@ C $BCED pop #R$BC94(cursor coordinates) into HL
 C $BCEE push #R$BC94(cursor coordinates) onto stack again
 C $BCEF
 
-
-c $BDA5
-c $BDD1
-c $BDE7
-
-c $BDA5
+c $BDA5 routine42
+@ $BDA5 label=routine42
 C $BDA5 call CHAN-OPEN in ROM to set output channel to 2
 C $BDAA load #R$BC94(cursor coordinates) into BC and call #R$BC8D
 C $BDB1 use PRINT-A routine in ROM to print AT control code
@@ -2304,6 +2349,12 @@ C $BDBE increment B coordinate to move down a row
 C $BDBF print AT control code followed by coordinates B,C
 C $BDC6 print third and fourth User Defined Graphic characters
 C $BDCC load #R$BC94(cursor coordinates) into BC and return
+
+c $BDD1 routine43
+@ $BDD1 label=routine43
+
+c $BDE7 routine44
+@ $BDE7 label=routine44
 
 c $BE0A GETCHR
 @ $BE0A label=GETCHR
@@ -2319,10 +2370,14 @@ C $BE1D load byte from object data into A
 C $BE1E restore BC, HL
 C $BE20 return
 
-c $BE21
-c $BE52
+c $BE21 routine45
+@ $BE21 label=routine45
+
+c $BE52 routine46
+@ $BE52 label=routine46
 
 c $BE94 get a random number from 11 to 15 in A register
+@ $BE94 label=get_random
 C $BE94 preserve HL and DE
 C $BE96 copy value of R register into E
 @ $BE99 ssub=LD HL,$E01F+$96
@@ -2336,7 +2391,8 @@ C $BEAA jump back to #R$BE96 if A is less than eleven
 C $BEAF restore DE and HL
 C $BE81 return
 
-c $BEB2
+c $BEB2 routine47
+@ $BEB2 label=routine47
 C $BEB2 preserve AF, BC
 C $BEB4 set #R$AC03 to zero
 C $BEB8 set #R$AC07 to one
@@ -2352,29 +2408,29 @@ C $BED4 restore BC, AF
 C $BED6 return
 
 c $BED7 clear bottom of screen by printing 32 spaces on line 22
+@ $BED7 label=clear_bottom_row
 C $BED7 preserve AF, DE, HL, BC
 C $BEDB Print #mprintlink($01) at coordinates 0,22
 C $BEE3 restore BC, HL, DE, AF
 C $BEE7 return
 
-b $BEE8
 @ $BEE8 label=unknown74
-D $BEE8 unknown74
+b $BEE8 unknown74
 @ $BEE9 label=unknown75
-W $BEE9 unknown75
+w $BEE9 unknown75
 @ $BEEB label=unknown76
-W $BEEB unknown76
+w $BEEB unknown76
 @ $BEED label=unknown77
-D $BEED unknown77
+b $BEED unknown77
 @ $BEEE label=unknown78
-D $BEEE unknown78
+b $BEEE unknown78
 
-c $BEEF
+c $BEEF routine48
+@ $BEEF label=routine48
 
 b $BF37 sprite data for attack effect
+@ $BF37 label=attack_effect_sprites
 D $BF37 #HTML(#UDGARRAY2,,4;$BF37-$BF56-8(*attackeffectsprite0)) #HTML(#UDGARRAY2,,4;$BF57-$BF76-8(*attackeffectsprite1)) #HTML(#UDGARRAY2,,4;$BF77-$BF96-8(*attackeffectsprite2)) #HTML(#UDGARRAY2,,4;$BF97-$BFB6-8(*attackeffectsprite3)) #HTML(#UDGARRAY*attackeffectsprite0,10;attackeffectsprite1;attackeffectsprite2;attackeffectsprite3(attackeffect))
-
-
 B $BF37,$20 #HTML(#UDGARRAY*attackeffectsprite0(attackeffectsprite0))
 B $BF57,$20 #HTML(#UDGARRAY*attackeffectsprite1(attackeffectsprite1))
 B $BF77,$20 #HTML(#UDGARRAY*attackeffectsprite2(attackeffectsprite2))
@@ -2383,7 +2439,6 @@ B $BF97,$20 #HTML(#UDGARRAY*attackeffectsprite3(attackeffectsprite3))
 b $BFB7 WOOP_D
 @ $BFB7 label=WOOP_D
 D $BFB7 #HTML(#UDGARRAY2,,4;$BFB7-$BFD6-8(*WOOP_Dsprite0)) #HTML(#UDGARRAY2,,4;$BFD7-$BFF6-8(*WOOP_Dsprite1)) #HTML(#UDGARRAY2,,4;$BFF7-$C016-8(*WOOP_Dsprite2)) #HTML(#UDGARRAY2,,4;$C017-$C036-8(*WOOP_Dsprite3)) #HTML(#UDGARRAY2,,4;$C037-$C056-8(*WOOP_Dsprite4)) #HTML(#UDGARRAY2,,4;$C057-$C076-8(*WOOP_Dsprite5)) #HTML(#UDGARRAY2,,4;$C077-$C096-8(*WOOP_Dsprite6)) #HTML(#UDGARRAY2,,4;$C097-$C0B6-8(*WOOP_Dsprite7)) #HTML(#UDGARRAY2,,4;$C0B7-$C0D6-8(*WOOP_Dsprite8)) #HTML(#UDGARRAY*WOOP_Dsprite0,10;WOOP_Dsprite1;WOOP_Dsprite2;WOOP_Dsprite3;WOOP_Dsprite4;WOOP_Dsprite5;WOOP_Dsprite6;WOOP_Dsprite7;WOOP_Dsprite8,100(WOOP_Dsprite))
-
 B $BFB7,$20 #HTML(#UDGARRAY*WOOP_Dsprite0(WOOP_Dsprite0))
 B $BFD7,$20 #HTML(#UDGARRAY*WOOP_Dsprite1(WOOP_Dsprite1))
 B $BFF7,$20 #HTML(#UDGARRAY*WOOP_Dsprite2(WOOP_Dsprite2))
@@ -2394,16 +2449,16 @@ B $C077,$20 #HTML(#UDGARRAY*WOOP_Dsprite6(WOOP_Dsprite6))
 B $C097,$20 #HTML(#UDGARRAY*WOOP_Dsprite7(WOOP_Dsprite7))
 B $C0B7,$20 #HTML(#UDGARRAY*WOOP_Dsprite8(WOOP_Dsprite8))
 
-b $C0D7
+b $C0D7 unknown56
 @ $C0D7 label=unknown56
-B $C0D7 unknown56
 
-c $C0D8
+c $C0D8 routine49
+@ $C0D8 label=routine49
 @ $C105 ssub=LD DE,$E0C0+1
 
 b $C123 sprite data for dragon breath
+@ $C123 label=dragon_breath_sprites
 D $C123 #HTML(#UDGARRAY2,,4;$C123-$C142-8(*dragonbreathsprite0)) #HTML(#UDGARRAY2,,4;$C143-$C162-8(*dragonbreathsprite1)) #HTML(#UDGARRAY2,,4;$C163-$C182-8(*dragonbreathsprite2)) #HTML(#UDGARRAY2,,4;$C183-$C1A2-8(*dragonbreathsprite3)) #HTML(#UDGARRAY2,,4;$C1A3-$C1C2-8(*dragonbreathsprite4)) #HTML(#UDGARRAY2,,4;$C1C3-$C1E2-8(*dragonbreathsprite5)) #HTML(#UDGARRAY2,,4;$C1E3-$C202-8(*dragonbreathsprite6)) #HTML(#UDGARRAY2,,4;$C203-$C222-8(*dragonbreathsprite7)) #HTML(#UDGARRAY2,,4;$C223-$C242-8(*dragonbreathsprite8)) #HTML(#UDGARRAY*dragonbreathsprite0,10;dragonbreathsprite1;dragonbreathsprite2;dragonbreathsprite3;dragonbreathsprite4;dragonbreathsprite5;dragonbreathsprite6;dragonbreathsprite7;dragonbreathsprite8,100(dragonbreath))
-
 B $C123,$20 #HTML(#UDGARRAY*dragonbreathsprite0(dragonbreathsprite0))
 B $C143,$20 #HTML(#UDGARRAY*dragonbreathsprite1(dragonbreathsprite1))
 B $C163,$20 #HTML(#UDGARRAY*dragonbreathsprite2(dragonbreathsprite2))
@@ -2414,48 +2469,54 @@ B $C1E3,$20 #HTML(#UDGARRAY*dragonbreathsprite6(dragonbreathsprite6))
 B $C203,$20 #HTML(#UDGARRAY*dragonbreathsprite7(dragonbreathsprite7))
 B $C223,$20 #HTML(#UDGARRAY*dragonbreathsprite8(dragonbreathsprite8))
 
-b $C243 ?
 @ $C243 label=sound_effect_16
-B $C243 ???sound_effect_16???
+b $C243 sound_effect_16
 @ $C24D label=sound_effect_17
-B $C24D ???sound_effect_17???
+b $C24D sound_effect_17
 @ $C257 label=sound_effect_18
-B $C257 ???sound_effect_18???
+b $C257 sound_effect_18
 @ $C261 label=sound_effect_19
-B $C261 ???sound_effect_19???
+b $C261 sound_effect_19
 @ $C26B label=sound_effect_20
-B $C26B ???sound_effect_20???
+b $C26B sound_effect_20
 @ $C275 label=sound_effect_21
-B $C275 ???sound_effect_21???
+b $C275 sound_effect_21
 
-b $C27F
 @ $C27F label=sound_effect_8
-B $C27F,$0A
+b $C27F
 @ $C289 label=engaged_sound_effect
-B $C289,$0A "ENGAGED TO ENEMY" sound effect
+b $C289 "ENGAGED TO ENEMY" sound effect
 @ $C293 label=sound_effect_9
-B $C293,$0A
+b $C293
 @ $C29D label=S10
-B $C29D,$0A S10
+b $C29D S10
 @ $C2A7 label=sound_effect_10
-B $C2A7,$0A
+b $C2A7
 @ $C2B1 label=sound_effect_11
-B $C2B1,$0A
-@ $C2Bb label=sound_effect_12
-B $C2BB,$0A
+b $C2B1
+@ $C2BB label=sound_effect_12
+b $C2BB
 @ $C2C5 label=sound_effect_13
-B $C2C5,$0A
+b $C2C5
 @ $C2CF label=sound_effect_14
-B $C2CF,$0A
+b $C2CF
 @ $C2D9 label=sound_effect_15
-B $C2D9,$0A
+b $C2D9
 
 @ $C2E3 label=unknown69
 w $C2E3 unknown69
 
-b $C2E5 variables
+b $C2E5 unknown84
+@ $C2E5 label=unknown84
 
-b $C2E8
+b $C2E6 unknown85
+@ $C2E6 label=unknown85
+
+b $C2E7 unknown86
+@ $C2E7 label=unknown86
+
+b $C2E8 sound effect data
+@ $C2E8 sound_effect_temp
 D $C2E8 sound effects are copied here by the routine at C2F9 and the bytes read directly to save calculating offsets at the original location
 @ $C2E8 label=outer_loop_counter
 B $C2E8 outer loop counter
@@ -2466,21 +2527,23 @@ B $C2EA delay counters
 @ $C2EE label=delay_to_add
 B $C2EE values to add to delay
 
-b $C2F2
 @ $C2F2 label=port_FE_output_byte
-B $C2F2,1 port_FE_output_byte
+b $C2F2 port_FE_output_byte
 @ $C2F3 label=sound_effect_pointer
-W $C2F3,2 sound_effect_pointer
+w $C2F3 sound_effect_pointer
 
 s $C2F5
 
 c $C2F6 play_sound_effect_pointer
+@ $C2F6 label=play_sound_effect_pointer
 C $C2F6 load sound_effect_pointer into HL as address to copy sound data from
 
 c $C2F9 play_sound_effect_in_HL
+@ $C2F9 label=play_sound_effect_in_HL
 C $C2F9 copy ten bytes from address in HL to #R$C2E8 (sound effect playback data)
 
 c $C301 sound_effect_playback_routine
+@ $C301 label=sound_effect_playback_routine
 D $C301 play the sound effect data at #R$C2E8
 C $C301 disable interrupts
 C $C302 load first byte of sound effect playback data into B
@@ -2518,6 +2581,7 @@ C $C337 loop back to outer_sound_loop
 C $C339 return
 
 c $C33A sound_playback_delay_routine
+@ $C33A label=sound_playback_delay_routine
 D $C33A calling routine takes 17 T-states, loop for (13*(B-1))+8 T-states, and return takes 10 T-states
 C $C33A loop to self B-1 times then return
 
@@ -2529,35 +2593,36 @@ B $C35D #HTML(#UDGARRAY2,,4;$C35D-$C37C-8(cursorsprite1))
 @ $C37D label=cursorsprite2
 B $C37D #HTML(#UDGARRAY2,,4;$C37D-$C39C-8(cursorsprite2))
 
-b $C39D 
 @ $C39D label=unknown70
-B $C39D unknown70
+b $C39D unknown70
 @ $C39E label=unknown71
-B $C39E unknown71 
+b $C39E unknown71 
 @ $C39F label=object_table_row
-B $C39F object table row number
+b $C39F object table row number
 @ $C3A0 label=display_comma_flag
-B $C3A0 display comma before green spell property flag
+b $C3A0 display comma before green spell property flag
 @ $C3A1 label=unknown72
-B $C3A1 unknown72
+b $C3A1 unknown72
 @ $C3A2 label=offset_in_object_data
-B $C3A2 offset within object data
+b $C3A2 offset within object data
 @ $C3A3 label=creature_attribute_message
-B $C3A3 creature spell attribute message number
+b $C3A3 creature spell attribute message number
 @ $C3A4 label=CH_LAW
-B $C3A4 CH_LAW
-@ $C3A5 label=unknown81
-B $C3A5 unknown81
-B $C3A6
+b $C3A4 CH_LAW
+@ $C3A5 label=unknown87
+b $C3A5 unknown87
 
+b $C3A6 unknown88
+@ $C3A6 label=unknown88
 
-
-c $C3B3
+c $C3B3 routine50
+@ $C3B3 label=routine50
 
 c $C5EE CLS
 @ $C5EE label=CLS
 
-c $C5FC Display a spell property
+c $C5FC Print a spell property
+@ $C5FC label=print_spell_property
 D $C5FC optional preceding comma as indicated by flag at #R$C3A0.
 R $C5FC A Current spell property
 C $C5FC preserve AF
@@ -2569,6 +2634,7 @@ C $C60C set flag at #R$C3A0 so comma is printed next time
 C $C611 return
 
 c $C612 Print an attribute for a creature spell based on table at #R$C39D
+@ $C612 label=print_creature_attribute
 C $C612 load A with spell attribute message number from #R$C3A3
 C $C615 preserve AF
 C $C616 Print creature attribute
@@ -2584,99 +2650,109 @@ C $C634 call #R$BAD6 to print double height character at coordinates in BC
 C $C637 set ATTR-P to $45 (bright cyan on black)
 C $C63C return
 
-c $C63D
+c $C63D routine51
+@ $C63D label=routine51
 
-b $C649
 @ $C649 label=X_ADD
 @ $C649 ssub=DEFW $E01F+$9E
-W $C649 X_ADD
+w $C649 X_ADD
 @ $C64B label=unknown59
-B $C64B unknown59
+b $C64B unknown59
 
 c $C64C SORT
 @ $C64C label=SORT
 
-b $C679
+b $C679 unknown82
 @ $C679 label=unknown82
-B $C679 unknown82
 
-c $C67A
+c $C67A routine52
+@ $C67A label=routine52
 
 @ $C6D4 label=THRTAB
 b $C6D4 THRTAB
 
-c $C703
+c $C703 routine53
+@ $C703 label=routine53
 
-c $C710
+c $C710 routine54
+@ $C710 label=routine54
 
-b $C78B
 @ $C78B label=TEMADD
 @ $C78B ssub=DEFW $E01F+$56
-W $C78B TEMADD
-c $C78D
+w $C78B TEMADD
 
-b $C7BB
+c $C78D routine55
+@ $C78D label=routine55
+
 @ $C7BB label=SRTCNT
-B $C7BB SRTCNT
+b $C7BB SRTCNT
+
 @ $C7BC label=EN_AN
 c $C7BC EN_AN
-c $C825
 
-b $C858
+c $C825 routine56
+@ $C825 label=routine56
+
+b $C858 unknown60
 @ $C858 label=unknown60
-B $C858 unknown60
-c $C859
 
-b $C8B7
+c $C859 routine57
+@ $C859 label=routine57
+
 @ $C8B7 label=AIM
 @ $C8B7 ssub=DEFW $E01F+$57
-W $C8B7 AIM
+w $C8B7 AIM
 
-c $C8B9
+c $C8B9 routine58
+@ $C8B9 label=routine58
 @ $C8B9 ssub=LD HL,$D3F2+$1
 
-c $C8C7
+c $C8C7 routine59
+@ $C8C7 label=routine59
 
 @ $C94A ssub=LD HL,$D3F2+$F
 
-c $C955
+c $C955 routine60
+@ $C955 label=routine60
 
 @ $C9CD ssub=LD HL,$D3F2+$F3
 
-c $C9D4 move #R$CD86 back two bytes
+c $C9D4 routine61
+@ $C9D4 label=routine61
 C $C9D4 load #R$CD86 into HL
 C $C9D7 decrement HL twice
 C $C9D9 store #R$CD86
 
-
-b $CA16
 @ $CA16 label=unknown61
 @ $CA16 ssub=DEFW $E01F+$46
-W $CA16 unknown61
+w $CA16 unknown61
 @ $CA18 label=unknown62
-B $CA18 unknown62
+b $CA18 unknown62
 
-c $CA19
+c $CA19 routine62
+@ $CA19 label=routine62
 
-c $CA7C
+c $CA7C routine63
+@ $CA7C label=routine63
 
-c $CA92
+c $CA92 routine64
+@ $CA92 label=routine64
 
 @ $CB9C ssub=LD HL,$D3F2+$F
 
-b $CBB8
 @ $CBB8 label=unknown63
-B $CBB8 unknown63
+b $CBB8 unknown63
 
-c $CBB9
+c $CBB9 routine65
+@ $CBB9 label=routine65
 
-c $CBC7
+c $CBC7 routine66
+@ $CBC7 label=routine66
 
 @ $CC3A ssub=LD HL,$D3F2+$A1
 
-b $CC55
 @ $CC55 label=unknown64
-B $CC55 unknown64
+b $CC55 unknown64
 
 c $CC56 FIREON
 @ $CC56 label=FIREON
@@ -2707,38 +2783,44 @@ C $CCB1 set #R$CD86 to second byte of #R$D3F2
 C $CCB7 copy #R$C78B to #R$AC14
 C $CCBD set #R$CC55 to zero and return
 
-c $CCC3
+c $CCC3 routine67
+@ $CCC3 label=routine67
 
-b $CD2A
 @ $CD2A label=SPATAB
-B $CD2A SPATAB
+b $CD2A SPATAB
 @ $CD3A label=SPADAT
-W $CD3A SPADAT
+w $CD3A SPADAT
 
 c $CD3C ADSPA
 @ $CD3C label=ADSPA
 
-b $CD86
 @ $CD86 label=BUFPNT
-W $CD86 BUFPNT
+w $CD86 BUFPNT
 @ $CD86 ssub=DEFW $D3F2+$3
 @ $CD88 label=direction_keys_string
-T $CD88 string containing the direction keys
+t $CD88 string containing the direction keys
 @ $CD90 label=unknown65
-W $CD90 unknown65
+w $CD90 unknown65
 
-c $CD92
+c $CD92 routine68
+@ $CD92 label=routine68
 
 c $CDAA fill #R$D3F2 with FF00
+@ $CDAA label=fill_inbuf
 C $CDAA set HL to address of #R$D3F2
 C $CDAD set loop counter to $9E
 C $CDAF store FF00 at address in HL
 C $CDB5 loop back to #R$CDAF 157 times
 C $CDB7 return
 
-c $CDB8
-c $CDC0
+c $CDB8 routine69
+@ $CDB8 label=routine69
+
+c $CDC0 routine70
+@ $CDC0 label=routine70
+
 b $CDD3 game messages table 1
+@ $CDD3 label=game_messages_1
 D $CDD3 address,length
 W $CDD3,$1F8,4
 
@@ -2824,43 +2906,78 @@ T $CFCB,$3C6,$1F,$09,$07,$20,$20,$20,$0E,$07,$15,$19,1,$0F,$14,$10,$20,$05,$05,$
 @ $D37B label=magic_sleep_string
 @ $D386 label=shadow_form_string
 
-
 b $D391 unknown68
 @ $D391 label=unknown68
 
-c $D392 ?
-b $D3D6 ?
+c $D392 routine71
+@ $D392 label=routine71
+
+w $D3F0 unknown89
+@ $D3F0 label=unknown89
 
 b $D3F2 INBUF
 @ $D3F2 label=INBUF
 
-c $D52E
-c $D588
-c $D5EC
-c $D602
+c $D52E routine72
+@ $D52E label=routine72
+
+c $D588 routine73
+@ $D588 label=routine73
+
+c $D5EC routine74
+@ $D5EC label=routine74
+
+c $D602 routine75
+@ $D602 label=routine75
+
 s $D651
-c $D652
-c $D686
-c $D702
-c $D732
-c $D763
-c $D7A6
-c $D7EE
-c $D82D
-c $D887
-b $D8DE
+
+c $D652 routine76
+@ $D652 label=routine76
+
+c $D686 routine77
+@ $D686 label=routine77
+
+c $D702 routine78
+@ $D702 label=routine78
+
+c $D732 routine79
+@ $D732 label=routine79
+
+c $D763 routine80
+@ $D763 label=routine80
+
+c $D7A6 routine81
+@ $D7A6 label=routine81
+
+c $D7EE routine82
+@ $D7EE label=routine82
+
+c $D82D routine83
+@ $D82D label=routine83
+
+c $D887 routine84
+@ $D887 label=routine84
+
+c $D8DE routine85
+@ $D8DE label=routine85
 
 b $D908 font data
 @ $D908 label=font_data
 
-b $DF08 ?
+b $DF08 unknown90
+@ $DF08 label=unknown90
 
-c $DF0C
+c $DF0C routine86
+@ $DF0C label=routine86
 C $DF0C jump to #R$DF72 ???
 
 c $DF0F print 8x8 char graphic for char in A at coordinates C,B
+@ $DF0F label=print_8x8_graphic
 
-b $DF47 ?
+b $DF47 unknown91
+@ $DF47 label=unknown91
+
 @ $DF4A label=C_DATA
 @ $DF4A ssub=DEFW $EB51+$FC3
 w $DF4A C_DATA
@@ -2879,19 +2996,20 @@ C $DF66 call #R$DF0F to print character $22 (bottom left block of sprite)
 C $DF6B move one character position right
 C $DF6C call #R$DF0F to print character $23 (bottom right block of sprite) then return
 
-c $DF72 
+c $DF72 routine87
+@ $DF72 label=routine87
 
-b $E005
 @ $E005 label=unknown66
 @ $E005 ssub=DEFW $E01F+$8E
-W $E005 unknown66
+w $E005 unknown66
 
-c $E007
+c $E007 routine88
+@ $E007 label=routine88
 
 b $E01F map tables
 @ $E01F label=map_area_object_table
 B $E01F,$A0 map area object code table
-b $E0BF
+B $E0BF
 @ $E0C0 label=second_map_area_table
 B $E0C0,$A0 second_map_area_table
 @ $E160 label=third_map_area_table
@@ -3015,7 +3133,7 @@ b $E440 object data table
 ; macro to create an single coloured sprite from a pointer to a sprite and an attribute
 @ $E440 replace=/#SPELLSPRITE\i,(\w+)/#UDGARRAY#(2,#PEEK(\1+2),4;#EVAL(#PEEK\1+(#PEEK(\1+1)*256))-#EVAL(#PEEK(\1)+(#PEEK(\1+1)*256+$1F))-8)(\2)
 
-; object table proper begins here 
+; object table proper begins here
 @ $E440 label=nothing
 T $E440 nothing
 B $E44D,10,d10 #SPELLSTATS$E44D
@@ -3818,17 +3936,19 @@ B $FDF4,$20 #HTML(#UDGARRAY2,,4;$FDF4-$FE13-8(character7sprite) )character 7
 @ $FE14 label=character_8_sprite
 B $FE14,$20 #HTML(#UDGARRAY2,,4;$FE14-$FE33-8(character8sprite) )character 8
 
-b $FE34 ?
+b $FE34 unknown92
+@ $FE34 label=unknown92
 
 c $FE56 switch to interrupt mode 2
+@ $FE56 label=set_IM2_mode
 C $FE56 set I to $09 for the high byte of the interrupt vector. The lower byte is assumed to always be $FF so that the value $69FE will be read from adress $09FF in ROM
 C $FE5A set interrupt mode 2
 C $FE5C return
 
-
 s $FE5D
 
 c $FE60 switch to interrupt mode 1
+@ $FE60 label=set_IM1_mode
 C $FE60 load I with $3E ???
 C $FE64 set interrupt mode 1
 C $FE66 return
@@ -3836,12 +3956,13 @@ C $FE66 return
 s $FE67
 
 c $FE69 interrupt service routine
+@ $FE69 label=ISR
 C $FE69 disable interrupts
 C $FE6A call #R$DF0C which executes a jump to #R$DF72
 C $FE6D enable interrupts
 C $FE6E jump to $0038 in ROM (the IM1 interrupt service routine)
 
-b $FE71
+u $FE71
 
 @ $FFFF label=unknown67
-B $FFFF unknown67
+b $FFFF unknown67
