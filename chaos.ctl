@@ -500,7 +500,7 @@ C $8A2A Zero out #R$E01F.
 C $8A37 Zero out #R$E0C0(other five map area tables). These tables hold the data for what object are on the screen and their state.
 @ $8A3A ssub=LD DE,$E0C0+1
 C $8A44 Set #R$C3A4 to zero.
-C $8A49 Set ATTR-T to $5A (bright red on magenta) and call #R$BB57.
+C $8A49 Set ATTR-T to $5A (bright red on magenta) and draw border.
 C $8A51 Set ATTR-T to $43 (bright magenta on black).
 C $8A56 Print message #m2printlink($00) at coordinates (2,2).
 C $8A5E Set ATTR-T to $42 (bright red on black).
@@ -530,7 +530,7 @@ C $8ACE Get #R$AC0F into B, and store #R$D3F2 in #R$CD86.
 @ $8AD8 label=STALOO
 C $8AD8 Preserve BC.
 C $8AD9 call #R$C5EE ???
-C $8ADC Set ATTR-T to $69 (bright cyan on black) and call #R$BB57.
+C $8ADC Set ATTR-T to $69 (bright cyan on black) and draw border.
 C $8AE4 Set ATTR-T to $46 (bright yellow on black) and print message #m2printlink($04) at coordinates (2,2).
 C $8AF1 Get current player number, add $31 to convert to char value and call #R$BAD6.
 C $8AF9 Set ATTR-T to $43 (bright magenta on black) and print message #m2printlink($09) at coordinates (2,4).
@@ -762,7 +762,7 @@ C $8E9C Call #R$C5EE ???
 C $8E9F Set ATTR-T to $01 (dark blue on black).
 @ $8EA4 label=LOOPY
 C $8EA4 Call #R$8F8B ???
-C $8EA7 Call #R$BB57 ???
+C $8EA7 Draw border.
 C $8EAA Call #R$8F8B ???
 C $8EAD Print message #m2printlink($10) at coordinates (2,2).
 C $8EB5 Set HL to #R$AC16.
@@ -791,7 +791,7 @@ C $8F04 Call #R$C5EE ???
 C $8F07 Set ATTR-T to $01 (dark blue on black).
 @ $8F0C label=LOPY2
 C $8F0C Call #R$8F8B ???
-C $8F0F Call #R$BB57 ???
+C $8F0F Draw border.
 C $8F12 Call #R$8F8B ???
 C $8F15 Print message #m2printlink($11) at coordinates (9,4).
 C $8F1D Call #R$8F8B ???
@@ -1028,7 +1028,7 @@ C $919C set HL to address of sound effect data at #R$C2E3. This overlaps the sou
 C $919F call play_sound_effect_in_HL
 C $91A2 wait for no key to be pressed
 C $91A5 call #R$C5EE
-C $91A8 set ATTR-T to $72 (bright red on yellow) and call #R$BB57
+C $91A8 set ATTR-T to $72 (bright red on yellow) and draw border.
 C $91B0 jump forwards to #R$9230 if #R$C3A4 is zero
 C $91B6 set BC to coordinates (7,7)
 C $91B9 jump forwards to #R$91F6 if #R$C3A4 is positive
@@ -2248,6 +2248,24 @@ w $BB55 address of border graphics table
 
 c $BB57 ZRDR_P
 @ $BB57 label=ZRDR_P
+D $BB57 Print border around game area.
+C $BB57 Preserve registers.
+C $BB5B Load address of border graphics from #R$BB55 and store in CHARS.
+C $BB61 Set E to 20 as loop counter and row coordinate.
+@ $BB63 label=vertical_border_loop
+C $BB63 Print character $00 (left border) in column 0.
+C $BB6C Print character $01 (right border) in column 31.
+C $BB74 Loop back to #R$BB63 for 20 rows.
+C $BB77 Set E to 30 as loop counter and column coordinate.
+@ $BB79 label=horizontal_border_loop
+C $BB79 Print character $02 (top border) in row 0.
+C $BB82 Print character $03 (bottom border) in row 21.
+C $BB8A Loop back to #R$BB79 for 30 columns.
+C $BB8D Print character $04 (top-left corner) at coordinate (0,0).
+C $BB95 Print character $05 (top-right corner) at coordinate (31,0).
+C $BB9C Print character $06 (bottom-left corner) at coordinate (0,21).
+C $BBA4 Print character $07 (bottom-right corner) at coordinate (31,21).
+C $BBAB Restore registers and return.
 
 c $BBB0 wait for a key and set SEED based on how long no key is pressed
 @ $BBB0 label=wait_key_seed
@@ -2513,45 +2531,38 @@ b $C27F
 @ $C289 label=engaged_sound_effect
 b $C289 "ENGAGED TO ENEMY" sound effect
 @ $C293 label=sound_effect_9
-b $C293
+b $C293 sound_effect_9
 @ $C29D label=S10
 b $C29D S10
 @ $C2A7 label=sound_effect_10
-b $C2A7
+b $C2A7 sound_effect_10
 @ $C2B1 label=sound_effect_11
-b $C2B1
+b $C2B1 sound_effect_11
 @ $C2BB label=sound_effect_12
-b $C2BB
+b $C2BB sound_effect_12
 @ $C2C5 label=sound_effect_13
-b $C2C5
+b $C2C5 sound_effect_13
 @ $C2CF label=sound_effect_14
-b $C2CF
+b $C2CF sound_effect_14
 @ $C2D9 label=sound_effect_15
-b $C2D9
+b $C2D9 sound_effect_15
 
-@ $C2E3 label=unknown69
-w $C2E3 unknown69
+@ $C2E3 label=sound_effect_22
+D $C2E3 This overlaps #R$C2E8 with the result that when copied the same 5 bytes are repeated.
+b $C2E3 sound_effect_22
 
-b $C2E5 unknown84
-@ $C2E5 label=unknown84
-
-b $C2E6 unknown85
-@ $C2E6 label=unknown85
-
-b $C2E7 unknown86
-@ $C2E7 label=unknown86
 
 b $C2E8 sound effect data
 @ $C2E8 sound_effect_temp
-D $C2E8 sound effects are copied here by the routine at C2F9 and the bytes read directly to save calculating offsets at the original location
+D $C2E8 Sound effects are copied here by #R$C2F9 and the bytes read directly to save calculating offsets at the original location.
 @ $C2E8 label=outer_loop_counter
-B $C2E8 outer loop counter
+B $C2E8 Outer loop counter.
 @ $C2E9 label=middle_loop_counter
-B $C2E9 middle loop counter
+B $C2E9 Middle loop counter.
 @ $C2EA label=delay_counters
-B $C2EA delay counters
+B $C2EA Delay counters.
 @ $C2EE label=delay_to_add
-B $C2EE values to add to delay
+B $C2EE Values to add to delay.
 
 @ $C2F2 label=port_FE_output_byte
 b $C2F2 port_FE_output_byte
@@ -2563,13 +2574,9 @@ s $C2F5
 c $C2F6 play_sound_effect_pointer
 @ $C2F6 label=play_sound_effect_pointer
 C $C2F6 load sound_effect_pointer into HL as address to copy sound data from
-
-c $C2F9 play_sound_effect_in_HL
 @ $C2F9 label=play_sound_effect_in_HL
 C $C2F9 copy ten bytes from address in HL to #R$C2E8 (sound effect playback data)
-
-c $C301 sound_effect_playback_routine
-@ $C301 label=sound_effect_playback_routine
+@ $C301 label=sound_effect_playback
 D $C301 play the sound effect data at #R$C2E8
 C $C301 disable interrupts
 C $C302 load first byte of sound effect playback data into B
@@ -2580,7 +2587,7 @@ C $C307 load second byte of sound effect playback data into B
 C $C30B preserve BC (middle loop counter)
 C $C30C set B to four as loop counter
 C $C30E set HL to third byte of sound effect playback data
-@ $C30B label=inner_sound_loop
+@ $C311 label=inner_sound_loop
 C $C311 preserve inner loop counter
 C $C312 preserve HL
 C $C313 load byte at HL into B as delay
