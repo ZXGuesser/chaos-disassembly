@@ -2296,43 +2296,59 @@ C $BBE6 return
 c $BBE7 Move cursor on screen depending on direction key pressed
 @ $BBE7 label=move_cursor
 D $BBE7 Movement points variable holds the number of points multiplied by two. It is set to 2 for non-diagonal movement, and 3 for diagonal movement.
-C $BBE7 preserve HL, DE
-C $BBE9 set CAPS mode
-C $BBEE preserve BC - cursor coords
-C $BBEF jump to #R$CDC0 if player is computer-controlled
-C $BBF6 call KEYBOARD routine in ROM
-C $BBF9 restore BC - cursor coords
-C $BBFA store value of A (key pressed) in #R$AC32
-C $BBFD jump to #R$BC09 if 'W' not pressed
-C $BC01 'W' was pressed so set movement points to 2 and call #R$BC6C to decrement y-coord
-C $BC09 jump to #R$BC15 if 'X' not pressed
-C $BC0D 'X' pressed - set movement points to 2 and call #R$BC72 to increment y-coordinate
-C $BC15 jump to #R$BC21 if 'A' not pressed
-C $BC19 'A' pressed - set movement points to 2 and call #R$BC7D to decrement x-coordinate
-C $BC21 jump to #R$BC2D if 'D' not pressed
-C $BC25 'D' pressed - set movement points to 2 and call #R$BC83 to increment x-coordinate
-C $BC2D jump to #R$BC3C if 'Q' not pressed
-C $BC31 'Q' pressed - set movement points to 3 and decrement x & y coords
-C $BC3C jump to #R$BC4B if 'E' not pressed
-C $BC40 'E' pressed - set movement points to 3 - increment x, decrement y coords
-C $BC4B jump to #R$BC5A if 'Z' not pressed
-C $BC4F 'Z' pressed - set movement points to 3 - increment y, decrement x coords
-C $BC5A jump to #R$BC69 if 'C' not pressed
-C $BC5E 'C' pressed - set movement points to 3 - increment x & y coords
-C $BC69 restore DE, HL
-C $BC6B return
+C $BBE7 Preserve registers.
+C $BBE9 Set CAPS mode.
+C $BBEE Preserve cursor coordinates
+C $BBEF Jump to #R$CDC0 if player is computer controlled.
+C $BBF6 Call KEYBOARD routine in ROM.
+C $BBF9 Restore cursor coordinates.
+C $BBFA Store value of A (key pressed) in #R$AC32
+C $BBFD If 'W' key pressed set movement points to 2 and decrement y coordinate.
+@ $BC09 label=not_W_pressed
+C $BC09 If 'X' key pressed set movement points to 2 and increment y coordinate.
+@ $BC15 label=not_X_pressed
+C $BC15 If 'A' key pressed set movement points to 2 and decrement x coordinate.
+@ $BC21 label=not_A_pressed
+C $BC21 If 'D' key pressed set movement points to 2 and increment x coordinate.
+@ $BC2D label=not_D_pressed
+C $BC2D If 'Q' key pressed set movement points to 3 and decrement x and y coordinates.
+@ $BC3C label=not_Q_pressed
+C $BC3C If 'E' key pressed set movement points to 3, increment x, and decrement y coordinates.
+@ $BC4B label=not_E_pressed
+C $BC4B If 'Z' key pressed set movement points to 3, increment y, and decrement x coordinates.
+@ $BC5A label=not_Z_pressed
+C $BC5A If 'C' key pressed set movement points to 3 and increment x and y coordinates.
+@ $BC69 label=not_C_pressed
+C $BC69 Restore registers and return.
 
-c $BC6C routine37
-@ $BC6C label=routine37
+c $BC6C cursor_up
+@ $BC6C label=cursor_up
+D $BC6C Move cursor up and prevent from going into border.
+C $BC6C Decrement y-coordinate.
+C $BC6D If 0 set back to 1.
+C $BC70 Jump to return instruction at #R$BC8C.
 
-c $BC72 routine38
-@ $BC72 label=routine38
+c $BC72 cursor_down
+@ $BC72 label=cursor_down
+D $BC72 Move cursor down and prevent from going into border.
+C $BC72 Increment y-coordinate.
+C $BC73 If 11 set back to 10.
+C $BC7A Jump to return instruction at #R$BC8C.
 
-c $BC7D routine39
-@ $BC7D label=routine39
+c $BC7D cursor_left
+@ $BC7D label=cursor_left
+D $BC7D Move cursor left and prevent from going into border.
+C $BC7D Decrement x-coordinate.
+C $BC7E If 0 set back to 1.
+C $BC81 Jump to return instruction at #R$BC8C.
 
-c $BC83 routine40
-@ $BC83 label=routine40
+c $BC83 cursor_right
+@ $BC83 label=cursor_right
+D $BC83 Move cursor right and prevent from going into border.
+C $BC83 Increment x-coordinate.
+C $BC84 If 16 set back to 15.
+C $BC8C Return.
+
 
 c $BC8D GET_LC
 @ $BC8D label=GET_LC
