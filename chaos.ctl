@@ -1955,6 +1955,7 @@ b $AC0D unknown26
 @ $AC0E label=current_player
 b $AC0E current player (0-7)
 @ $AC0F label=NO_PLA
+D $AC0F Number of players in the current game.
 b $AC0F NO_PLA
 @ $AC10 label=unknown27
 b $AC10 unknown27
@@ -2179,7 +2180,7 @@ c $BABE routine36
 @ $BABE label=routine36
 C $BABE preserve map object byte in A register
 C $BABF load table entry address from #R$BA75
-C $BAC2 store address in #R$E005 and call #R$E007 ???
+C $BAC2 Get screen coordinates for address.
 C $BAC8 store returned value in #R$DF4C
 C $BACE load value of #R$DF4A into HL and call #R$DF4E to print the object
 C $BAD4 restore A register and return
@@ -2363,7 +2364,7 @@ c $BC96 routine41
 @ $BC96 label=routine41
 C $BC96 call KEYBOARD in ROM
 C $BC99 if decoded key is not 'I' then jump to #R$BCA3
-C $BC9D otherwise call #R$C3B3
+C $BC9D else call #R$C3B3
 C $BCA0 wait for interrupt, then jump to #R$BCE5
 C $BCA3 call KEYBOARD in ROM
 C $BCA6 if decoded key is greater than '8' or less than '1' then jump to #R$BCE5
@@ -2410,8 +2411,14 @@ C $BDBF print AT control code followed by coordinates B,C
 C $BDC6 print third and fourth User Defined Graphic characters
 C $BDCC load #R$BC94(cursor coordinates) into BC and return
 
-c $BDD1 routine43
-@ $BDD1 label=routine43
+c $BDD1 Get address of entry in #R$E01F.
+D $BDD1 Calculate address of entry in #R$E01F from coordinates in BC and return in HL.
+@ $BDD1 label=coordinate_to_address
+C $BDD1 Preserve coordinates.
+C $BDD2 Decrement each coordinate to get zero-based value.
+C $BDD4 Multiply row by 16 and add column as table offset.
+C $BDDE Set HL to address of #R$E01F and add offset.
+C $BDE5 Restore coordinates and return.
 
 c $BDE7 routine44
 @ $BDE7 label=routine44
@@ -3166,8 +3173,15 @@ c $DF72 routine87
 @ $E005 ssub=DEFW $E01F+$8E
 w $E005 unknown66
 
-c $E007 routine88
-@ $E007 label=routine88
+c $E007 Calculate coordinates for an address in #R$E01F.
+@ $E007 label=address_to_coordinate
+C $E007 Load #R$E005 into HL.
+C $E00A Clear carry flag.
+C $E00B Subtract address of #R$E01F to get position in table.
+C $E010 Copy offset into A and clear lower nibble.
+C $E013 Divide by 8 to get row and store in H.
+C $E010 Multiply offset by 2 and mask bits to get column and store in L.
+C $E01C Increment both coordinates to account for border and return.
 
 b $E01F map tables
 @ $E01F label=map_area_object_table
