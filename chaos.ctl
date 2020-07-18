@@ -2677,7 +2677,7 @@ C $C3C0 Else store code for current object in #R$C39F.
 C $C3C3 If the current object is a wizard, bit 1 of #R$C39E is set, else it is cleared.
 @ $C3CF label=not_wizard
 C $C3CF Read corresponding entry in #R$E2A0.
-C $C3D7 If not zero store in #R$C39D and set bit 2 of #R$C39E.
+C $C3D7 If not zero store in #R$C39D and set bit 2 of #R$C39E. ???
 C $C3E2 Clear the screen and play #R$C2E3.
 C $C3EB Set ATTR-T to bright green on black and draw border.
 C $C3F3 Set ATTR-T to black on bright green and print #mprintlink($3D) at coordinates (0,22).
@@ -2745,7 +2745,24 @@ C $C56E If bit 1 (wizard object) of #R$C39E is clear then jump to #R$C5C1.
 C $C575 Set ATTR-T to bright yellow on black.
 C $C57A Print #mprintlink($51) at coordinates (4,18).
 C $C582 Get number of spells attribute from wizard object.
-C $C58B
+C $C58B If less than 10 jump to #R$C5A6.
+C $C590 If not 20 jump to #R$C59D.
+C $C594 Print '2' and jump to #R$C5A6.
+@ $C59D label=ten_to_nineteen
+C $C59D Subtract 10 from value and print '1'.
+@ $C5A6 label=spell_units
+C $C5A6 Print value.
+C $C5AB Print #mprintlink($52) at coordinates (14,18).
+C $C5B3 Get ability attribute from wizard object.
+C $C5BC Print value.
+C $C5C1 If #R$C39D is zero jump to #R$C5DC. ???
+C $C5C7 Clear bit 1 (wizard object) of #R$C39E.
+C $C5CC Copy #R$C39D to #R$C39F.
+C $C5CF Set #R$C39D to zero.
+C $C5D3 Wait for a keypress from human players and jump back to #R$C3E2. ???
+C $C5DC Wait for a keypress from human players and clear screen.
+C $C5E5 Call #R$C0DD. ???
+C $C5E8 Restore registers, enable interrupts, and return.
 
 @ $C5C1 label=not_wizard_3
 
@@ -3815,7 +3832,7 @@ b $EA39 wizard data
 @ $EA39 replace=/#WIZARDNAME\i/#FOR#(0,#EVAL(#PEEK($CE79+(\1*4))-1))||$n|#CHR(#PEEK(#EVAL(#PEEK($CE77+(\1*4))+(#PEEK($CE78+(\1*4))*256)+$n)))||
 
 ; macro to print out spell stats from memory
-@ $E440 replace=/#WIZARDSTATS\i/???=#PEEK(\1) ???=#PEEK(\1+1) ???=#PEEK(\1+2) ???=#PEEK(\1+3) ???=#PEEK(\1+4) ???=#PEEK(\1+5) ???=#PEEK(\1+6) Spells=#PEEK(\1+7) ???=#PEEK(\1+8) ?=#PEEK(\1+9)
+@ $E440 replace=/#WIZARDSTATS\i/???=#PEEK(\1) ???=#PEEK(\1+1) ???=#PEEK(\1+2) ???=#PEEK(\1+3) ???=#PEEK(\1+4) ???=#PEEK(\1+5) ???=#PEEK(\1+6) Spells=#PEEK(\1+7) Ability=#PEEK(\1+8) ?=#PEEK(\1+9)
 
 D $EA39 The first two names memory in the released tape were obviously written over existing strings. Based on Gollop's blog post about the origins of Chaos they were most likely JEVARELL and LARGEFART.
 D $EA39 This data is overwritten during character creation at the start of the game
