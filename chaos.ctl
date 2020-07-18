@@ -301,7 +301,7 @@ C $84F5 Store result back in #R$AC16 and return.
 c $84F7 Subversion spell.
 C $84F7 Jump to #R$853B if player is not human.
 C $84FD Clear bottom row of screen.
-C $8500 Set P_FLAGS to 3 (OVER).
+C $8500 Set P-FLAGS to 3 (OVER).
 C $8505 Call #R$BC96 ???
 C $8508 Call KEYBOARD routine in Spectrum ROM.
 C $850B If keypress is 'S' jump to #R$851B.
@@ -1661,7 +1661,7 @@ B $A7A6
 T $A7AB NOADD
 W $A7B0
 B $A7B2
-T $A7B7 ATTR_T
+T $A7B7 ATTR-T
 W $A7BD
 B $A7BF
 T $A7C4 DH_P
@@ -2665,14 +2665,66 @@ b $C3A2 offset within object data
 b $C3A3 creature spell attribute message number
 @ $C3A4 label=CH_LAW
 b $C3A4 CH_LAW
-@ $C3A5 label=unknown87
-b $C3A5 unknown87
 
-b $C3A6 unknown88
-@ $C3A6 label=unknown88
+@ $C3A5 label=creature_attr_coords_table
+w $C3A5 Coordinates for printing creature attributes.
 
-c $C3B3 routine50
-@ $C3B3 label=routine50
+c $C3B3 Display information about the object at the current cursor position.
+@ $C3B3 label=display_object_info
+C $C3B3 Disable interrupts and preserve registers.
+C $C3B8 If object at cursor position is blank, jump to #R$C5E8
+C $C3C0 Else store code for current object in #R$C39F.
+C $C3C3 If the current object is a wizard, bit 1 of #R$C39E is set, else it is cleared.
+@ $C3CF label=not_wizard
+C $C3CF Read corresponding entry in #R$E2A0.
+C $C3D7 If not zero store in #R$C39D and set bit 2 of #R$C39E.
+C $C3E2 Clear the screen and play #R$C2E3.
+C $C3EB Set ATTR-T to bright green on black and draw border.
+C $C3F3 Set ATTR-T to black on bright green and print #mprintlink($3D) at coordinates (0,22).
+C $C400 Set ATTR-T to bright yellow on black and print creature's name at (4,2).
+C $C40E Clear #R$C3A0.
+C $C412 If bit 1 of #R$C39E is clear (wizard object) jump to #R$C479.
+C $C419 Set BC to coordinates (4,4).
+C $C41C Calculate wizard number as offset in #R$AC16.
+C $C428 Copy from table into #R$C3A1.
+C $C42C If bit 1 is set print #mprintlink($3E) spell property.
+@ $C435 label=not_knife
+C $C435 If bit 2 is set print #mprintlink($3F) spell property.
+@ $C441 label=not_sword
+C $C441 If bits 6 and 7 are set print #mprintlink($40) spell property.
+@ $C44F label=not_armour
+C $C44F If bit 6 is set and bit 7 is clear print #mprintlink($41) spell property.
+@ $C45D label=not_shield
+C $C45D If bit 5 is set print #mprintlink($42) spell property.
+@ $C469 label=not_flying
+C $C469 If bit 3 is set print #mprintlink($43) spell property.
+C $C476 If zero jump to #R$C4B8.
+C $C486 If negative jump to #R$C4A1.
+C $C48A Set ATTR-T to bright cyan on black and print #mprintlink($47).
+C $C495 Print value and closing bracket.
+C $C49F Jump to #R$C4B8.
+@ $C4A1 label=is_chaos
+C $C4A1 Set ATTR-T to bright magenta on black and print #mprintlink($46).
+C $C4AC Convert value to positive number and print it followed by closing bracket.
+@ $C4B8 label=is_neutral
+C $C4B8 Set ATTR-T to bright green on black and set coordinates to (4,4).
+C $C4C0
+
+@ $C479 label=not_wizard_2
+C $C479 Increment x coordinate.
+C $C47A Get CHAOS/LAW attribute of object.
+C $C483
+
+
+C $C52A Set HL to address of first coordinate in #R$C3A5.
+C $C52D Set B to seven as loop counter.
+C $C534 Preserve loop counter.
+C $C530 Load coordinates into BC and move on to next word.
+C $C534 Display the next attribute.
+C $C539 Restore counter and loop for seven iterations.
+C $C53C
+
+C $C5E8 Restore registers, enable interrupts and return.
 
 c $C5EE CLS
 @ $C5EE label=CLS
@@ -4118,7 +4170,7 @@ b $FE34 unknown92
 
 c $FE56 switch to interrupt mode 2
 @ $FE56 label=set_IM2_mode
-C $FE56 set I to $09 for the high byte of the interrupt vector. The lower byte is assumed to always be $FF so that the value $69FE will be read from adress $09FF in ROM
+C $FE56 set I to $09 for the high byte of the interrupt vector. The lower byte is assumed to always be $FF so that the value $FE69 will be read from adress $09FF in ROM
 C $FE5A set interrupt mode 2
 C $FE5C return
 
