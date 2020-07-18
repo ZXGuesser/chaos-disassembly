@@ -2683,7 +2683,7 @@ C $C3EB Set ATTR-T to bright green on black and draw border.
 C $C3F3 Set ATTR-T to black on bright green and print #mprintlink($3D) at coordinates (0,22).
 C $C400 Set ATTR-T to bright yellow on black and print creature's name at (4,2).
 C $C40E Clear #R$C3A0.
-C $C412 If bit 1 of #R$C39E is clear (wizard object) jump to #R$C479.
+C $C412 If bit 1 (wizard object) of #R$C39E is clear jump to #R$C479.
 C $C419 Set BC to coordinates (4,4).
 C $C41C Calculate wizard number as offset in #R$AC16.
 C $C428 Copy from table into #R$C3A1.
@@ -2732,7 +2732,22 @@ C $C534 Preserve loop counter.
 C $C530 Load coordinates into BC and move on to next word in table.
 C $C534 Print the next attribute.
 C $C539 Restore counter and loop for seven iterations.
-C $C53C
+C $C53C If bit 0 ??? of #R$C39E is clear then jump to #R$C56E.
+C $C543 Set ATTR-T to bright cyan on black.
+C $C548 Print #mprintlink($4F) at coordinates (4,18).
+C $C550 If #R$FFFF + 1 equals 10 print #mprintlink($50).
+@ $C55F label=print_casting_chance
+C $C55F Else print value.
+@ $C564 label=print_0_percent
+C $C564 Print "0%".
+@ $C56E label=done_casting_chance
+C $C56E If bit 1 (wizard object) of #R$C39E is clear then jump to #R$C5C1.
+C $C575 Set ATTR-T to bright yellow on black.
+C $C57A Print #mprintlink($51) at coordinates (4,18).
+C $C582 Get number of spells attribute from wizard object.
+C $C58B
+
+@ $C5C1 label=not_wizard_3
 
 C $C5E8 Restore registers, enable interrupts and return.
 
@@ -3799,12 +3814,15 @@ b $EA39 wizard data
 ; macro to print wizard name for wizard n by looking up address and length in games message table 1
 @ $EA39 replace=/#WIZARDNAME\i/#FOR#(0,#EVAL(#PEEK($CE79+(\1*4))-1))||$n|#CHR(#PEEK(#EVAL(#PEEK($CE77+(\1*4))+(#PEEK($CE78+(\1*4))*256)+$n)))||
 
+; macro to print out spell stats from memory
+@ $E440 replace=/#WIZARDSTATS\i/???=#PEEK(\1) ???=#PEEK(\1+1) ???=#PEEK(\1+2) ???=#PEEK(\1+3) ???=#PEEK(\1+4) ???=#PEEK(\1+5) ???=#PEEK(\1+6) Spells=#PEEK(\1+7) ???=#PEEK(\1+8) ?=#PEEK(\1+9)
+
 D $EA39 The first two names memory in the released tape were obviously written over existing strings. Based on Gollop's blog post about the origins of Chaos they were most likely JEVARELL and LARGEFART.
 D $EA39 This data is overwritten during character creation at the start of the game
 
 @ $EA39 label=wizard_0
 T $EA39 wizard 0 #WIZARDNAME0
-B $EA46,10,d10 #SPELLSTATS$EA46
+B $EA46,10,d10 #WIZARDSTATS$EA46
 M $EA50,12 #HTML(#ANIMSPELL$EA50,wizard0coloured )
 W $EA50,2
 B $EA52,1
@@ -3812,7 +3830,7 @@ L $EA50,3,4
 
 @ $EA5C label=wizard_1
 T $EA5C wizard 1 #WIZARDNAME1
-B $EA69,10,d10 #SPELLSTATS$EA69
+B $EA69,10,d10 #WIZARDSTATS$EA69
 M $EA73,12 #HTML(#ANIMSPELL$EA73,wizard1coloured )
 W $EA73,2
 B $EA75,1
@@ -3820,7 +3838,7 @@ L $EA73,3,4
 
 @ $EA7F label=wizard_2
 T $EA7F wizard 2 #WIZARDNAME2
-B $EA8C,10,d10 #SPELLSTATS$EA8C
+B $EA8C,10,d10 #WIZARDSTATS$EA8C
 M $EA96,12 #HTML(#ANIMSPELL$EA96,wizard2coloured )
 W $EA96,2
 B $EA98,1
@@ -3828,7 +3846,7 @@ L $EA96,3,4
 
 @ $EAA2 label=wizard_3
 T $EAA2 wizard 3 #WIZARDNAME3
-B $EAAF,10,d10 #SPELLSTATS$EAAF
+B $EAAF,10,d10 #WIZARDSTATS$EAAF
 M $EAB9,12 #HTML(#ANIMSPELL$EAB9,wizard3coloured )
 W $EAB9,2
 B $EABB,1
@@ -3836,7 +3854,7 @@ L $EAB9,3,4
 
 @ $EAC5 label=wizard_4
 T $EAC5 wizard 4 #WIZARDNAME4
-B $EAD2,10,d10 #SPELLSTATS$EAD2
+B $EAD2,10,d10 #WIZARDSTATS$EAD2
 M $EADC,12 #HTML(#ANIMSPELL$EADC,wizard4coloured )
 W $EADC,2
 B $EADE,1
@@ -3844,7 +3862,7 @@ L $EADC,3,4
 
 @ $EAE8 label=wizard_5
 T $EAE8 wizard 5 #WIZARDNAME5
-B $EAF5,10,d10 #SPELLSTATS$EAF5
+B $EAF5,10,d10 #WIZARDSTATS$EAF5
 M $EAFF,12 #HTML(#ANIMSPELL$EAFF,wizard5coloured )
 W $EAFF,2
 B $EB01,1
@@ -3852,7 +3870,7 @@ L $EAFF,3,4
 
 @ $EB0B label=wizard_6
 T $EB0B wizard 6 #WIZARDNAME6
-B $EB18,10,d10 #SPELLSTATS$EB18
+B $EB18,10,d10 #WIZARDSTATS$EB18
 M $EB22,12 #HTML(#ANIMSPELL$EB22,wizard6coloured )
 W $EB22,2
 B $EB24,1
@@ -3860,7 +3878,7 @@ L $EB22,3,4
 
 @ $EB2E label=wizard_7
 T $EB2E wizard 7 #WIZARDNAME7
-B $EB3B,10,d10 #SPELLSTATS$EB3B
+B $EB3B,10,d10 #WIZARDSTATS$EB3B
 M $EB45,12 #HTML(#ANIMSPELL$EB45,wizard7coloured )
 W $EB45,2
 B $EB47,1
