@@ -2427,9 +2427,9 @@ c $BE0A GETCHR
 @ $BE0A label=GETCHR
 D $BE0A enter with object number in D and offset in object data entry in E
 C $BE0A preserve HL and BC
-C $BE0C set HL to address of object address table
+C $BE0C set HL to address of first entry in object address table
 C $BE0F set BC to value in D (row number in object address table)
-C $BE13 decrement C, then double it and add result to HL as an offset in object address table
+C $BE12 decrement C, then double it and add result to HL as an offset in object address table
 C $BE16 load address of object data from the table into BC
 C $BE19 set HL to value in E (offset in object data table entry)
 C $BE1C add to the object address in BC to get offset within object data
@@ -2653,8 +2653,8 @@ B $C37D #HTML(#UDGARRAY2,,4;$C37D-$C39C-8(cursorsprite2))
 b $C39D unknown70
 @ $C39E label=unknown71
 b $C39E unknown71 
-@ $C39F label=object_table_row
-b $C39F object table row number
+@ $C39F label=object_number
+b $C39F Object number in #R$E3E0(object address table).
 @ $C3A0 label=display_comma_flag
 b $C3A0 display comma before green spell property flag
 @ $C3A1 label=unknown72
@@ -2699,6 +2699,10 @@ C $C45D If bit 5 is set print #mprintlink($42) spell property.
 @ $C469 label=not_flying
 C $C469 If bit 3 is set print #mprintlink($43) spell property.
 C $C476 If zero jump to #R$C4B8.
+@ $C479 label=not_wizard_2
+C $C479 Increment x coordinate.
+C $C47A Get CHAOS/LAW attribute of object.
+C $C483 If zero jump to #R$C4B8.
 C $C486 If negative jump to #R$C4A1.
 C $C48A Set ATTR-T to bright cyan on black and print #mprintlink($47).
 C $C495 Print value and closing bracket.
@@ -2706,21 +2710,27 @@ C $C49F Jump to #R$C4B8.
 @ $C4A1 label=is_chaos
 C $C4A1 Set ATTR-T to bright magenta on black and print #mprintlink($46).
 C $C4AC Convert value to positive number and print it followed by closing bracket.
-@ $C4B8 label=is_neutral
+@ $C4B8 label=done_chaos_law
 C $C4B8 Set ATTR-T to bright green on black and set coordinates to (4,4).
-C $C4C0
-
-@ $C479 label=not_wizard_2
-C $C479 Increment x coordinate.
-C $C47A Get CHAOS/LAW attribute of object.
-C $C483
-
-
+C $C4C0 If object number is between 16 and 21 print #mprintlink($44) property.
+@ $C4D2 label=done_mount
+C $C4D2 If #R$C39D is not zero print wizard name in brackets. ???
+C $C4E7 Set #R$C3A0.
+@ $C4EC label=done_wizard_name
+C $C4EC If object number is between 19 and 29 print #mprintlink($42) property.
+@ $C4FE label=done_flying
+C $C4FE If bit 6 of entry in #R$E200 is set or object number is between 28 and 33, print #mprintlink($45) property.
+@ $C516 label=is_undead
+@ $C51B label=done_undead
+C $C51B Set ATTR-T to bright cyan on black.
+C $C520 Set #R$C3A3 to #mprintlink($48).
+C $C525 Set #R$C3A2 to combat attribute.
 C $C52A Set HL to address of first coordinate in #R$C3A5.
 C $C52D Set B to seven as loop counter.
+@ $C52F label=display_next_attribute
 C $C534 Preserve loop counter.
-C $C530 Load coordinates into BC and move on to next word.
-C $C534 Display the next attribute.
+C $C530 Load coordinates into BC and move on to next word in table.
+C $C534 Print the next attribute.
 C $C539 Restore counter and loop for seven iterations.
 C $C53C
 
@@ -2741,7 +2751,7 @@ C $C609 Print current spell property (e.g. undead, flying, etc)
 C $C60C set flag at #R$C3A0 so comma is printed next time
 C $C611 return
 
-c $C612 Print an attribute for a creature spell based on table at #R$C39D
+c $C612 Print an attribute for a creature spell.
 @ $C612 label=print_creature_attribute
 C $C612 load A with spell attribute message number from #R$C3A3
 C $C615 preserve AF
@@ -3252,101 +3262,101 @@ B $E340,$A0 sixth_map_area_table
 
 w $E3E0 object address table
 @ $E3E0 label=nothing_pointer
-W $E3E0 nothing_pointer
+W $E3E0 Object 1: Nothing.
 @ $E3E2 label=king_cobra_pointer
-W $E3E2 king_cobra_pointer
+W $E3E2 Object 2: King cobra.
 @ $E3E4 label=dire_wolf_pointer
-W $E3E4 dire_wolf_pointer
+W $E3E4 Object 3: Dire wolf.
 @ $E3E6 label=goblin_pointer
-W $E3E6 goblin_pointer
+W $E3E6 Object 4: Goblin.
 @ $E3E8 label=crocodile_pointer
-W $E3E8 crocodile_pointer
+W $E3E8 Object 5: Crocodile.
 @ $E3EA label=faun_pointer
-W $E3EA faun_pointer
+W $E3EA Object 6: Faun.
 @ $E3EC label=lion_pointer
-W $E3EC lion_pointer
+W $E3EC Object 7: Lion.
 @ $E3EE label=elf_pointer
-W $E3EE elf_pointer
+W $E3EE Object 8: Elf.
 @ $E3F0 label=orc_pointer
-W $E3F0 orc_pointer
+W $E3F0 Object 9: Orc.
 @ $E3F2 label=bear_pointer
-W $E3F2 bear_pointer
+W $E3F2 Object 10: Bear.
 @ $E3F4 label=gorilla_pointer
-W $E3F4 gorilla_pointer
+W $E3F4 Object 11: Gorilla.
 @ $E3F6 label=ogre_pointer
-W $E3F6 ogre_pointer
+W $E3F6 Object 12: Ogre.
 @ $E3F8 label=hydra_pointer
-W $E3F8 hydra_pointer
+W $E3F8 Object 13: Hydra.
 @ $E3FA label=giant_rat_pointer
-W $E3FA giant_rat_pointer
+W $E3FA Object 14: Giant rat.
 @ $E3FC label=giant_pointer
-W $E3FC giant_pointer
+W $E3FC Object 15: Giant.
 @ $E3FE label=horse_pointer
-W $E3FE horse_pointer
+W $E3FE Object 16: Horse.
 @ $E400 label=unicorn_pointer
-W $E400 unicorn_pointer
+W $E400 Object 17: Unicorn.
 @ $E402 label=centaur_pointer
-W $E402 centaur_pointer
+W $E402 Object 18: Centaur.
 @ $E404 label=pegasus_pointer
-W $E404 pegasus_pointer
+W $E404 Object 19: Pegasus.
 @ $E406 label=gryphon_pointer
-W $E406 gryphon_pointer
+W $E406 Object 20: Gryphon.
 @ $E408 label=manticore_pointer
-W $E408 manticore_pointer
+W $E408 Object 21: Manticore.
 @ $E40A label=bat_pointer
-W $E40A bat_pointer
+W $E40A Object 22: Bat.
 @ $E40C label=green_dragon_pointer
-W $E40C green_dragon_pointer
+W $E40C Object 23: Green dragon.
 @ $E40E label=red_dragon_pointer
-W $E40E red_dragon_pointer
+W $E40E Object 24: Red dragon.
 @ $E410 label=golden_dragon_pointer
-W $E410 golden_dragon_pointer
+W $E410 Object 25: Golden dragon.
 @ $E412 label=harpy_pointer
-W $E412 harpy_pointer
+W $E412 Object 26: Harpy.
 @ $E414 label=eagle_pointer
-W $E414 eagle_pointer
+W $E414 Object 27: Eagle.
 @ $E416 label=vampire_pointer
-W $E416 vampire_pointer
+W $E416 Object 28: Vampire.
 @ $E418 label=ghost_pointer
-W $E418 ghost_pointer
+W $E418 Object 29: Ghost.
 @ $E41A label=spectre_pointer
-W $E41A spectre_pointer
+W $E41A Object 30: Spectre.
 @ $E41C label=wraith_pointer
-W $E41C wraith_pointer
+W $E41C Object 31: Wraith.
 @ $E41E label=skeleton_pointer
-W $E41E skeleton_pointer
+W $E41E Object 32: Skeleton.
 @ $E420 label=zombie_pointer
-W $E420 zombie_pointer
+W $E420 Object 33: Zombie.
 @ $E422 label=blob_pointer
-W $E422 blob_pointer
+W $E422 Object 34: Blob.
 @ $E424 label=fire_pointer
-W $E424 fire_pointer
+W $E424 Object 35: Fire.
 @ $E426 label=magic_wood_pointer
-W $E426 magic_wood_pointer
+W $E426 Object 36: Magic wood.
 @ $E428 label=shadow_wood_pointer
-W $E428 shadow_wood_pointer
+W $E428 Object 37: Shadow wood.
 @ $E42A label=magic_castle_pointer
-W $E42A magic_castle_pointer
+W $E42A Object 38: Magic castle.
 @ $E42C label=dark_citadel_pointer
-W $E42C dark_citadel_pointer
+W $E42C Object 39: Dark citadel.
 @ $E42E label=wall_pointer
-W $E42E wall_pointer
+W $E42E Object 40: Wall.
 @ $E430 label=wizard_0_pointer
-W $E430 wizard_0_pointer
+W $E430 Object 41: Wizard 0.
 @ $E432 label=wizard_1_pointer
-W $E432 wizard_1_pointer
+W $E432 Object 42: Wizard 1.
 @ $E434 label=wizard_2_pointer
-W $E434 wizard_2_pointer
+W $E434 Object 43: Wizard 2.
 @ $E436 label=wizard_3_pointer
-W $E436 wizard_3_pointer
+W $E436 Object 44: Wizard 3.
 @ $E438 label=wizard_4_pointer
-W $E438 wizard_4_pointer
+W $E438 Object 45: Wizard 4.
 @ $E43A label=wizard_5_pointer
-W $E43A wizard_5_pointer
+W $E43A Object 46: Wizard 5.
 @ $E43C label=wizard_6_pointer
-W $E43C wizard_6_pointer
+W $E43C Object 47: Wizard 6.
 @ $E43E label=wizard_7_pointer
-W $E43E wizard_7_pointer
+W $E43E Object 48: Wizard 7.
 
 
 b $E440 object data table
