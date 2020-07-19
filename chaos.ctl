@@ -1,5 +1,9 @@
-@ $7D00 replace=|#mprintlink\((\i)\)|#R#(#EVAL($#N(#PEEK($CDD3+(\1*4)+1)*$100)+$#N(#PEEK($CDD3+(\1*4)))))
-@ $7D00 replace=|#m2printlink\((\i)\)|#R#(#EVAL($#N(#PEEK($8809+(\1*4)+1)*$100)+$#N(#PEEK($8809+(\1*4)))))
+; define macros
+@ $7D00 expand=#DEFINE1(DPEEK,#EVAL(((#PEEK({0}+1))*$100)+#PEEK{0}))
+@ $7D00 expand=#DEFINE1(SIGNED,#IF({0}>127)(-#EVAL(256-{0}),{0}))
+@ $7D00 expand=#DEFINE1(MPRINTLINK,#R#(#DPEEK(#EVAL($CDD3+({0}*4)))))
+@ $7D00 expand=#DEFINE1(MTWOPRINTLINK,#R#(#DPEEK(#EVAL($8809+({0}*4)))))
+@ $7D00 expand=#DEFINE1(SPRITE,#UDGARRAY#(2,#PEEK({0}+2),4;#DPEEK({0})-#EVAL(#DPEEK({0})+$1F)-8))
 
 @ $7D00 label=start
 c $7D00 Start.
@@ -36,7 +40,7 @@ C $7D5B Add value of #R$AC0E variable as offset.
 C $7D5D Store $00 in byte pointed to by HL and return.
 
 ; macro to print out spell data
-@ $7D60 replace=|#SPELLDATA\i|Message #PEEK(\1): Casting chance=#PEEK(\1+1), Max distance=#EVAL(#PEEK(\1+2)/2), Chaos/Law=#IF(#PEEK(\1+3)>127)(-#EVAL(256-(#PEEK(\1+3))),#PEEK(\1+3)), ???=#PEEK(\1+4)
+@ $E440 expand=#DEFINE1(SPELLDATA,Message #PEEK({0}): Casting chance=#PEEK({0}+1)#RAW(,) Max distance=#EVAL(#PEEK({0}+2)/2)#RAW(,) Chaos/Law=#SIGNED(#PEEK({0}+3))#RAW(,) ???=#PEEK({0}+4))
 
 @ $7D60 label=spells_table
 b $7D60 Spells table.
@@ -631,21 +635,21 @@ C $8A37 Zero out #R$E0C0(other five map area tables). These tables hold the data
 C $8A44 Set #R$C3A4 to zero.
 C $8A49 Set ATTR-T to $5A (bright red on magenta) and draw border.
 C $8A51 Set ATTR-T to $43 (bright magenta on black).
-C $8A56 Print message #m2printlink($00) at coordinates (2,2).
+C $8A56 Print message #MTWOPRINTLINK($00) at coordinates (2,2).
 C $8A5E Set ATTR-T to $42 (bright red on black).
-C $8A63 Print message #m2printlink($01) at coordinates (8,4).
+C $8A63 Print message #MTWOPRINTLINK($01) at coordinates (8,4).
 C $8A6B Set ATTR-T to $46 (bright yellow on black).
-C $8A70 Print message #m2printlink($02) at coordinates (2,9).
+C $8A70 Print message #MTWOPRINTLINK($02) at coordinates (2,9).
 C $8A78 Set ATTR-T to $44 (bright green on black).
-C $8A7D Print message #m2printlink($0E) at coordinates (2,11).
+C $8A7D Print message #MTWOPRINTLINK($0E) at coordinates (2,11).
 C $8A85 Set BC to coordinates (20,9).
 C $8A88 Set the flag to prevent numbers less than 2 in input.
 C $8A8D Call #R$89B0 ???
 C $8A90 Increment the number input and store in #R$AC0F.
 C $8A94 Set ATTR-T to $46 (bright yellow on black).
-C $8A99 Print message #m2printlink($08) at coordinates (2,14).
+C $8A99 Print message #MTWOPRINTLINK($08) at coordinates (2,14).
 C $8AA1 Set ATTR-T to $43 (bright magenta on black).
-C $8AA6 Print message #m2printlink($03) at coordinates (2,16).
+C $8AA6 Print message #MTWOPRINTLINK($03) at coordinates (2,16).
 C $8AAE Call #R$89B0 with coordinates 29,14.
 C $8AB4 Store input in #R$89A7.
 C $8AB7 Multiply level by four and add fifteen.
@@ -660,9 +664,9 @@ C $8ACE Get #R$AC0F into B, and store #R$D3F2 in #R$CD86.
 C $8AD8 Preserve BC.
 C $8AD9 call #R$C5EE ???
 C $8ADC Set ATTR-T to $69 (bright cyan on black) and draw border.
-C $8AE4 Set ATTR-T to $46 (bright yellow on black) and print message #m2printlink($04) at coordinates (2,2).
+C $8AE4 Set ATTR-T to $46 (bright yellow on black) and print message #MTWOPRINTLINK($04) at coordinates (2,2).
 C $8AF1 Get current player number, add $31 to convert to char value and call #R$BAD6.
-C $8AF9 Set ATTR-T to $43 (bright magenta on black) and print message #m2printlink($09) at coordinates (2,4).
+C $8AF9 Set ATTR-T to $43 (bright magenta on black) and print message #MTWOPRINTLINK($09) at coordinates (2,4).
 C $8B06 Get address of wizard object data for current player.
 C $8B09 Set #R$89AE to zero.
 C $8B0E Set #R$89AC to coordinates (2,6) and set ATTR-T to $45 (bright cyan on black).
@@ -699,25 +703,25 @@ C $8BA6 Add result to address of #R$CDD3(game messages table 1) to point at offs
 C $8BAA Move past address word in table to wizard name length.
 C $8BAC Read #R$89AE variable again and write into table.
 C $8BB0 Call #R$907B ???
-C $8BB3 Set ATTR-T to $43 (bright magenta on black) and print message #m2printlink($05) at coordinates (2,9).
+C $8BB3 Set ATTR-T to $43 (bright magenta on black) and print message #MTWOPRINTLINK($05) at coordinates (2,9).
 C $8BC0 Set ATTR-T to $46 (bright yellow on black).
 C $8BC5 Set #R$AC2E to zero (current player is human).
 @ $8BCA label=Y_OR_N
 C $8BCA Call KEYBOARD in Spectrum ROM.
 C $8BCD If keypress is 'Y' jump to #R$8BDF.
 C $8BD1 If keypress is not 'N' jump back to #R$8BCA.
-C $8BD5 Print message #m2printlink($07) at coordinates (23,9).
+C $8BD5 Print message #MTWOPRINTLINK($07) at coordinates (23,9).
 C $8BDD Jump to #R$8BF8.
 @ $8BDF label=YES_CC
-C $8BDF Print message #m2printlink($08) at 23,9.
+C $8BDF Print message #MTWOPRINTLINK($08) at 23,9.
 C $8BE7 Set HL to #R$AC26 + #R$AC0E.
 C $8BF1 Write $01 to #R$AC26 + #R$AC0E.
 C $8BF3 Set #R$AC2E.
 @ $8BF8 label=NOT_CC
 C $8BF8 Play key bloop sound effect.
 C $8BFE Call #R$907B ???
-C $8C01 Set ATTR-T to $43 (bright magenta on black) and print message #m2printlink($0C) at coordinates (2,11).
-C $8C0E Set ATTR-T to $45 (bright cyan on black) and print message #m2printlink($0D) at coordinates (2,13).
+C $8C01 Set ATTR-T to $43 (bright magenta on black) and print message #MTWOPRINTLINK($0C) at coordinates (2,11).
+C $8C0E Set ATTR-T to $45 (bright cyan on black) and print message #MTWOPRINTLINK($0D) at coordinates (2,13).
 C $8C1B Set #R$89AC to coordinates (3,13).
 C $8C22 Set #R$89A8 to zero.
 C $8C27 Set B to eight as a loop counter.
@@ -736,8 +740,8 @@ C $8C58 Set HL to unknown data block at #R$82C0.
 C $8C5B Multiply #R$90DF by eight and add to #R$82C0 to give address of pointer to sprite data for selected character.
 C $8C68 Store result at address in #R$831F.
 C $8C6B Copy pointers to sprite data of chosen character to wizard object data for current player.
-C $8C6E Set ATTR-T to $43 (bright magenta on black) and print message #m2printlink($0B) at coordinates (2,16).
-C $8C7B Set ATTR-T to $46 (bright yellow on black) and print message #m2printlink($0D) at coordinates (2,18).
+C $8C6E Set ATTR-T to $43 (bright magenta on black) and print message #MTWOPRINTLINK($0B) at coordinates (2,16).
+C $8C7B Set ATTR-T to $46 (bright yellow on black) and print message #MTWOPRINTLINK($0D) at coordinates (2,18).
 C $8C88 Set #R$89AC to coordinates (3,18).
 C $8C8F Set #R$8321 to address of #R$90D7 (attribute table).
 C $8C95 Set B to eight as loop counter.
@@ -893,7 +897,7 @@ C $8E9F Set ATTR-T to $01 (dark blue on black).
 C $8EA4 Call #R$8F8B ???
 C $8EA7 Draw border.
 C $8EAA Call #R$8F8B ???
-C $8EAD Print message #m2printlink($10) at coordinates (2,2).
+C $8EAD Print message #MTWOPRINTLINK($10) at coordinates (2,2).
 C $8EB5 Set HL to #R$AC16.
 C $8EB8 Set #R$89AC to coordinates (10,3).
 C $8EBF Set #R$AC0E variable to $29 (row in #R$CDD3(game messages table 1) for pointer to the first wizards name).
@@ -911,7 +915,7 @@ C $8EE4 Increment #R$AC0E variable (next row in game message table 1).
 C $8EEB Restore loop counter from stack.
 C $8EEC Loop back to #R$8EC8 for #R$AC0F iterations.
 C $8EEE Call #R$8F8B ???
-C $8EF1 Print #mprintlink($3D) at coordinates (0,22).
+C $8EF1 Print #MPRINTLINK($3D) at coordinates (0,22).
 C $8EF9 Call #R$96E6 ???
 C $8EFC Call KEY-SCAN in Spectrum ROM.
 C $8EFF Jump back to #R$8EA4 if no key is pressed else return.
@@ -922,13 +926,13 @@ C $8F07 Set ATTR-T to $01 (dark blue on black).
 C $8F0C Call #R$8F8B ???
 C $8F0F Draw border.
 C $8F12 Call #R$8F8B ???
-C $8F15 Print message #m2printlink($11) at coordinates (9,4).
+C $8F15 Print message #MTWOPRINTLINK($11) at coordinates (9,4).
 C $8F1D Call #R$8F8B ???
-C $8F20 Print message #m2printlink($12) at coordinates (8,8).
-C $8F28 Print message #m2printlink($13) at coordinates (8,10).
-C $8F30 Print message #m2printlink($13) at coordinates (8,12).
-C $8F38 Print message #m2printlink($13) at coordinates (8,14).
-C $8F40 Print message #m2printlink($12) at coordinates (8,16).
+C $8F20 Print message #MTWOPRINTLINK($12) at coordinates (8,8).
+C $8F28 Print message #MTWOPRINTLINK($13) at coordinates (8,10).
+C $8F30 Print message #MTWOPRINTLINK($13) at coordinates (8,12).
+C $8F38 Print message #MTWOPRINTLINK($13) at coordinates (8,14).
+C $8F40 Print message #MTWOPRINTLINK($12) at coordinates (8,16).
 C $8F48 Call #R$8F8B ???
 C $8F4B Set HL to address #R$AC16.
 C $8F4E Set B to eight as loop counter.
@@ -950,7 +954,7 @@ C $8F6D Subtract E from sixteen and copy result to C.
 C $8F71 Pop row of #R$CDD3(game messages table 1) back into A.
 C $8F72 Print wizard name centred in box.
 C $8F75 Call #R$8F8B ???
-C $8F78 Print message $3D at coordinates (0,22) (#mprintlink($3D)).
+C $8F78 Print message $3D at coordinates (0,22) (#MPRINTLINK($3D)).
 C $8F80 Call #R$96E6 ???
 C $8F83 Call KEY-SCAN in ROM to see if a key was pressed.
 C $8F88 Loop back to #R$8F0C if no key was pressed.
@@ -977,7 +981,7 @@ C $8FB2 store this byte in #R$A172
 C $8FB5 call #R$904B
 C $8FB8 if value is greater than 4 jump to #R$9031
 C $8FBD subtract 41 from #R$A172 and store result in #R$AC0E
-C $8FC5 set ATTR-T to $46 (bright yellow on black) and print message #m2printlink($0F) at coordinates (0,22).
+C $8FC5 set ATTR-T to $46 (bright yellow on black) and print message #MTWOPRINTLINK($0F) at coordinates (0,22).
 C $8FD2 move coordinates right one column
 C $8FD3 Print message number in #R$A172
 C $8FD9 set HL to address of #R$903E and call routine to copy ten bytes to data block at #R$C2E8
@@ -1168,7 +1172,7 @@ C $91B0 jump forwards to #R$9230 if #R$C3A4 is zero
 C $91B6 set BC to coordinates (7,7)
 C $91B9 jump forwards to #R$91F6 if #R$C3A4 is positive
 C $91BC set ATTR-T to $46 (bright yellow on black)
-C $91C1 Print #mprintlink($47)
+C $91C1 Print #MPRINTLINK($47)
 C $91C6 load #R$C3A4 into A and divide by four
 C $91CD jump forwards to #R$91EF if result is zero
 C $91D0 set #R$89AC to coordinates (7,7)
@@ -1184,7 +1188,7 @@ C $91EB load #R$89AC into BC
 C $91EF call #R$BAD6 with ')' character and jump forwards to #R$9230
 @ $91F6 label=cast_s_chaotic
 C $91F6 set ATTR-T to $45 (bright cyan on black)
-C $91FB Print #mprintlink($46)
+C $91FB Print #MPRINTLINK($46)
 C $9200 load #R$C3A4 into A
 C $9203 store BC in #R$89AC
 C $9207 negate A
@@ -1202,14 +1206,14 @@ C $922B call #R$BAD6 with character ')'
 C $9230 set ATTR-T to $46 (bright yellow on black)
 C $9235 load #R$AC0E into A
 C $9238 add $29 (first wizard name string in #R$CDD3(game messages table 1))
-C $923A Print #mprintlink($29) at coordinates (7,5)
+C $923A Print #MPRINTLINK($29) at coordinates (7,5)
 C $9240 set ATTR-T to $45 (bright cyan on black)
-C $9245 Print #mprintlink($59) at coordinates (7,9)
-C $924D Print #mprintlink($5A) at coordinates (7,11)
-C $9255 Print #mprintlink($5B) at coordinates (7,13)
-C $925D Print #mprintlink($5C) at coordinates (7,15)
+C $9245 Print #MPRINTLINK($59) at coordinates (7,9)
+C $924D Print #MPRINTLINK($5A) at coordinates (7,11)
+C $9255 Print #MPRINTLINK($5B) at coordinates (7,13)
+C $925D Print #MPRINTLINK($5C) at coordinates (7,15)
 C $9265 set ATTR-T to $56 (bright yellow on red)
-C $926A Print #mprintlink($57) at coordinates (0,22)
+C $926A Print #MPRINTLINK($57) at coordinates (0,22)
 C $9272 call #R$92AA
 @ $9275 label=cast_s_key_loop
 C $9275 call KEYBOARD routine in ROM returning character code in A
@@ -1463,10 +1467,10 @@ C $97A3 call #R$BED7 to clear line 22 of the display
 C $97A6 jump to #R$97BB if spell successful flag is set
 C $97AC set ATTR-T to bright magenta on black
 C $97B1 set A to $54 ("SPELL FAILS" message)
-C $97B1 Print #mprintlink($54) at coordinates (0,22)
+C $97B1 Print #MPRINTLINK($54) at coordinates (0,22)
 C $97B9 jump to #R$97C8
 C $97BB set ATTR-T to bright white on black
-C $97C0 Print #mprintlink($55) at coordinates (0,22)
+C $97C0 Print #MPRINTLINK($55) at coordinates (0,22)
 C $97C8 set loop counter to $64
 C $97CA HALT
 C $97CB loop back to #R$97CA ninety-nine times (pause for two seconds)
@@ -2217,7 +2221,7 @@ C $AC69 set ATTR-P to $46 (bright yellow on black)
 C $AC6E clear bottom row of screen (line 22)
 C $AC71 #R$AC0E into A and add $29 to get message number of player name in #R$CDD3(game messages table 1)
 C $AC76 Print wizard name at coordinates (0,22)
-C $AC7C Print #mprintlink($37)
+C $AC7C Print #MPRINTLINK($37)
 C $AC81 call #R$C0DD ???
 C $AC84 do nothing for two frames
 C $AC86 copy #R$AC0E into #R$D391 ???
@@ -2599,7 +2603,7 @@ C $BCBF wait for interrupt then call #R$D392 ???
 C $BCC3 load #R$D391 into A and add $29 as offset to wizards in #R$CDD3(game messages table 1)
 C $BCC8 set BC to coordinates (0,22) and set ATTR-T to $46 (bright yellow on black)
 C $BCD0 Print wizard name
-C $BCD3 Print #mprintlink($5F)
+C $BCD3 Print #MPRINTLINK($5F)
 C $BCD8 call KEY-SCAN routine in ROM
 C $BCDB if E is not $FF jump back to #R$BCC0. This prints messages again while key is held down.
 C $BCDE call #R$BED7 to clear bottom of screen
@@ -2614,10 +2618,10 @@ C $BCEF
 C $BD1A Print at coordinates (0,22).
 C $BD20
 
-C $BD2C Print #mprintlink($31).
+C $BD2C Print #MPRINTLINK($31).
 C $BD31
 
-C $BD3C Print #mprintlink($32).
+C $BD3C Print #MPRINTLINK($32).
 C $BD41 Jump to #R$BD88.
 C $BD43
 
@@ -2690,7 +2694,7 @@ C $BEBD set ATTR-T to bright yellow on black
 C $BEC2 set A to message $34
 C $BEC4 set BC to coordinates (0,22)
 C $BEC7 call #R$BED7 to clear line 22
-C $BECA Print #mprintlink($34) at coordinates (0,22)
+C $BECA Print #MPRINTLINK($34) at coordinates (0,22)
 C $BECD set HL to address of "ENGAGED TO ENEMY" sound effect
 C $BED0 call play_sound_effect_in_HL
 C $BED3 re-enable interrupts
@@ -2700,7 +2704,7 @@ C $BED6 return
 c $BED7 clear bottom of screen by printing 32 spaces on line 22
 @ $BED7 label=clear_bottom_row
 C $BED7 preserve AF, DE, HL, BC
-C $BEDB Print #mprintlink($01) at coordinates (0,22)
+C $BEDB Print #MPRINTLINK($01) at coordinates (0,22)
 C $BEE3 restore BC, HL, DE, AF
 C $BEE7 return
 
@@ -2905,50 +2909,50 @@ C $C3CF Read corresponding entry in #R$E2A0.
 C $C3D7 If not zero store in #R$C39D and set bit 2 of #R$C39E. ???
 C $C3E2 Clear the screen and play #R$C2E3.
 C $C3EB Set ATTR-T to bright green on black and draw border.
-C $C3F3 Set ATTR-T to black on bright green and print #mprintlink($3D) at coordinates (0,22).
+C $C3F3 Set ATTR-T to black on bright green and print #MPRINTLINK($3D) at coordinates (0,22).
 C $C400 Set ATTR-T to bright yellow on black and print creature's name at (4,2).
 C $C40E Clear #R$C3A0.
 C $C412 If bit 1 (wizard object) of #R$C39E is clear jump to #R$C479.
 C $C419 Set BC to coordinates (4,4).
 C $C41C Calculate wizard number as offset in #R$AC16.
 C $C428 Copy from table into #R$C3A1.
-C $C42C If bit 1 is set print #mprintlink($3E) spell property.
+C $C42C If bit 1 is set print #MPRINTLINK($3E) spell property.
 @ $C435 label=not_knife
-C $C435 If bit 2 is set print #mprintlink($3F) spell property.
+C $C435 If bit 2 is set print #MPRINTLINK($3F) spell property.
 @ $C441 label=not_sword
-C $C441 If bits 6 and 7 are set print #mprintlink($40) spell property.
+C $C441 If bits 6 and 7 are set print #MPRINTLINK($40) spell property.
 @ $C44F label=not_armour
-C $C44F If bit 6 is set and bit 7 is clear print #mprintlink($41) spell property.
+C $C44F If bit 6 is set and bit 7 is clear print #MPRINTLINK($41) spell property.
 @ $C45D label=not_shield
-C $C45D If bit 5 is set print #mprintlink($42) spell property.
+C $C45D If bit 5 is set print #MPRINTLINK($42) spell property.
 @ $C469 label=not_flying
-C $C469 If bit 3 is set print #mprintlink($43) spell property.
+C $C469 If bit 3 is set print #MPRINTLINK($43) spell property.
 C $C476 If zero jump to #R$C4B8.
 @ $C479 label=not_wizard_2
 C $C479 Increment x coordinate.
 C $C47A Get CHAOS/LAW attribute of object.
 C $C483 If zero jump to #R$C4B8.
 C $C486 If negative jump to #R$C4A1.
-C $C48A Set ATTR-T to bright cyan on black and print #mprintlink($47).
+C $C48A Set ATTR-T to bright cyan on black and print #MPRINTLINK($47).
 C $C495 Print value and closing bracket.
 C $C49F Jump to #R$C4B8.
 @ $C4A1 label=is_chaos
-C $C4A1 Set ATTR-T to bright magenta on black and print #mprintlink($46).
+C $C4A1 Set ATTR-T to bright magenta on black and print #MPRINTLINK($46).
 C $C4AC Convert value to positive number and print it followed by closing bracket.
 @ $C4B8 label=done_chaos_law
 C $C4B8 Set ATTR-T to bright green on black and set coordinates to (4,4).
-C $C4C0 If object number is between 16 and 21 print #mprintlink($44) property.
+C $C4C0 If object number is between 16 and 21 print #MPRINTLINK($44) property.
 @ $C4D2 label=done_mount
 C $C4D2 If #R$C39D is not zero print wizard name in brackets. ???
 C $C4E7 Set #R$C3A0.
 @ $C4EC label=done_wizard_name
-C $C4EC If object number is between 19 and 29 print #mprintlink($42) property.
+C $C4EC If object number is between 19 and 29 print #MPRINTLINK($42) property.
 @ $C4FE label=done_flying
-C $C4FE If bit 6 of entry in #R$E200 is set or object number is between 28 and 33, print #mprintlink($45) property.
+C $C4FE If bit 6 of entry in #R$E200 is set or object number is between 28 and 33, print #MPRINTLINK($45) property.
 @ $C516 label=is_undead
 @ $C51B label=done_undead
 C $C51B Set ATTR-T to bright cyan on black.
-C $C520 Set #R$C3A3 to #mprintlink($48).
+C $C520 Set #R$C3A3 to #MPRINTLINK($48).
 C $C525 Set #R$C3A2 to combat attribute.
 C $C52A Set HL to address of first coordinate in #R$C3A5.
 C $C52D Set B to seven as loop counter.
@@ -2959,8 +2963,8 @@ C $C534 Print the next attribute.
 C $C539 Restore counter and loop for seven iterations.
 C $C53C If bit 0 ??? of #R$C39E is clear then jump to #R$C56E.
 C $C543 Set ATTR-T to bright cyan on black.
-C $C548 Print #mprintlink($4F) at coordinates (4,18).
-C $C550 If #R$FFFF + 1 equals 10 print #mprintlink($50).
+C $C548 Print #MPRINTLINK($4F) at coordinates (4,18).
+C $C550 If #R$FFFF + 1 equals 10 print #MPRINTLINK($50).
 @ $C55F label=print_casting_chance
 C $C55F Else print value.
 @ $C564 label=print_0_percent
@@ -2968,7 +2972,7 @@ C $C564 Print "0%".
 @ $C56E label=done_casting_chance
 C $C56E If bit 1 (wizard object) of #R$C39E is clear then jump to #R$C5C1.
 C $C575 Set ATTR-T to bright yellow on black.
-C $C57A Print #mprintlink($51) at coordinates (4,18).
+C $C57A Print #MPRINTLINK($51) at coordinates (4,18).
 C $C582 Get number of spells attribute from wizard object.
 C $C58B If less than 10 jump to #R$C5A6.
 C $C590 If not 20 jump to #R$C59D.
@@ -2977,7 +2981,7 @@ C $C594 Print '2' and jump to #R$C5A6.
 C $C59D Subtract 10 from value and print '1'.
 @ $C5A6 label=spell_units
 C $C5A6 Print value.
-C $C5AB Print #mprintlink($52) at coordinates (14,18).
+C $C5AB Print #MPRINTLINK($52) at coordinates (14,18).
 C $C5B3 Get ability attribute from wizard object.
 C $C5BC Print value.
 C $C5C1 If #R$C39D is zero jump to #R$C5DC. ???
@@ -3353,113 +3357,114 @@ c $D887 routine84
 c $D8DE routine85
 @ $D8DE label=routine85
 
+@ $D908 expand=#DEFINE0(DOUBLEFONT,#UDGARRAY#(1,,4;#PC;#EVAL(#PC+$300))(font#N(((#PC-$D908) / 8) + $20)))
+
 b $D908 Font data.
 D $D908 #HTML(Images show top and bottom rows of font combined.)
-@ $D908 replace=|#doublefont|#UDGARRAY1,,4;(#PC);(#EVAL(#PC+$300))(font#N(((#PC-$D908) / 8) + $20))
 @ $D908 label=font_data_top
-B $D908 #HTML(#doublefont)
-B $D910 #HTML(#doublefont)
-B $D918 #HTML(#doublefont)
-B $D920 #HTML(#doublefont)
-B $D928 #HTML(#doublefont)
-B $D930 #HTML(#doublefont)
-B $D938 #HTML(#doublefont)
-B $D940 #HTML(#doublefont)
-B $D948 #HTML(#doublefont)
-B $D940 #HTML(#doublefont)
-B $D948 #HTML(#doublefont)
-B $D950 #HTML(#doublefont)
-B $D958 #HTML(#doublefont)
-B $D960 #HTML(#doublefont)
-B $D968 #HTML(#doublefont)
-B $D970 #HTML(#doublefont)
-B $D978 #HTML(#doublefont)
-B $D980 #HTML(#doublefont)
-B $D988 #HTML(#doublefont)
-B $D990 #HTML(#doublefont)
-B $D998 #HTML(#doublefont)
-B $D9A0 #HTML(#doublefont)
-B $D9A8 #HTML(#doublefont)
-B $D9B0 #HTML(#doublefont)
-B $D9B8 #HTML(#doublefont)
-B $D9C0 #HTML(#doublefont)
-B $D9C8 #HTML(#doublefont)
-B $D9D0 #HTML(#doublefont)
-B $D9D8 #HTML(#doublefont)
-B $D9E0 #HTML(#doublefont)
-B $D9E8 #HTML(#doublefont)
-B $D9F0 #HTML(#doublefont)
-B $D9F8 #HTML(#doublefont)
-B $DA00 #HTML(#doublefont)
-B $DA08 #HTML(#doublefont)
-B $DA10 #HTML(#doublefont)
-B $DA18 #HTML(#doublefont)
-B $DA20 #HTML(#doublefont)
-B $DA28 #HTML(#doublefont)
-B $DA30 #HTML(#doublefont)
-B $DA38 #HTML(#doublefont)
-B $DA40 #HTML(#doublefont)
-B $DA48 #HTML(#doublefont)
-B $DA40 #HTML(#doublefont)
-B $DA48 #HTML(#doublefont)
-B $DA50 #HTML(#doublefont)
-B $DA58 #HTML(#doublefont)
-B $DA60 #HTML(#doublefont)
-B $DA68 #HTML(#doublefont)
-B $DA70 #HTML(#doublefont)
-B $DA78 #HTML(#doublefont)
-B $DA80 #HTML(#doublefont)
-B $DA88 #HTML(#doublefont)
-B $DA90 #HTML(#doublefont)
-B $DA98 #HTML(#doublefont)
-B $DAA0 #HTML(#doublefont)
-B $DAA8 #HTML(#doublefont)
-B $DAB0 #HTML(#doublefont)
-B $DAB8 #HTML(#doublefont)
-B $DAC0 #HTML(#doublefont)
-B $DAC8 #HTML(#doublefont)
-B $DAD0 #HTML(#doublefont)
-B $DAD8 #HTML(#doublefont)
-B $DAE0 #HTML(#doublefont)
-B $DAE8 #HTML(#doublefont)
-B $DAF0 #HTML(#doublefont)
-B $DAF8 #HTML(#doublefont)
-B $DB00 #HTML(#doublefont)
-B $DB00 #HTML(#doublefont)
-B $DB08 #HTML(#doublefont)
-B $DB10 #HTML(#doublefont)
-B $DB18 #HTML(#doublefont)
-B $DB20 #HTML(#doublefont)
-B $DB28 #HTML(#doublefont)
-B $DB30 #HTML(#doublefont)
-B $DB38 #HTML(#doublefont)
-B $DB40 #HTML(#doublefont)
-B $DB48 #HTML(#doublefont)
-B $DB40 #HTML(#doublefont)
-B $DB48 #HTML(#doublefont)
-B $DB50 #HTML(#doublefont)
-B $DB58 #HTML(#doublefont)
-B $DB60 #HTML(#doublefont)
-B $DB68 #HTML(#doublefont)
-B $DB70 #HTML(#doublefont)
-B $DB78 #HTML(#doublefont)
-B $DB80 #HTML(#doublefont)
-B $DB88 #HTML(#doublefont)
-B $DB90 #HTML(#doublefont)
-B $DB98 #HTML(#doublefont)
-B $DBA0 #HTML(#doublefont)
-B $DBA8 #HTML(#doublefont)
-B $DBB0 #HTML(#doublefont)
-B $DBB8 #HTML(#doublefont)
-B $DBC0 #HTML(#doublefont)
-B $DBC8 #HTML(#doublefont)
-B $DBD0 #HTML(#doublefont)
-B $DBD8 #HTML(#doublefont)
-B $DBE0 #HTML(#doublefont)
-B $DBE8 #HTML(#doublefont)
-B $DBF0 #HTML(#doublefont)
-B $DBF8 #HTML(#doublefont)
-B $DC00 #HTML(#doublefont)
+B $D908 #HTML(#DOUBLEFONT)
+B $D910 #HTML(#DOUBLEFONT)
+B $D918 #HTML(#DOUBLEFONT)
+B $D920 #HTML(#DOUBLEFONT)
+B $D928 #HTML(#DOUBLEFONT)
+B $D930 #HTML(#DOUBLEFONT)
+B $D938 #HTML(#DOUBLEFONT)
+B $D940 #HTML(#DOUBLEFONT)
+B $D948 #HTML(#DOUBLEFONT)
+B $D940 #HTML(#DOUBLEFONT)
+B $D948 #HTML(#DOUBLEFONT)
+B $D950 #HTML(#DOUBLEFONT)
+B $D958 #HTML(#DOUBLEFONT)
+B $D960 #HTML(#DOUBLEFONT)
+B $D968 #HTML(#DOUBLEFONT)
+B $D970 #HTML(#DOUBLEFONT)
+B $D978 #HTML(#DOUBLEFONT)
+B $D980 #HTML(#DOUBLEFONT)
+B $D988 #HTML(#DOUBLEFONT)
+B $D990 #HTML(#DOUBLEFONT)
+B $D998 #HTML(#DOUBLEFONT)
+B $D9A0 #HTML(#DOUBLEFONT)
+B $D9A8 #HTML(#DOUBLEFONT)
+B $D9B0 #HTML(#DOUBLEFONT)
+B $D9B8 #HTML(#DOUBLEFONT)
+B $D9C0 #HTML(#DOUBLEFONT)
+B $D9C8 #HTML(#DOUBLEFONT)
+B $D9D0 #HTML(#DOUBLEFONT)
+B $D9D8 #HTML(#DOUBLEFONT)
+B $D9E0 #HTML(#DOUBLEFONT)
+B $D9E8 #HTML(#DOUBLEFONT)
+B $D9F0 #HTML(#DOUBLEFONT)
+B $D9F8 #HTML(#DOUBLEFONT)
+B $DA00 #HTML(#DOUBLEFONT)
+B $DA08 #HTML(#DOUBLEFONT)
+B $DA10 #HTML(#DOUBLEFONT)
+B $DA18 #HTML(#DOUBLEFONT)
+B $DA20 #HTML(#DOUBLEFONT)
+B $DA28 #HTML(#DOUBLEFONT)
+B $DA30 #HTML(#DOUBLEFONT)
+B $DA38 #HTML(#DOUBLEFONT)
+B $DA40 #HTML(#DOUBLEFONT)
+B $DA48 #HTML(#DOUBLEFONT)
+B $DA40 #HTML(#DOUBLEFONT)
+B $DA48 #HTML(#DOUBLEFONT)
+B $DA50 #HTML(#DOUBLEFONT)
+B $DA58 #HTML(#DOUBLEFONT)
+B $DA60 #HTML(#DOUBLEFONT)
+B $DA68 #HTML(#DOUBLEFONT)
+B $DA70 #HTML(#DOUBLEFONT)
+B $DA78 #HTML(#DOUBLEFONT)
+B $DA80 #HTML(#DOUBLEFONT)
+B $DA88 #HTML(#DOUBLEFONT)
+B $DA90 #HTML(#DOUBLEFONT)
+B $DA98 #HTML(#DOUBLEFONT)
+B $DAA0 #HTML(#DOUBLEFONT)
+B $DAA8 #HTML(#DOUBLEFONT)
+B $DAB0 #HTML(#DOUBLEFONT)
+B $DAB8 #HTML(#DOUBLEFONT)
+B $DAC0 #HTML(#DOUBLEFONT)
+B $DAC8 #HTML(#DOUBLEFONT)
+B $DAD0 #HTML(#DOUBLEFONT)
+B $DAD8 #HTML(#DOUBLEFONT)
+B $DAE0 #HTML(#DOUBLEFONT)
+B $DAE8 #HTML(#DOUBLEFONT)
+B $DAF0 #HTML(#DOUBLEFONT)
+B $DAF8 #HTML(#DOUBLEFONT)
+B $DB00 #HTML(#DOUBLEFONT)
+B $DB00 #HTML(#DOUBLEFONT)
+B $DB08 #HTML(#DOUBLEFONT)
+B $DB10 #HTML(#DOUBLEFONT)
+B $DB18 #HTML(#DOUBLEFONT)
+B $DB20 #HTML(#DOUBLEFONT)
+B $DB28 #HTML(#DOUBLEFONT)
+B $DB30 #HTML(#DOUBLEFONT)
+B $DB38 #HTML(#DOUBLEFONT)
+B $DB40 #HTML(#DOUBLEFONT)
+B $DB48 #HTML(#DOUBLEFONT)
+B $DB40 #HTML(#DOUBLEFONT)
+B $DB48 #HTML(#DOUBLEFONT)
+B $DB50 #HTML(#DOUBLEFONT)
+B $DB58 #HTML(#DOUBLEFONT)
+B $DB60 #HTML(#DOUBLEFONT)
+B $DB68 #HTML(#DOUBLEFONT)
+B $DB70 #HTML(#DOUBLEFONT)
+B $DB78 #HTML(#DOUBLEFONT)
+B $DB80 #HTML(#DOUBLEFONT)
+B $DB88 #HTML(#DOUBLEFONT)
+B $DB90 #HTML(#DOUBLEFONT)
+B $DB98 #HTML(#DOUBLEFONT)
+B $DBA0 #HTML(#DOUBLEFONT)
+B $DBA8 #HTML(#DOUBLEFONT)
+B $DBB0 #HTML(#DOUBLEFONT)
+B $DBB8 #HTML(#DOUBLEFONT)
+B $DBC0 #HTML(#DOUBLEFONT)
+B $DBC8 #HTML(#DOUBLEFONT)
+B $DBD0 #HTML(#DOUBLEFONT)
+B $DBD8 #HTML(#DOUBLEFONT)
+B $DBE0 #HTML(#DOUBLEFONT)
+B $DBE8 #HTML(#DOUBLEFONT)
+B $DBF0 #HTML(#DOUBLEFONT)
+B $DBF8 #HTML(#DOUBLEFONT)
+B $DC00 #HTML(#DOUBLEFONT)
 @ $DC08 label=font_data_bottom
 B $DC08 Bottom half of characters.
 
@@ -3628,20 +3633,12 @@ W $E43C Object 47: Wizard 6.
 W $E43E Object 48: Wizard 7.
 
 
+@ $E440 expand=#DEFINE1,1(ANIMSPELL,#FOR(0,3)||$n|#SPRITE#(({0}+($n*3)))(*frame$n)||#UDGARRAY*frame0;frame1;frame2;frame3({1}))
+@ $E440 expand=#DEFINE1,1(SPELLSPRITE,#SPRITE{0}({1}))
+@ $E440 expand=#DEFINE1,(SPELLNAME,#FOR(0,12)||$n|#CHR(#PEEK({0}+$n))||)
+@ $E440 expand=#DEFINE1(SPELLSTATS,Combat=#PEEK({0}) Ranged combat=#PEEK({0}+1) Range=#PEEK({0}+2) Defence=#PEEK({0}+3) Movement allowance=#PEEK({0}+4) Manouvre rating=#PEEK({0}+5) Magic resistance=#PEEK({0}+6) Casting chance=#PEEK({0}+7) Chaos/Law=#SIGNED(#PEEK({0}+8)) ?=#PEEK({0}+9))
+
 b $E440 object data table
-; macro to print a spell name from memory
-@ $E440 replace=/#SPELLNAME\i/#FOR0,12||$n|#CHR(#PEEK(\1+$n))||
-
-; macro to print out spell stats from memory
-@ $E440 replace=|#SPELLSTATS\i|Combat=#PEEK(\1) Ranged combat=#PEEK(\1+1) Range=#PEEK(\1+2) Defence=#PEEK(\1+3) Movement allowance=#PEEK(\1+4) Manouvre rating=#PEEK(\1+5) Magic resistance=#PEEK(\1+6) Casting chance=#PEEK(\1+7) Chaos/Law=#IF(#PEEK(\1+8)>127)(-#EVAL(256-(#PEEK(\1+8))) ,#PEEK(\1+8)) ?=#PEEK(\1+9)
-
-; macro to create an animated png from pointers to sprites and attributes
-@ $E440 replace=/#ANIMSPELL\i,(\w+)/#FOR0,3||$n|#UDGARRAY#(2,#PEEK(\1+($n*3)+2),4;#EVAL(#PEEK(\1+($n*3))+(#PEEK((\1+($n*3))+1))*256)-#EVAL(#PEEK(\1+($n*3))+(#PEEK((\1+($n*3))+1))*256+$1F)-8)(*frame$n)|| #UDGARRAY*frame0;frame1;frame2;frame3(\2)
-
-; macro to create an single coloured sprite from a pointer to a sprite and an attribute
-@ $E440 replace=/#SPELLSPRITE\i,(\w+)/#UDGARRAY#(2,#PEEK(\1+2),4;#EVAL(#PEEK\1+(#PEEK(\1+1)*256))-#EVAL(#PEEK(\1)+(#PEEK(\1+1)*256+$1F))-8)(\2)
-
-; object table proper begins here
 @ $E440 label=nothing
 T $E440 nothing
 B $E44D,10,d10 #SPELLSTATS$E44D
@@ -3653,183 +3650,183 @@ L $E457,3,4
 @ $E463 label=king_cobra
 T $E463 #SPELLNAME$E463
 B $E470,10,d10 #SPELLSTATS$E470
-M $E47A,12 #HTML(#ANIMSPELL$E47A,kingcobracoloured )king cobra animation cycle
+M $E47A,12 #HTML(#ANIMSPELL$E47A|kingcobracoloured| )king cobra animation cycle
 W $E47A,2
 B $E47C,1
 L $E47A,3,4
-M $E486,3 #HTML(#SPELLSPRITE$E486,deadkingcobracoloured )dead king cobra
+M $E486,3 #HTML(#SPELLSPRITE$E486|deadkingcobracoloured| )dead king cobra
 W $E486,2
 B $E488,1
 
 @ $E489 label=bat
 T $E489 #SPELLNAME$E489
 B $E496,10,d10 #SPELLSTATS$E496
-M $E4A0,12 #HTML(#ANIMSPELL$E4A0,batcoloured )bat animation cycle
+M $E4A0,12 #HTML(#ANIMSPELL$E4A0|batcoloured| )bat animation cycle
 W $E4A0,2
 B $E4A2,1
 L $E4A0,3,4
-M $E4AC,3 #HTML(#SPELLSPRITE$E4AC,deadbatcoloured )dead bat
+M $E4AC,3 #HTML(#SPELLSPRITE$E4AC|deadbatcoloured| )dead bat
 W $E4AC,2
 B $E4AE,1
 
 @ $E4AF label=blob
 T $E4AF #SPELLNAME$E4AF
 B $E4BC,10,d10 #SPELLSTATS$E4BC
-M $E4C6,12 #HTML(#ANIMSPELL$E4C6,blobcoloured )blob animation cycle
+M $E4C6,12 #HTML(#ANIMSPELL$E4C6|blobcoloured| )blob animation cycle
 W $E4C6,2
 B $E4C8,1
 L $E4C6,3,4
-M $E4D2,3 #HTML(#SPELLSPRITE$E4D2,deadblobcoloured )dead blob
+M $E4D2,3 #HTML(#SPELLSPRITE$E4D2|deadblobcoloured| )dead blob
 W $E4D2,2
 B $E4D4,1
 
 @ $E4D5 label=dire_wolf
 T $E4D5 #SPELLNAME$E4D5
 B $E4E2,10,d10 #SPELLSTATS$E4E2
-M $E4EC,12 #HTML(#ANIMSPELL$E4EC,direwolfcoloured )dire wolf animation cycle
+M $E4EC,12 #HTML(#ANIMSPELL$E4EC|direwolfcoloured| )dire wolf animation cycle
 W $E4EC,2
 B $E4EE,1
 L $E4EC,3,4
-M $E4F8,3 #HTML(#SPELLSPRITE$E4F8,deaddirewolfcoloured )dead dire wolf
+M $E4F8,3 #HTML(#SPELLSPRITE$E4F8|deaddirewolfcoloured| )dead dire wolf
 W $E4F8,2
 B $E4FA,1
 
 @ $E4FB label=spectre
 T $E4FB #SPELLNAME$E4FB
 B $E508,10,d10 #SPELLSTATS$E508
-M $E512,12 #HTML(#ANIMSPELL$E512,spectrecoloured )spectre animation cycle
+M $E512,12 #HTML(#ANIMSPELL$E512|spectrecoloured| )spectre animation cycle
 W $E512,2
 B $E514,1
 L $E512,3,4
-M $E51E,3 #HTML(#SPELLSPRITE$E51E,deadspectrecoloured )dead spectre
+M $E51E,3 #HTML(#SPELLSPRITE$E51E|deadspectrecoloured| )dead spectre
 W $E51E,2
 B $E520,1
 
 @ $E521 label=goblin
 T $E521 #SPELLNAME$E521
 B $E52E,10,d10 #SPELLSTATS$E52E
-M $E538,12 #HTML(#ANIMSPELL$E538,goblincoloured )goblin animation cycle
+M $E538,12 #HTML(#ANIMSPELL$E538|goblincoloured| )goblin animation cycle
 W $E538,2
 B $E53A,1
 L $E538,3,4
-M $E544,3 #HTML(#SPELLSPRITE$E544,deadgoblincoloured )dead goblin
+M $E544,3 #HTML(#SPELLSPRITE$E544|deadgoblincoloured| )dead goblin
 W $E544,2
 B $E546,1
 
 @ $E547 label=crocodile
 T $E547 #SPELLNAME$E547
 B $E554,10,d10 #SPELLSTATS$E554
-M $E55E,12 #HTML(#ANIMSPELL$E55E,crocodilecoloured )crocodile animation cycle
+M $E55E,12 #HTML(#ANIMSPELL$E55E|crocodilecoloured| )crocodile animation cycle
 W $E55E,2
 B $E560,1
 L $E55E,3,4
-M $E56A,3 #HTML(#SPELLSPRITE$E56A,deadcrocodilecoloured )dead crocodile
+M $E56A,3 #HTML(#SPELLSPRITE$E56A|deadcrocodilecoloured| )dead crocodile
 W $E56A,2
 B $E56C,1
 
 @ $E56D label=green_dragon
 T $E56D #SPELLNAME$E56D
 B $E57A,10,d10 #SPELLSTATS$E57A
-M $E584,12 #HTML(#ANIMSPELL$E584,greendragoncoloured )green dragon animation cycle
+M $E584,12 #HTML(#ANIMSPELL$E584|greendragoncoloured| )green dragon animation cycle
 W $E584,2
 B $E586,1
 L $E584,3,4
-M $E590,3 #HTML(#SPELLSPRITE$E590,deadgreendragoncoloured )dead green dragon
+M $E590,3 #HTML(#SPELLSPRITE$E590|deadgreendragoncoloured| )dead green dragon
 W $E590,2
 B $E592,1
 
 @ $E593 label=vampire
 T $E593 #SPELLNAME$E593
 B $E5A0,10,d10 #SPELLSTATS$E5A0
-M $E5AA,12 #HTML(#ANIMSPELL$E5AA,vampirecoloured )vampire animation cycle
+M $E5AA,12 #HTML(#ANIMSPELL$E5AA|vampirecoloured| )vampire animation cycle
 W $E5AA,2
 B $E5AC,1
 L $E5AA,3,4
-M $E5B6,3 #HTML(#SPELLSPRITE$E5B6,deadvampirecoloured )dead vampire
+M $E5B6,3 #HTML(#SPELLSPRITE$E5B6|deadvampirecoloured| )dead vampire
 W $E5B6,2
 B $E5B8,1
 
 @ $E5B9 label=faun
 T $E5B9 #SPELLNAME$E5B9
 B $E5C6,10,d10 #SPELLSTATS$E5C6
-M $E5D0,12 #HTML(#ANIMSPELL$E5D0,fauncoloured )faun animation cycle
+M $E5D0,12 #HTML(#ANIMSPELL$E5D0|fauncoloured| )faun animation cycle
 W $E5D0,2
 B $E5D2,1
 L $E5D0,3,4
-M $E5DC,3 #HTML(#SPELLSPRITE$E5DC,deadfauncoloured )dead faun
+M $E5DC,3 #HTML(#SPELLSPRITE$E5DC|deadfauncoloured| )dead faun
 W $E5DC,2
 B $E5DE,1
 
 @ $E5DF label=lion
 T $E5DF #SPELLNAME$E5DF
 B $E5EC,10,d10 #SPELLSTATS$E5EC
-M $E5F6,12 #HTML(#ANIMSPELL$E5F6,lioncoloured )lion animation cycle
+M $E5F6,12 #HTML(#ANIMSPELL$E5F6|lioncoloured| )lion animation cycle
 W $E5F6,2
 B $E5F8,1
 L $E5F6,3,4
-M $E602,3 #HTML(#SPELLSPRITE$E602,deadlioncoloured )dead lion
+M $E602,3 #HTML(#SPELLSPRITE$E602|deadlioncoloured| )dead lion
 W $E602,2
 B $E604,1
 
 @ $E605 label=gryphon
 T $E605 #SPELLNAME$E605
 B $E612,10,d10 #SPELLSTATS$E612
-M $E61C,12 #HTML(#ANIMSPELL$E61C,gryphoncoloured )gryphon animation cycle
+M $E61C,12 #HTML(#ANIMSPELL$E61C|gryphoncoloured| )gryphon animation cycle
 W $E61C,2
 B $E61E,1
 L $E61C,3,4
-M $E628,3 #HTML(#SPELLSPRITE$E628,deadgryphoncoloured )dead gryphon
+M $E628,3 #HTML(#SPELLSPRITE$E628|deadgryphoncoloured| )dead gryphon
 W $E628,2
 B $E62A,1
 
 @ $E62B label=elf
 T $E62B #SPELLNAME$E62B
 B $E638,10,d10 #SPELLSTATS$E638
-M $E642,12 #HTML(#ANIMSPELL$E642,elfcoloured )elf animation cycle
+M $E642,12 #HTML(#ANIMSPELL$E642|elfcoloured| )elf animation cycle
 W $E642,2
 B $E644,1
 L $E642,3,4
-M $E64E,3 #HTML(#SPELLSPRITE$E64E,deadelfcoloured )dead elf
+M $E64E,3 #HTML(#SPELLSPRITE$E64E|deadelfcoloured| )dead elf
 W $E64E,2
 B $E650,1
 
 @ $E651 label=horse
 T $E651 #SPELLNAME$E651
 B $E65E,10,d10 #SPELLSTATS$E65E
-M $E668,12 #HTML(#ANIMSPELL$E668,horsecoloured )horse animation cycle
+M $E668,12 #HTML(#ANIMSPELL$E668|horsecoloured| )horse animation cycle
 W $E668,2
 B $E66A,1
 L $E668,3,4
-M $E674,3 #HTML(#SPELLSPRITE$E674,deadhorsecoloured )dead horse
+M $E674,3 #HTML(#SPELLSPRITE$E674|deadhorsecoloured| )dead horse
 W $E674,2
 B $E676,1
 
 @ $E677 label=orc
 T $E677 #SPELLNAME$E677
 B $E684,10,d10 #SPELLSTATS$E684
-M $E68E,12 #HTML(#ANIMSPELL$E68E,orccoloured )orc animation cycle
+M $E68E,12 #HTML(#ANIMSPELL$E68E|orccoloured| )orc animation cycle
 W $E68E,2
 B $E690,1
 L $E68E,3,4
-M $E69A,3 #HTML(#SPELLSPRITE$E69A,deadorccoloured )dead orc
+M $E69A,3 #HTML(#SPELLSPRITE$E69A|deadorccoloured| )dead orc
 W $E69A,2
 B $E69C,1
 
 @ $E69D label=red_dragon
 T $E69D #SPELLNAME$E69D
 B $E6AA,10,d10 #SPELLSTATS$E6AA
-M $E6B4,12 #HTML(#ANIMSPELL$E6B4,reddragoncoloured )red dragon animation cycle
+M $E6B4,12 #HTML(#ANIMSPELL$E6B4|reddragoncoloured| )red dragon animation cycle
 W $E6B4,2
 B $E6B6,1
 L $E6B4,3,4
-M $E6C0,3 #HTML(#SPELLSPRITE$E6C0,deadreddragoncoloured )dead red dragon
+M $E6C0,3 #HTML(#SPELLSPRITE$E6C0|deadreddragoncoloured| )dead red dragon
 W $E6C0,2
 B $E6C2,1
 
 @ $E6C3 label=fire
 T $E6C3 #SPELLNAME$E6C3
 B $E6D0,10,d10 #SPELLSTATS$E6D0
-M $E6DA,12 #HTML(#ANIMSPELL$E6DA,redfirecoloured )fire animation cycle
+M $E6DA,12 #HTML(#ANIMSPELL$E6DA|redfirecoloured| )fire animation cycle
 W $E6DA,2
 B $E6DC,1
 L $E6DA,3,4
@@ -3837,40 +3834,40 @@ L $E6DA,3,4
 @ $E6E6 label=manticore
 T $E6E6 #SPELLNAME$E6E6
 B $E6F3,10,d10 #SPELLSTATS$E6F3
-M $E6FD,12 #HTML(#ANIMSPELL$E6FD,manticorecoloured )manticore animation cycle
+M $E6FD,12 #HTML(#ANIMSPELL$E6FD|manticorecoloured| )manticore animation cycle
 W $E6FD,2
 B $E6FF,1
 L $E6FD,3,4
-M $E709,3 #HTML(#SPELLSPRITE$E709,deadmanticorecoloured )dead manticore
+M $E709,3 #HTML(#SPELLSPRITE$E709|deadmanticorecoloured| )dead manticore
 W $E709,2
 B $E70B,1
 
 @ $E70D label=troll
 T $E70D #SPELLNAME$E70D
 B $E71A,10,d10 #SPELLSTATS$E71A
-M $E724,12 #HTML(#ANIMSPELL$E724,trollcoloured )troll animation cycle
+M $E724,12 #HTML(#ANIMSPELL$E724|trollcoloured| )troll animation cycle
 W $E724,2
 B $E726,1
 L $E724,3,4
-M $E730,3 #HTML(#SPELLSPRITE$E730,deadtrollcoloured )dead troll
+M $E730,3 #HTML(#SPELLSPRITE$E730|deadtrollcoloured| )dead troll
 W $E730,2
 B $E732,1
 
 @ $E733 label=unicorn
 T $E733 #SPELLNAME$E733
 B $E740,10,d10 #SPELLSTATS$E740
-M $E74A,12 #HTML(#ANIMSPELL$E74A,unicorncoloured )unicorn animation cycle
+M $E74A,12 #HTML(#ANIMSPELL$E74A|unicorncoloured| )unicorn animation cycle
 W $E74A,2
 B $E74C,1
 L $E74A,3,4
-M $E756,3 #HTML(#SPELLSPRITE$E756,deadunicorncoloured )dead unicorn
+M $E756,3 #HTML(#SPELLSPRITE$E756|deadunicorncoloured| )dead unicorn
 W $E756,2
 B $E758,1
 
 @ $E759 label=ghost
 T $E759 #SPELLNAME$E759
 B $E766,10,d10 #SPELLSTATS$E766
-M $E770,12 #HTML(#ANIMSPELL$E770,ghostcoloured )ghost animation cycle
+M $E770,12 #HTML(#ANIMSPELL$E770|ghostcoloured| )ghost animation cycle
 W $E770,2
 B $E772,1
 L $E770,3,4
@@ -3878,7 +3875,7 @@ L $E770,3,4
 @ $E77C label=wraith
 T $E77C #SPELLNAME$E77C
 B $E789,10,d10 #SPELLSTATS$E789
-M $E793,12 #HTML(#ANIMSPELL$E793,wraithcoloured )wraith animation cycle
+M $E793,12 #HTML(#ANIMSPELL$E793|wraithcoloured| )wraith animation cycle
 W $E793,2
 B $E795,1
 L $E793,3,4
@@ -3886,29 +3883,29 @@ L $E793,3,4
 @ $E79F label=bear
 T $E79F #SPELLNAME$E79F
 B $E7AC,10,d10 #SPELLSTATS$E7AC
-M $E7B6,12 #HTML(#ANIMSPELL$E7B6,bearcoloured )bear animation cycle
+M $E7B6,12 #HTML(#ANIMSPELL$E7B6|bearcoloured| )bear animation cycle
 W $E7B6,2
 B $E7B8,1
 L $E7B6,3,4
-M $E7C2,3 #HTML(#SPELLSPRITE$E7C2,deadbearcoloured )dead bear
+M $E7C2,3 #HTML(#SPELLSPRITE$E7C2|deadbearcoloured| )dead bear
 W $E7C2,2
 B $E7C4,1
 
 @ $E7C5 label=gorilla
 T $E7C5 #SPELLNAME$E7C5
 B $E7D2,10,d10 #SPELLSTATS$E7D2
-M $E7DC,12 #HTML(#ANIMSPELL$E7DC,gorillacoloured )gorilla animation cycle
+M $E7DC,12 #HTML(#ANIMSPELL$E7DC|gorillacoloured| )gorilla animation cycle
 W $E7DC,2
 B $E7DE,1
 L $E7DC,3,4
-M $E7E8,3 #HTML(#SPELLSPRITE$E7E8,deadgorillacoloured )dead gorilla
+M $E7E8,3 #HTML(#SPELLSPRITE$E7E8|deadgorillacoloured| )dead gorilla
 W $E7E8,2
 B $E7EA,1
 
 @ $E7EB label=skeleton
 T $E7EB #SPELLNAME$E7EB
 B $E7F8,10,d10 #SPELLSTATS$E7F8
-M $E802,12 #HTML(#ANIMSPELL$E802,skeletoncoloured )skeleton animation cycle
+M $E802,12 #HTML(#ANIMSPELL$E802|skeletoncoloured| )skeleton animation cycle
 W $E802,2
 B $E804,1
 L $E802,3,4
@@ -3916,18 +3913,18 @@ L $E802,3,4
 @ $E80E label=ogre
 T $E80E #SPELLNAME$E80E
 B $E81B,10,d10 #SPELLSTATS$E81B
-M $E825,12 #HTML(#ANIMSPELL$E825,ogrecoloured )ogre animation cycle
+M $E825,12 #HTML(#ANIMSPELL$E825|ogrecoloured| )ogre animation cycle
 W $E825,2
 B $E827,1
 L $E825,3,4
-M $E831,3 #HTML(#SPELLSPRITE$E831,deadogrecoloured )dead ogre
+M $E831,3 #HTML(#SPELLSPRITE$E831|deadogrecoloured| )dead ogre
 W $E831,2
 B $E833,1
 
 @ $E834 label=zombie
 T $E834 #SPELLNAME$E834
 B $E841,10,d10 #SPELLSTATS$E841
-M $E84B,12 #HTML(#ANIMSPELL$E84B,zombiecoloured )zombie animation cycle
+M $E84B,12 #HTML(#ANIMSPELL$E84B|zombiecoloured| )zombie animation cycle
 W $E84B,2
 B $E84D,1
 L $E84B,3,4
@@ -3935,106 +3932,106 @@ L $E84B,3,4
 @ $E857 label=harpy
 T $E857 #SPELLNAME$E857
 B $E864,10,d10 #SPELLSTATS$E864
-M $E86E,12 #HTML(#ANIMSPELL$E86E,harpycoloured )harpy animation cycle
+M $E86E,12 #HTML(#ANIMSPELL$E86E|harpycoloured| )harpy animation cycle
 W $E86E,2
 B $E870,1
 L $E86E,3,4
-M $E87A,3 #HTML(#SPELLSPRITE$E87A,deadharpycoloured )dead harpy
+M $E87A,3 #HTML(#SPELLSPRITE$E87A|deadharpycoloured| )dead harpy
 W $E87A,2
 B $E87C,1
 
 @ $E87D label=pegasus
 T $E87D #SPELLNAME$E87D
 B $E88A,10,d10 #SPELLSTATS$E88A
-M $E894,12 #HTML(#ANIMSPELL$E894,pegasuscoloured )pegasus animation cycle
+M $E894,12 #HTML(#ANIMSPELL$E894|pegasuscoloured| )pegasus animation cycle
 W $E894,2
 B $E896,1
 L $E894,3,4
-M $E8A0,3 #HTML(#SPELLSPRITE$E8A0,deadpegasuscoloured )dead pegasus
+M $E8A0,3 #HTML(#SPELLSPRITE$E8A0|deadpegasuscoloured| )dead pegasus
 W $E8A0,2
 B $E8A2,1
 
 @ $E8A3 label=eagle
 T $E8A3 #SPELLNAME$E8A3
 B $E8B0,10,d10 #SPELLSTATS$E8B0
-M $E8BA,12 #HTML(#ANIMSPELL$E8BA,eaglecoloured )eagle animation cycle
+M $E8BA,12 #HTML(#ANIMSPELL$E8BA|eaglecoloured| )eagle animation cycle
 W $E8BA,2
 B $E8BC,1
 L $E8BA,3,4
-M $E8C6,3 #HTML(#SPELLSPRITE$E8C6,deadeaglecoloured )dead eagle
+M $E8C6,3 #HTML(#SPELLSPRITE$E8C6|deadeaglecoloured| )dead eagle
 W $E8C6,2
 B $E8C8,1
 
 @ $E8C9 label=hydra
 T $E8C9 #SPELLNAME$E8C9
 B $E8D6,10,d10 #SPELLSTATS$E8D6
-M $E8E0,12 #HTML(#ANIMSPELL$E8E0,hydracoloured )hydra animation cycle
+M $E8E0,12 #HTML(#ANIMSPELL$E8E0|hydracoloured| )hydra animation cycle
 W $E8E0,2
 B $E8E2,1
 L $E8E0,3,4
-M $E8EC,3 #HTML(#SPELLSPRITE$E8EC,deadhydracoloured )dead hydra
+M $E8EC,3 #HTML(#SPELLSPRITE$E8EC|deadhydracoloured| )dead hydra
 W $E8EC,2
 B $E8EE,1
 
 @ $E8EF label=giant_rat
 T $E8EF #SPELLNAME$E8EF
 B $E8FC,10,d10 #SPELLSTATS$E8FC
-M $E906,12 #HTML(#ANIMSPELL$E906,giantratcoloured )giant rat animation cycle
+M $E906,12 #HTML(#ANIMSPELL$E906|giantratcoloured| )giant rat animation cycle
 W $E906,2
 B $E908,1
 L $E906,3,4
-M $E912,3 #HTML(#SPELLSPRITE$E912,deadgiantratcoloured )dead giant rat
+M $E912,3 #HTML(#SPELLSPRITE$E912|deadgiantratcoloured| )dead giant rat
 W $E912,2
 B $E914,1
 
 @ $E915 label=centaur
 T $E915 #SPELLNAME$E915
 B $E922,10,d10 #SPELLSTATS$E922
-M $E92C,12 #HTML(#ANIMSPELL$E92C,centaurcoloured )centaur animation cycle
+M $E92C,12 #HTML(#ANIMSPELL$E92C|centaurcoloured| )centaur animation cycle
 W $E92C,2
 B $E92E,1
 L $E92C,3,4
-M $E938,3 #HTML(#SPELLSPRITE$E938,deadcentaurcoloured )dead centaur
+M $E938,3 #HTML(#SPELLSPRITE$E938|deadcentaurcoloured| )dead centaur
 W $E938,2
 B $E93A,1
 
 @ $E93B label=giant
 T $E93B #SPELLNAME$E93B
 B $E948,10,d10 #SPELLSTATS$E948
-M $E952,12 #HTML(#ANIMSPELL$E952,giantcoloured )giant animation cycle
+M $E952,12 #HTML(#ANIMSPELL$E952|giantcoloured| )giant animation cycle
 W $E952,2
 B $E954,1
 L $E952,3,4
-M $E95E,3 #HTML(#SPELLSPRITE$E95E,deadgiantcoloured )dead giant
+M $E95E,3 #HTML(#SPELLSPRITE$E95E|deadgiantcoloured| )dead giant
 W $E95E,2
 B $E960,1
 
 @ $E961 label=golden_dragon
 T $E961 #SPELLNAME$E961
 B $E96E,10,d10 #SPELLSTATS$E96E
-M $E978,12 #HTML(#ANIMSPELL$E978,goldendragoncoloured )golden dragon animation cycle
+M $E978,12 #HTML(#ANIMSPELL$E978|goldendragoncoloured| )golden dragon animation cycle
 W $E978,2
 B $E97A,1
 L $E978,3,4
-M $E984,3 #HTML(#SPELLSPRITE$E984,deadgoldendragoncoloured )dead golden dragon
+M $E984,3 #HTML(#SPELLSPRITE$E984|deadgoldendragoncoloured| )dead golden dragon
 W $E984,2
 B $E986,1
 
 @ $E987 label=dark_citadel
 T $E987 #SPELLNAME$E987
 B $E994,10,d10 #SPELLSTATS$E994
-M $E99E,12 #HTML(#ANIMSPELL$E99E,darkcitadelcoloured )dark citadel animation cycle
+M $E99E,12 #HTML(#ANIMSPELL$E99E|darkcitadelcoloured| )dark citadel animation cycle
 W $E99E,2
 B $E9A0,1
 L $E99E,3,4
-M $E9AA,3 #HTML(#SPELLSPRITE$E9AA,deaddarkcitadelcoloured )dead dark citadel ???
+M $E9AA,3 #HTML(#SPELLSPRITE$E9AA|deaddarkcitadelcoloured| )dead dark citadel ???
 W $E9AA,2
 B $E9AC,1
 
 @ $E9AD label=magic_castle
 T $E9AD #SPELLNAME$E9AD
 B $E9BA,10,d10 #SPELLSTATS$E9BA
-M $E9C4,12 #HTML(#ANIMSPELL$E9C4,magiccastlecoloured )magic castle animation cycle
+M $E9C4,12 #HTML(#ANIMSPELL$E9C4|magiccastlecoloured| )magic castle animation cycle
 W $E9C4,2
 B $E9C6,1
 L $E9C4,3,4
@@ -4042,7 +4039,7 @@ L $E9C4,3,4
 @ $E9D0 label=shadow_wood
 T $E9D0 #SPELLNAME$E9D0
 B $E9DD,10,d10 #SPELLSTATS$E9DD
-M $E9E7,12 #HTML(#ANIMSPELL$E9E7,shadowwoodcoloured )shadow wood animation cycle
+M $E9E7,12 #HTML(#ANIMSPELL$E9E7|shadowwoodcoloured| )shadow wood animation cycle
 W $E9E7,2
 B $E9E9,1
 L $E9E7,3,4
@@ -4050,7 +4047,7 @@ L $E9E7,3,4
 @ $E9F3 label=magic_wood
 T $E9F3 #SPELLNAME$E9F3
 B $EA00,10,d10 #SPELLSTATS$EA00
-M $EA0A,12 #HTML(#ANIMSPELL$EA0A,magicwoodcoloured )magic wood animation cycle
+M $EA0A,12 #HTML(#ANIMSPELL$EA0A|magicwoodcoloured| )magic wood animation cycle
 W $EA0A,2
 B $EA0C,1
 L $EA0A,3,4
@@ -4058,18 +4055,18 @@ L $EA0A,3,4
 @ $EA16 label=wall
 T $EA16 #SPELLNAME$EA16
 B $EA23,10,d10 #SPELLSTATS$EA23
-; M $EA2D,12 #HTML(#ANIMSPELL$EA2D,wallcoloured )wall
-M $EA2D,12 #HTML(#SPELLSPRITE$EA2D,wallcoloured )wall
+; M $EA2D,12 #HTML(#ANIMSPELL$EA2D|wallcoloured| )wall
+M $EA2D,12 #HTML(#SPELLSPRITE$EA2D|wallcoloured| )wall
 W $EA2D,2
 B $EA2F,1
 L $EA2D,3,4
 
 g $EA39 wizard data
 ; macro to print wizard name for wizard n by looking up address and length in games message table 1
-@ $EA39 replace=/#WIZARDNAME\i/#FOR#(0,#EVAL(#PEEK($CE79+(\1*4))-1))||$n|#CHR(#PEEK(#EVAL(#PEEK($CE77+(\1*4))+(#PEEK($CE78+(\1*4))*256)+$n)))||
+@ $EA39 expand=#DEFINE1(WIZARDNAME,#FOR(0,#EVAL(#PEEK($CE79+({0}*4))-1))||$n|#CHR(#PEEK(#DPEEK($CE77+({0}*4))+$n))||)
 
-; macro to print out spell stats from memory
-@ $E440 replace=/#WIZARDSTATS\i/Combat=#PEEK(\1) Ranged combat=#PEEK(\1+1) Range=#PEEK(\1+2) Defence=#PEEK(\1+3) Movement allowance=#PEEK(\1+4) Manouvre rating=#PEEK(\1+5) Magic resistance=#PEEK(\1+6) Spells=#PEEK(\1+7) Ability=#PEEK(\1+8) ?=#PEEK(\1+9)
+; macro to print out wizard stats from memory
+@ $EA39 expand=#DEFINE1(WIZARDSTATS,Combat=#PEEK({0}) Ranged combat=#PEEK({0}+1) Range=#PEEK({0}+2) Defence=#PEEK({0}+3) Movement allowance=#PEEK({0}+4) Manouvre rating=#PEEK({0}+5) Magic resistance=#PEEK({0}+6) Spells=#PEEK({0}+7) Ability=#PEEK({0}+8) ?=#PEEK({0}+9))
 
 D $EA39 The first two names memory in the released tape were obviously written over existing strings. Based on Gollop's blog post about the origins of Chaos they were most likely JEVARELL and LARGEFART.
 D $EA39 This data is overwritten during character creation at the start of the game
@@ -4077,7 +4074,7 @@ D $EA39 This data is overwritten during character creation at the start of the g
 @ $EA39 label=wizard_0
 T $EA39 wizard 0 #WIZARDNAME0
 B $EA46,10,d10 #WIZARDSTATS$EA46
-M $EA50,12 #HTML(#ANIMSPELL$EA50,wizard0coloured )
+M $EA50,12 #HTML(#ANIMSPELL$EA50|wizard0coloured| )
 W $EA50,2
 B $EA52,1
 L $EA50,3,4
@@ -4085,7 +4082,7 @@ L $EA50,3,4
 @ $EA5C label=wizard_1
 T $EA5C wizard 1 #WIZARDNAME1
 B $EA69,10,d10 #WIZARDSTATS$EA69
-M $EA73,12 #HTML(#ANIMSPELL$EA73,wizard1coloured )
+M $EA73,12 #HTML(#ANIMSPELL$EA73|wizard1coloured| )
 W $EA73,2
 B $EA75,1
 L $EA73,3,4
@@ -4093,7 +4090,7 @@ L $EA73,3,4
 @ $EA7F label=wizard_2
 T $EA7F wizard 2 #WIZARDNAME2
 B $EA8C,10,d10 #WIZARDSTATS$EA8C
-M $EA96,12 #HTML(#ANIMSPELL$EA96,wizard2coloured )
+M $EA96,12 #HTML(#ANIMSPELL$EA96|wizard2coloured| )
 W $EA96,2
 B $EA98,1
 L $EA96,3,4
@@ -4101,7 +4098,7 @@ L $EA96,3,4
 @ $EAA2 label=wizard_3
 T $EAA2 wizard 3 #WIZARDNAME3
 B $EAAF,10,d10 #WIZARDSTATS$EAAF
-M $EAB9,12 #HTML(#ANIMSPELL$EAB9,wizard3coloured )
+M $EAB9,12 #HTML(#ANIMSPELL$EAB9|wizard3coloured| )
 W $EAB9,2
 B $EABB,1
 L $EAB9,3,4
@@ -4109,7 +4106,7 @@ L $EAB9,3,4
 @ $EAC5 label=wizard_4
 T $EAC5 wizard 4 #WIZARDNAME4
 B $EAD2,10,d10 #WIZARDSTATS$EAD2
-M $EADC,12 #HTML(#ANIMSPELL$EADC,wizard4coloured )
+M $EADC,12 #HTML(#ANIMSPELL$EADC|wizard4coloured| )
 W $EADC,2
 B $EADE,1
 L $EADC,3,4
@@ -4117,7 +4114,7 @@ L $EADC,3,4
 @ $EAE8 label=wizard_5
 T $EAE8 wizard 5 #WIZARDNAME5
 B $EAF5,10,d10 #WIZARDSTATS$EAF5
-M $EAFF,12 #HTML(#ANIMSPELL$EAFF,wizard5coloured )
+M $EAFF,12 #HTML(#ANIMSPELL$EAFF|wizard5coloured| )
 W $EAFF,2
 B $EB01,1
 L $EAFF,3,4
@@ -4125,7 +4122,7 @@ L $EAFF,3,4
 @ $EB0B label=wizard_6
 T $EB0B wizard 6 #WIZARDNAME6
 B $EB18,10,d10 #WIZARDSTATS$EB18
-M $EB22,12 #HTML(#ANIMSPELL$EB22,wizard6coloured )
+M $EB22,12 #HTML(#ANIMSPELL$EB22|wizard6coloured| )
 W $EB22,2
 B $EB24,1
 L $EB22,3,4
@@ -4133,7 +4130,7 @@ L $EB22,3,4
 @ $EB2E label=wizard_7
 T $EB2E wizard 7 #WIZARDNAME7
 B $EB3B,10,d10 #WIZARDSTATS$EB3B
-M $EB45,12 #HTML(#ANIMSPELL$EB45,wizard7coloured )
+M $EB45,12 #HTML(#ANIMSPELL$EB45|wizard7coloured| )
 W $EB45,2
 B $EB47,1
 L $EB45,3,4
