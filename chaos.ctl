@@ -35,12 +35,142 @@ C $7D53 Set HL to address of #R$AC1E.
 C $7D5B Add value of #R$AC0E variable as offset.
 C $7D5D Store $00 in byte pointed to by HL and return.
 
+; macro to print out spell data
+@ $7D60 replace=|#SPELLDATA\i|Message #PEEK(\1): ???=#PEEK(\1+1), Max distance=#EVAL(#PEEK(\1+2)/2), Chaos/Law=#IF(#PEEK(\1+3)>127)(-#EVAL(256-(#PEEK(\1+3))),#PEEK(\1+3)), ???=#PEEK(\1+4)
+
 @ $7D60 label=spells_table
 b $7D60 Spells table.
 D $7D60 5 bytes of spell data followed by address of spell routine.
-B $7D60,5
+B $7D60,5 #SPELLDATA$7D60
 W $7D65,2
-L $7D60,7,$41
+B $7D67,5 #SPELLDATA$7D67
+W $7D6C,2
+B $7D6E,5 #SPELLDATA$7D6E
+W $7D73,2
+B $7D75,5 #SPELLDATA$7D75
+W $7D7A,2
+B $7D7C,5 #SPELLDATA$7D7C
+W $7D81,2
+B $7D83,5 #SPELLDATA$7D83
+W $7D88,2
+B $7D8A,5 #SPELLDATA$7D8A
+W $7D8F,2
+B $7D91,5 #SPELLDATA$7D91
+W $7D96,2
+B $7D98,5 #SPELLDATA$7D98
+W $7D9D,2
+B $7D9F,5 #SPELLDATA$7D9F
+W $7DA4,2
+B $7DA6,5 #SPELLDATA$7DA6
+W $7DAB,2
+B $7DAD,5 #SPELLDATA$7DAD
+W $7DB2,2
+B $7DB4,5 #SPELLDATA$7DB4
+W $7DB9,2
+B $7DBB,5 #SPELLDATA$7DBB
+W $7DC0,2
+B $7DC2,5 #SPELLDATA$7DC2
+W $7DC7,2
+B $7DC9,5 #SPELLDATA$7DC9
+W $7DCE,2
+B $7DD0,5 #SPELLDATA$7DD0
+W $7DD5,2
+B $7DD7,5 #SPELLDATA$7DD7
+W $7DDC,2
+B $7DDE,5 #SPELLDATA$7DDE
+W $7DE3,2
+B $7DE5,5 #SPELLDATA$7DE5
+W $7DEA,2
+B $7DEC,5 #SPELLDATA$7DEC
+W $7DF1,2
+B $7DF3,5 #SPELLDATA$7DF3
+W $7DF8,2
+B $7DFA,5 #SPELLDATA$7DFA
+W $7DFF,2
+B $7E01,5 #SPELLDATA$7E01
+W $7E06,2
+B $7E08,5 #SPELLDATA$7E08
+W $7E0D,2
+B $7E0F,5 #SPELLDATA$7E0F
+W $7E14,2
+B $7E16,5 #SPELLDATA$7E16
+W $7E1B,2
+B $7E1D,5 #SPELLDATA$7E1D
+W $7E22,2
+B $7E24,5 #SPELLDATA$7E24
+W $7E29,2
+B $7E2B,5 #SPELLDATA$7E2B
+W $7E30,2
+B $7E32,5 #SPELLDATA$7E32
+W $7E37,2
+B $7E39,5 #SPELLDATA$7E39
+W $7E3E,2
+B $7E40,5 #SPELLDATA$7E40
+W $7E45,2
+B $7E47,5 #SPELLDATA$7E47
+W $7E4C,2
+B $7E4E,5 #SPELLDATA$7E4E
+W $7E53,2
+B $7E55,5 #SPELLDATA$7E55
+W $7E5A,2
+B $7E5C,5 #SPELLDATA$7E5C
+W $7E61,2
+B $7E63,5 #SPELLDATA$7E63
+W $7E68,2
+B $7E6A,5 #SPELLDATA$7E6A
+W $7E6F,2
+B $7E71,5 #SPELLDATA$7E71
+W $7E76,2
+B $7E78,5 #SPELLDATA$7E78
+W $7E7D,2
+B $7E7F,5 #SPELLDATA$7E7F
+W $7E84,2
+B $7E86,5 #SPELLDATA$7E86
+W $7E8B,2
+B $7E8D,5 #SPELLDATA$7E8D
+W $7E92,2
+B $7E94,5 #SPELLDATA$7E94
+W $7E99,2
+B $7E9B,5 #SPELLDATA$7E9B
+W $7EA0,2
+B $7EA2,5 #SPELLDATA$7EA2
+W $7EA7,2
+B $7EA9,5 #SPELLDATA$7EA9
+W $7EAE,2
+B $7EB0,5 #SPELLDATA$7EB0
+W $7EB5,2
+B $7EB7,5 #SPELLDATA$7EB7
+W $7EBC,2
+B $7EBE,5 #SPELLDATA$7EBE
+W $7EC3,2
+B $7EC5,5 #SPELLDATA$7EC5
+W $7ECA,2
+B $7ECC,5 #SPELLDATA$7ECC
+W $7ED1,2
+B $7ED3,5 #SPELLDATA$7ED3
+W $7ED8,2
+B $7EDA,5 #SPELLDATA$7EDA
+W $7EDF,2
+B $7EE1,5 #SPELLDATA$7EE1
+W $7EE6,2
+B $7EE8,5 #SPELLDATA$7EE8
+W $7EED,2
+B $7EEF,5 #SPELLDATA$7EEF
+W $7EF4,2
+B $7EF6,5 #SPELLDATA$7EF6
+W $7EFB,2
+B $7EFD,5 #SPELLDATA$7EFD
+W $7F02,2
+B $7F04,5 #SPELLDATA$7F04
+W $7F09,2
+B $7F0B,5 #SPELLDATA$7F0B
+W $7F10,2
+B $7F12,5 #SPELLDATA$7F12
+W $7F17,2
+B $7F19,5 #SPELLDATA$7F19
+W $7F1E,2
+B $7F20,5 #SPELLDATA$7F20
+W $7F25,2
 
 @ $7F27 label=s_cursor_sprite
 b $7F27 S cursor sprite data.
@@ -961,9 +1091,8 @@ D $90D7 table of attribute bytes defining the colours for wizards (used by the w
 @ $90D7 label=ATTAB
 B $90D7 ATTAB
 
-b $90DF
+b $90DF ROMP
 @ $90DF label=ROMP
-B $90DF ROMP
 
 w $90E0 wizard character sprites table
 D $90E0 table of pointers to the eight wizard character sprites (used by the character picker)
@@ -995,8 +1124,8 @@ B $913F,$0A
 @ $9149 label=sound_effect_7
 B $9149,$0A
 
-@ $9153 label=chaos_law
-b $9153 current chaos/law*
+@ $9153 label=unknown09
+b $9153 unknown09
 @ $9154 label=HISPEL
 @ $9154 ssub=DEFW $7F47+$2F
 w $9154 HISPEL
@@ -1078,7 +1207,7 @@ C $926A Print #mprintlink($57) at coordinates (0,22)
 C $9272 call #R$92AA
 @ $9275 label=cast_s_key_loop
 C $9275 call KEYBOARD routine in ROM returning character code in A
-C $9278 set "something" to zero ???
+C $9278 set #R$9384 to zero ???
 C $927D if A equals '1' then call #R$9385 and jump back to #R$919C
 @ $9287 label=cast_s_not_1
 C $9287 else if A equals '4' then jump to #R$929E
@@ -1125,27 +1254,39 @@ C $92F3 call #R$C5EE and jump back to #R$919C in #R$9168 routine
 
 c $92F9 CHAN_C
 @ $92F9 label=CHAN_C
+C $92F9 Add #R$937B - 1 to address of #R$7D60 7 times to get address of current spell entry.
+@ $9306 label=spell_add_loop
+C $930A Store address in #R$9380.
+C $930E Load Chaos/Law value from spell data and store in #R$937F.
+C $9314 If #R$C3A4 is not zero jump to #R$9324.
+C $931A Copy ??? value from spell data into #R$9153 and jump to #R$9353.
+@ $9324 label=not_neutral
+C $9324 If #R$C3A4 is negative jump to #R$933E.
+C $9327 Copy value (lawfulness) into E
+C $9328 If #R$937F is less than or equal to zero jump to #R$931A.
+C $9331 Divide lawfulness by 4 and add ??? value from spell data.
+C $9339 Store in #R$9153 and jump to #R$9353.
+C $933E
 
-b $937B variables
+@ $933E label=chaotic
+
 @ $937B label=CURSP
-B $937B CURSP
+b $937B CURSP
 @ $937C label=unknown03
-W $937C unknown03
+w $937C unknown03
 @ $937E label=unknown04
-B $937E unknown04
+b $937E unknown04
 @ $937F label=unknown05
-B $937F unknown05
-@ $9380 label=unknown06
-@ $9380 ssub=DEFW $7D60+$E7
-W $9380 unknown06
+b $937F unknown05
+@ $9380 label=current_spell_pointer
+w $9380 Address of spell entry in #R$7D60.
 @ $9382 label=unknown07
-@ $9382 ssub=DEFW $7F47+$29
-W $9382 unknown07
+w $9382 unknown07
 @ $9384 label=unknown08
-B $9384 unknown08
+b $9384 unknown08
 
 c $9385 routine05
-@ $93CB label=routine05
+@ $9385 label=routine05
 @ $93CB ssub=LD A,($937C+$1)
 @ $93D0 ssub=LD ($937C+1),A
 @ $949A ssub=LD HL,$9156+$8
@@ -1195,8 +1336,8 @@ C $962A add #R$AC0E as offset in table
 C $9631 copy byte at offset into "unknown ***" ???
 C $9632 if byte is non zero then jump forward to #R$964C
 C $9638 else get a random number between 11 and 15 in A
-C $963B load current chaos/law into E, increment it, and compare with random value
-C $9641 if current chaos/law + 1 is greater than random value then skip to #R$964C
+C $963B load #R$9153 into E, increment it, and compare with random value
+C $9641 if #R$9153 + 1 is greater than random value then skip to #R$964C
 C $9644 else set spell successful flag to zero and skip forward to #R$9659 ???
 C $964C set spell successful flag to one
 C $9651 add #R$937F to #R$C3A4 and store result in #R$C3A4 ???
@@ -1348,7 +1489,7 @@ c $9B85 routine17
 c $9BB3 routine18
 @ $9BB3 label=routine18
 
-b $9C0E
+b $9C0E unknown80
 @ $9C0E label=unknown80
 
 c $9C0F routine19
@@ -2550,7 +2691,7 @@ b $C26B sound_effect_20
 b $C275 sound_effect_21
 
 @ $C27F label=sound_effect_8
-b $C27F
+b $C27F sound_effect_8
 @ $C289 label=engaged_sound_effect
 b $C289 "ENGAGED TO ENEMY" sound effect
 @ $C293 label=sound_effect_9
@@ -3396,7 +3537,7 @@ b $E440 object data table
 @ $E440 replace=/#SPELLNAME\i/#FOR0,12||$n|#CHR(#PEEK(\1+$n))||
 
 ; macro to print out spell stats from memory
-@ $E440 replace=/#SPELLSTATS\i/Combat=#PEEK(\1) Ranged combat=#PEEK(\1+1) Range=#PEEK(\1+2) Defence=#PEEK(\1+3) Movement allowance=#PEEK(\1+4) Manouvre rating=#PEEK(\1+5) Magic resistance=#PEEK(\1+6) Casting chance=#PEEK(\1+7) ChaosLaw=#PEEK(\1+8) ?=#PEEK(\1+9)
+@ $E440 replace=|#SPELLSTATS\i|Combat=#PEEK(\1) Ranged combat=#PEEK(\1+1) Range=#PEEK(\1+2) Defence=#PEEK(\1+3) Movement allowance=#PEEK(\1+4) Manouvre rating=#PEEK(\1+5) Magic resistance=#PEEK(\1+6) Casting chance=#PEEK(\1+7) Chaos/Law=#IF(#PEEK(\1+8)>127)(-#EVAL(256-(#PEEK(\1+8))) ,#PEEK(\1+8)) ?=#PEEK(\1+9)
 
 ; macro to create an animated png from pointers to sprites and attributes
 @ $E440 replace=/#ANIMSPELL\i,(\w+)/#FOR0,3||$n|#UDGARRAY#(2,#PEEK(\1+($n*3)+2),4;#EVAL(#PEEK(\1+($n*3))+(#PEEK((\1+($n*3))+1))*256)-#EVAL(#PEEK(\1+($n*3))+(#PEEK((\1+($n*3))+1))*256+$1F)-8)(*frame$n)|| #UDGARRAY*frame0;frame1;frame2;frame3(\2)
@@ -3832,7 +3973,7 @@ b $EA39 wizard data
 @ $EA39 replace=/#WIZARDNAME\i/#FOR#(0,#EVAL(#PEEK($CE79+(\1*4))-1))||$n|#CHR(#PEEK(#EVAL(#PEEK($CE77+(\1*4))+(#PEEK($CE78+(\1*4))*256)+$n)))||
 
 ; macro to print out spell stats from memory
-@ $E440 replace=/#WIZARDSTATS\i/???=#PEEK(\1) ???=#PEEK(\1+1) ???=#PEEK(\1+2) ???=#PEEK(\1+3) ???=#PEEK(\1+4) ???=#PEEK(\1+5) ???=#PEEK(\1+6) Spells=#PEEK(\1+7) Ability=#PEEK(\1+8) ?=#PEEK(\1+9)
+@ $E440 replace=/#WIZARDSTATS\i/CCombat=#PEEK(\1) Ranged combat=#PEEK(\1+1) Range=#PEEK(\1+2) Defence=#PEEK(\1+3) Movement allowance=#PEEK(\1+4) Manouvre rating=#PEEK(\1+5) Magic resistance=#PEEK(\1+6) Spells=#PEEK(\1+7) Ability=#PEEK(\1+8) ?=#PEEK(\1+9)
 
 D $EA39 The first two names memory in the released tape were obviously written over existing strings. Based on Gollop's blog post about the origins of Chaos they were most likely JEVARELL and LARGEFART.
 D $EA39 This data is overwritten during character creation at the start of the game
