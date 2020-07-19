@@ -9,14 +9,14 @@ LinkOperands=CALL,DEFW,DJNZ,JP,JR,LD
 Copyright=&#169; Games Workshop 1985. Disassembly by Guesser and szeliga &#169; 2020
 AddressAnchor={address:04X}
 
+[Links]
+GameStatusBuffer=Game variables
+
+[PageHeaders]
+Asm-g=Game variable
+
 [Paths]
 CodeFiles={address:04X}.html
 
 [Index:Reference:Reference]
 Facts
-Credits
-
-[PageContent:Credits]
-<div class="box box-1">
-foo bar baz
-</div>
