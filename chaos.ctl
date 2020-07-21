@@ -1072,7 +1072,7 @@ D $907B generate four random numbers at address held in #R$CD86 based on the len
 C $907B preserve HL, DE, and BC registers
 @ $907E label=WAIT1
 C $907E stack BC again
-C $907F call KEY-SCAN in Spectrum ROM
+C $907F call KEY-SCAN in Spectrum ROM to see if a key was pressed.
 C $9082 pop BC
 C $9083 increment C
 C $9084 copy E register to A (key value returned in the range 0 to 39)
@@ -2500,7 +2500,7 @@ c $BBB0 wait for a key and set SEED based on how long no key is pressed
 C $BBB0 preserve HL, DE, BC
 C $BBB3 skip to end of routine if current player is not human
 C $BBB9 preserve BC
-C $BBBA call KEY-SCAN in ROM
+C $BBBA call KEY-SCAN in ROM to see if a key was pressed.
 C $BBBD restore BC
 C $BBBE increment counter (used to set SEED later)
 C $BBBF loop back to #R$BBB9 if no key was pressed
@@ -2513,7 +2513,7 @@ c $BBCC wait for no key to be pressed and set SEED based on how long a key is pr
 C $BBCC preserve HL, DE, BC
 C $BBCF skip to end of routine if current player is not human
 C $BBD5 preserve BC
-C $BBD6 call KEY-SCAN in ROM
+C $BBD6 call KEY-SCAN in ROM to see if a key was pressed.
 C $BBD9 restore BC
 C $BBDA increment counter (used to set SEED later)
 C $BBDB loop back to #R$BBD5 if a key was pressed
@@ -2604,7 +2604,7 @@ C $BCC3 load #R$D391 into A and add $29 as offset to wizards in #R$CDD3(game mes
 C $BCC8 set BC to coordinates (0,22) and set ATTR-T to $46 (bright yellow on black)
 C $BCD0 Print wizard name
 C $BCD3 Print #MPRINTLINK($5F)
-C $BCD8 call KEY-SCAN routine in ROM
+C $BCD8 call KEY-SCAN routine in ROM to see if a key was pressed.
 C $BCDB if E is not $FF jump back to #R$BCC0. This prints messages again while key is held down.
 C $BCDE call #R$BED7 to clear bottom of screen
 C $BCE1 call #R$C0DD ???
@@ -3499,8 +3499,55 @@ C $DF66 call #R$DF0F to print character $22 (bottom left block of sprite)
 C $DF6B move one character position right
 C $DF6C call #R$DF0F to print character $23 (bottom right block of sprite) then return
 
-c $DF72 routine87
-@ $DF72 label=routine87
+c $DF72 Update sprite for any objects which need to animate, and update counters.
+D $DF72 Each position on the map has an associated animation timeout and frame number in #R$E0C0 and #R$E160.
+D $DF72 For all map positions containing an object, decrement the timeout until it reaches 1, then cycle to the next frame and reset the timeout from the #R$E440(object data table).
+@ $DF72 label=update_animation
+C $DF72 Preserve registers.
+C $DF76 Preserve value of ATTR-T.
+C $DF7A Preserve value of CHARS.
+C $DF7E Set HL to address of #R$E01F.
+C $DF81 Call KEY-SCAN routine in Spectrum ROM to see if a key was pressed.
+C $DF86 If CAPS SHIFT is pressed jump to #R$DF9D.
+@ $DF8B label=next_object_entry
+C $DF8B Else read entry from #R$E01F.
+C $DF8C If value is $FF jump to #R$DF9D.
+C $DF90 Else if value is not $00 jump to #R$DFAA.
+@ $DF93 label=check_zero
+C $DF93 If object is $01 set it to zero.
+@ $DF9A label=not_1
+C $DF9A Move on to next address and jump back to #R$DF8B.
+@ $DF9D label=end_of_table
+C $DF9D Restore value of CHARS.
+C $DFA1 Restore value of ATTR-T.
+C $DFA5 Restore registers and return.
+@ $DFAA label=object_not_zero
+C $DFAA Preserve position in #R$E01F and object number.
+C $DFAC If corresponding entry in #R$E0C0 is $01 jump to #R$DFB9.
+C $DFB4 Else decrement it and jump back to #R$DF93.
+@ $DFB9 label=animation_delay_timeout
+C $DFB9 Restore object number and preserve position in #R$E0C0.
+C $DFBB Set HL to address of first object.
+C $DFBE Decrement object number (to make first object 0).
+C $DFBF Double it and add to HL.
+C $DFC4 Load object pointer into BC.
+C $DFC7 Load animation delay attribute from object.
+C $DFCC Swap address of delay attribute into DE.
+C $DFCD Restore position in #R$E0C0 and store animation delay there.
+C $DFCF Add $0A to get corresponding address in #R$E160 and load it.
+C $DFD4 Increment the frame number.
+C $DFD5 If 4 reset to frame 0 (loop the animation).
+@ $DFDA label=not_4
+C $DFDA If 5 reset to frame 4 (dead creature sprite).
+@ $DFDF label=not_5
+C $DFDF Update value in #R$E160.
+C $DFE0 Swap address of animation delay attribute back into HL and increment to address of first sprite pointer.
+C $DFE2 Add frame number * 3 to get to required pointer.
+C $DFE8 Store sprite pointer in #R$DF4A.
+C $DFEF Load attribute for sprite and copy to ATTR-T.
+C $DFF4 Restore position in #R$E01F and store in #R$E005.
+C $DFF8 Convert position to coordinates and store in #R$DF4C then print the sprite.
+C $E003 Jump back to #R$DF93.
 
 @ $E005 label=unknown66
 g $E005 unknown66
@@ -3516,23 +3563,32 @@ C $E013 Divide by 8 to get row and store in H.
 C $E010 Multiply offset by 2 and mask bits to get column and store in L.
 C $E01C Increment both coordinates to account for border and return.
 
-g $E01F map_area_object_table
-@ $E01F label=map_area_object_table
-B $E01F,$A0 map area object code table
+@ $E01F label=map_object_table
+D $E01F Table is 16 columns by 10 rows, but rightmost column ($E0xE) is unused. This holds the object number for each map position.
+g $E01F map_object_table
+B $E01F Object codes for each map position.
+B $E0BF End of table marker.
 
-u $E0BF
+@ $E0C0 label=map_animation_timeout_table
+g $E0C0 map_animation_timeout_table
+D $E0C0 Table is 16 columns by 10 rows.
 
-g $E0C0 other_map_area_tables
-@ $E0C0 label=second_map_area_table
-B $E0C0,$A0 second_map_area_table
-@ $E160 label=third_map_area_table
-B $E160,$A0 third_map_area_table
-@ $E200 label=fourth_map_area_table
-B $E200,$A0 fourth_map_area_table
-@ $E2A0 label=fifth_map_area_table
-B $E2A0,$A0 fifth_map_area_table
-@ $E340 label=sixth_map_area_table
-B $E340,$A0 sixth_map_area_table
+@ $E160 label=map_animation_frame_table
+g $E160 map_animation_frame_table
+D $E160 Table is 16 columns by 10 rows. This holds the current animation frame for each map position.
+B $E160 Frame numbers $00 to $03, or $04 for dead.
+
+@ $E200 label=fourth_map_table
+g $E200 fourth_map_table
+D $E200 Table is 16 columns by 10 rows.
+
+@ $E2A0 label=fifth_map_table
+g $E2A0 fifth_map_table
+D $E2A0 Table is 16 columns by 10 rows.
+
+@ $E340 label=sixth_map_table
+g $E340 sixth_map_table
+D $E340 Table is 16 columns by 10 rows.
 
 w $E3E0 object address table
 @ $E3E0 label=nothing_pointer
@@ -3636,11 +3692,11 @@ W $E43E Object 48: Wizard 7.
 @ $E440 expand=#DEFINE1,1(ANIMSPELL,#FOR(0,3)||$n|#SPRITE#(({0}+($n*3)))(*frame$n)||#UDGARRAY*frame0;frame1;frame2;frame3({1}))
 @ $E440 expand=#DEFINE1,1(SPELLSPRITE,#SPRITE{0}({1}))
 @ $E440 expand=#DEFINE1,(SPELLNAME,#FOR(0,12)||$n|#CHR(#PEEK({0}+$n))||)
-@ $E440 expand=#DEFINE1(SPELLSTATS,Combat=#PEEK({0}) Ranged combat=#PEEK({0}+1) Range=#PEEK({0}+2) Defence=#PEEK({0}+3) Movement allowance=#PEEK({0}+4) Manouvre rating=#PEEK({0}+5) Magic resistance=#PEEK({0}+6) Casting chance=#PEEK({0}+7) Chaos/Law=#SIGNED(#PEEK({0}+8)) ?=#PEEK({0}+9))
+@ $E440 expand=#DEFINE1(SPELLSTATS,Combat=#PEEK({0})#RAW(,) Ranged combat=#PEEK({0}+1)#RAW(,) Range=#PEEK({0}+2)#RAW(,) Defence=#PEEK({0}+3)#RAW(,) Movement allowance=#PEEK({0}+4)#RAW(,) Manouvre rating=#PEEK({0}+5)#RAW(,) Magic resistance=#PEEK({0}+6)#RAW(,) Casting chance=#PEEK({0}+7)#RAW(,) Chaos/Law=#SIGNED(#PEEK({0}+8))#RAW(,) Animation delay=#PEEK({0}+9))
 
 b $E440 object data table
 @ $E440 label=nothing
-T $E440 nothing
+T $E440 Nothing
 B $E44D,10,d10 #SPELLSTATS$E44D
 M $E457,12 #HTML(#UDGARRAY2,$45,4;$EB51-$EB70-8(nothingcoloured))
 W $E457,2
@@ -4066,13 +4122,13 @@ g $EA39 wizard data
 @ $EA39 expand=#DEFINE1(WIZARDNAME,#FOR(0,#EVAL(#PEEK($CE79+({0}*4))-1))||$n|#CHR(#PEEK(#DPEEK($CE77+({0}*4))+$n))||)
 
 ; macro to print out wizard stats from memory
-@ $EA39 expand=#DEFINE1(WIZARDSTATS,Combat=#PEEK({0}) Ranged combat=#PEEK({0}+1) Range=#PEEK({0}+2) Defence=#PEEK({0}+3) Movement allowance=#PEEK({0}+4) Manouvre rating=#PEEK({0}+5) Magic resistance=#PEEK({0}+6) Spells=#PEEK({0}+7) Ability=#PEEK({0}+8) ?=#PEEK({0}+9))
+@ $EA39 expand=#DEFINE1(WIZARDSTATS,Combat=#PEEK({0})#RAW(,) Ranged combat=#PEEK({0}+1)#RAW(,) Range=#PEEK({0}+2)#RAW(,) Defence=#PEEK({0}+3)#RAW(,) Movement allowance=#PEEK({0}+4)#RAW(,) Manouvre rating=#PEEK({0}+5)#RAW(,) Magic resistance=#PEEK({0}+6)#RAW(,) Spells=#PEEK({0}+7)#RAW(,) Ability=#PEEK({0}+8)#RAW(,) Animation delay=#PEEK({0}+9))
 
 D $EA39 The first two names memory in the released tape were obviously written over existing strings. Based on Gollop's blog post about the origins of Chaos they were most likely JEVARELL and LARGEFART.
 D $EA39 This data is overwritten during character creation at the start of the game
 
 @ $EA39 label=wizard_0
-T $EA39 wizard 0 #WIZARDNAME0
+T $EA39 Wizard 0: #WIZARDNAME0
 B $EA46,10,d10 #WIZARDSTATS$EA46
 M $EA50,12 #HTML(#ANIMSPELL$EA50|wizard0coloured| )
 W $EA50,2
@@ -4080,7 +4136,7 @@ B $EA52,1
 L $EA50,3,4
 
 @ $EA5C label=wizard_1
-T $EA5C wizard 1 #WIZARDNAME1
+T $EA5C Wizard 1: #WIZARDNAME1
 B $EA69,10,d10 #WIZARDSTATS$EA69
 M $EA73,12 #HTML(#ANIMSPELL$EA73|wizard1coloured| )
 W $EA73,2
@@ -4088,7 +4144,7 @@ B $EA75,1
 L $EA73,3,4
 
 @ $EA7F label=wizard_2
-T $EA7F wizard 2 #WIZARDNAME2
+T $EA7F Wizard 2: #WIZARDNAME2
 B $EA8C,10,d10 #WIZARDSTATS$EA8C
 M $EA96,12 #HTML(#ANIMSPELL$EA96|wizard2coloured| )
 W $EA96,2
@@ -4096,7 +4152,7 @@ B $EA98,1
 L $EA96,3,4
 
 @ $EAA2 label=wizard_3
-T $EAA2 wizard 3 #WIZARDNAME3
+T $EAA2 Wizard 3: #WIZARDNAME3
 B $EAAF,10,d10 #WIZARDSTATS$EAAF
 M $EAB9,12 #HTML(#ANIMSPELL$EAB9|wizard3coloured| )
 W $EAB9,2
@@ -4104,7 +4160,7 @@ B $EABB,1
 L $EAB9,3,4
 
 @ $EAC5 label=wizard_4
-T $EAC5 wizard 4 #WIZARDNAME4
+T $EAC5 Wizard 4: #WIZARDNAME4
 B $EAD2,10,d10 #WIZARDSTATS$EAD2
 M $EADC,12 #HTML(#ANIMSPELL$EADC|wizard4coloured| )
 W $EADC,2
@@ -4112,7 +4168,7 @@ B $EADE,1
 L $EADC,3,4
 
 @ $EAE8 label=wizard_5
-T $EAE8 wizard 5 #WIZARDNAME5
+T $EAE8 Wizard 5: #WIZARDNAME5
 B $EAF5,10,d10 #WIZARDSTATS$EAF5
 M $EAFF,12 #HTML(#ANIMSPELL$EAFF|wizard5coloured| )
 W $EAFF,2
@@ -4120,7 +4176,7 @@ B $EB01,1
 L $EAFF,3,4
 
 @ $EB0B label=wizard_6
-T $EB0B wizard 6 #WIZARDNAME6
+T $EB0B Wizard 6: #WIZARDNAME6
 B $EB18,10,d10 #WIZARDSTATS$EB18
 M $EB22,12 #HTML(#ANIMSPELL$EB22|wizard6coloured| )
 W $EB22,2
@@ -4128,7 +4184,7 @@ B $EB24,1
 L $EB22,3,4
 
 @ $EB2E label=wizard_7
-T $EB2E wizard 7 #WIZARDNAME7
+T $EB2E Wizard 7: #WIZARDNAME7
 B $EB3B,10,d10 #WIZARDSTATS$EB3B
 M $EB45,12 #HTML(#ANIMSPELL$EB45|wizard7coloured| )
 W $EB45,2
