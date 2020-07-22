@@ -434,7 +434,7 @@ C $84F5 Store result back in #R$AC16 and return.
 c $84F7 Subversion spell.
 C $84F7 Jump to #R$853B if player is not human.
 C $84FD Clear bottom row of screen.
-C $8500 Set P-FLAGS to 3 (OVER).
+C $8500 Set P-FLAGS to 3 (OVER mode).
 C $8505 Call #R$BC96 ???
 C $8508 Call KEYBOARD routine in Spectrum ROM.
 C $850B If keypress is 'S' jump to #R$851B.
@@ -621,7 +621,7 @@ C $89F9 Set border to black.
 C $89FC Set ATTR-T to black.
 C $89FF Set ATTR-P to black.
 C $8A02 Set MASK-P to all transparent.
-C $8A07 Set P-FLAGS to 3.
+C $8A07 Set P-FLAGS to 3 (OVER mode).
 C $8A0C Disable interrupts.
 C $8A0D Call #R$C5EE ???
 C $8A10 Zero out 32 bytes at #R$AC16.
@@ -1251,7 +1251,7 @@ C $92C4 set ATTR-P to zero
 C $92C9 set MASK-P to 0xFF (print using existing attributes instead of ATTR-P)
 C $92CE call #R$C0DD ???
 C $92D1 enable interrupts and wait for the next interrupt
-C $92D3 set P-FLAG to $03 ???
+C $92D3 set P-FLAGS to $03 (OVER mode).
 C $92D8 wait for no key to be pressed
 C $92DB call #R$BC96 ???
 C $92DE call KEYBOARD routine in ROM returning character code in A
@@ -2589,54 +2589,65 @@ W $BC94
 
 c $BC96 routine41
 @ $BC96 label=routine41
-C $BC96 call KEYBOARD in ROM
-C $BC99 if decoded key is not 'I' then jump to #R$BCA3
-C $BC9D else call #R$C3B3
-C $BCA0 wait for interrupt, then jump to #R$BCE5
-C $BCA3 call KEYBOARD in ROM
-C $BCA6 if decoded key is greater than '8' or less than '1' then jump to #R$BCE5
-C $BCB0 subtract $31 to convert keycode into player number
-C $BCB2 If value is greater than or equal to #R$AC0F then jump to #R$BCE5
-C $BCB9 store number in #R$D391
-C $BCBC call #R$C0DD ???
-C $BCBF wait for interrupt then call #R$D392 ???
-C $BCC3 load #R$D391 into A and add $29 as offset to wizards in #R$CDD3(game messages table 1)
-C $BCC8 set BC to coordinates (0,22) and set ATTR-T to $46 (bright yellow on black)
-C $BCD0 Print wizard name
-C $BCD3 Print #MPRINTLINK($5F)
-C $BCD8 call KEY-SCAN routine in ROM to see if a key was pressed.
-C $BCDB if E is not $FF jump back to #R$BCC0. This prints messages again while key is held down.
-C $BCDE call #R$BED7 to clear bottom of screen
-C $BCE1 call #R$C0DD ???
-C $BCE4 wait for interrupt
-C $BCE5 load #R$BC94(cursor coordinates) into BC and push onto the stack
-C $BCEA call #R$BBE7 to move cursor depending on direction key pressed
-C $BCED pop #R$BC94(cursor coordinates) into HL
-C $BCEE push #R$BC94(cursor coordinates) onto stack again
-C $BCEF
+C $BC96 Call KEYBOARD in ROM.
+C $BC99 If decoded key is 'I' call #R$C3B3 to display information about the object at the current cursor position.
+C $BCA0 On return wait for next interrupt, then jump to #R$BCE5.
+@ $BCA3 label=not_I
+C $BCA3 Call KEYBOARD in ROM.
+C $BCA6 If decoded key is greater than '8' or less than '1' jump to #R$BCE5.
+C $BCB0 Subtract $31 to convert keycode into player number.
+C $BCB2 If value is greater than or equal to #R$AC0F jump to #R$BCE5.
+C $BCB9 Else store number in #R$D391.
+C $BCBC Call #R$C0DD ???
+C $BCBF Wait for next interrupt then call #R$D392 ???
+C $BCC3 Load #R$D391 into A and add $29 as offset to wizards in #R$CDD3(game messages table 1).
+C $BCC8 Set BC to coordinates (0,22) and set ATTR-T to $46 (bright yellow on black).
+C $BCD0 Print wizard name.
+C $BCD3 Print #MPRINTLINK($5F).
+C $BCD8 Call KEY-SCAN routine in ROM to see if a key was pressed.
+C $BCDB If E is not $FF jump back to #R$BCC0. This prints messages and flashes the wizard and his creatures again while key is held down.
+C $BCDE Clear bottom of screen.
+C $BCE1 Call #R$C0DD ???
+C $BCE4 Wait for next interrupt.
+@ $BCE5 label=test_cursor_key
+C $BCE5 Load #R$BC94(cursor coordinates) into BC and preserve on the stack.
+C $BCEA Call #R$BBE7 to move cursor depending on direction key pressed.
+C $BCED Restore old cursor coordinates into HL.
+C $BCEE Preserve new cursor coordinates on stack.
+C $BCEF Clear carry flag.
+C $BCF0 If cursor coordinates have changed call #R$BED7.
+C $BCF5 Restore new cursor coordinates and store in #R$BC94.
+C $BCFA Call #R$BDA5 to print cursor sprite at cursor coordinates.
+C $BCFD Set #R$AC12 to address of new coordinates in #R$E01F.
+C $BD03 Read value back pointlessly.
+C $BD06 Add $01E1 to get corresponding address in #R$E200.
+C $BD0A Copy entry into #R$AC10.
+C $BD0E Load address in #R$E01F again.
+C $BD11 Set ATTR-T to bright cyan on black.
+C $BD16 If object number is zero (nothing) jump to #R$BD88.
+C $BD1A Else print the current object name at coordinates (0,22).
+C $BD20 Set ATTR-T to bright green on black.
+C $BD25 If bit 3 of #R$AC10 is set print #MPRINTLINK($31).
+C $BD31 On return jump to #R$BD88 (Z flag is always set).
+C $BD33 Add $0141 to address to get corresponding entry in #R$E160.
+C $BD37 If animation frame is 4 print #MPRINTLINK($32) and jump to #R$BD88.
+C $BD43 Add $0140 to address to get corresponding entry in #R$E2A0.
+C $BD47 Set ATTR-T to bright white on black.
+C $BD4C
 
-C $BD1A Print at coordinates (0,22).
-C $BD20
-
-C $BD2C Print #MPRINTLINK($31).
-C $BD31
-
-C $BD3C Print #MPRINTLINK($32).
-C $BD41 Jump to #R$BD88.
-C $BD43
-
-c $BDA5 routine42
-@ $BDA5 label=routine42
-C $BDA5 call CHAN-OPEN in ROM to set output channel to 2
-C $BDAA load #R$BC94(cursor coordinates) into BC and call #R$BC8D
-C $BDB1 use PRINT-A routine in ROM to print AT control code
-C $BDB4 output the coordinates B,C using PRINT-A
-C $BDB8 print the first User Defined Graphic character
-C $BDBB print the second User Defined Graphic character
-C $BDBE increment B coordinate to move down a row
-C $BDBF print AT control code followed by coordinates B,C
-C $BDC6 print third and fourth User Defined Graphic characters
-C $BDCC load #R$BC94(cursor coordinates) into BC and return
+c $BDA5 Print cursor sprite.
+D $BDA5 
+@ $BDA5 label=print_cursor
+C $BDA5 Call CHAN-OPEN in ROM to set output channel to 2 (Screen).
+C $BDAA Load #R$BC94(cursor coordinates) into BC and convert to Spectrum screen coordinates.
+C $BDB1 Use PRINT-A routine in ROM to print AT control code.
+C $BDB4 Output the coordinates B,C using PRINT-A.
+C $BDB8 Print the first User Defined Graphic character.
+C $BDBB Print the second User Defined Graphic character.
+C $BDBE Increment B coordinate to move down a row.
+C $BDBF Print AT control code followed by coordinates B,C.
+C $BDC6 Print third and fourth User Defined Graphic characters.
+C $BDCC Load #R$BC94(cursor coordinates) into BC and return.
 
 c $BDD1 Get address of entry in #R$E01F.
 D $BDD1 Calculate address of entry in #R$E01F from coordinates in BC and return in HL.
