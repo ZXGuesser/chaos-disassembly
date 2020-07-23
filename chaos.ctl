@@ -2166,9 +2166,8 @@ g $AC10 unknown27
 @ $AC11 label=unknown28
 g $AC11 unknown28
 
-@ $AC12 label=cursor_position
-@ $AC12 ssub=DEFW $E01F+$9F
-g $AC12 position of cursor
+@ $AC12 label=object_table_entry_pointer
+g $AC12 Address of object table entry for current cursor position.
 W $AC12
 
 @ $AC14 ssub=DEFW $E01F+$9E
@@ -3334,11 +3333,37 @@ T $CFCB,$3C6,$1F,$09,$07,$20,$20,$20,$0E,$07,$15,$19,1,$0F,$14,$10,$20,$05,$05,$
 @ $D37B label=magic_sleep_string
 @ $D386 label=shadow_form_string
 
-@ $D391 label=unknown68
-g $D391 unknown68
+@ $D391 label=temp_wizard_number
+g $D391 temp_wizard_number ???
 
-c $D392 routine71
-@ $D392 label=routine71
+c $D392 Highlight objects belonging to #R$D391.
+D $D392 Objects are inverted by printing solid block characters using the ROM print routine with OVER flag set.
+@ $D392 label=highlight_objects
+C $D392 Disable interrupts and preserve registers.
+C $D397 Set HL to address of #R$E01F.
+C $D39A Set B to 195 as loop counter.
+@ $D39C label=highlight_objects_loop
+C $D39C Preserve address and loop counter.
+C $D39E If object number is zero jump to #R$D3BE.
+C $D3A2 Else add $0141 to get corresponding entry in #R$E160.
+C $D3A6 If animation frame is $04 (dead sprite) jump to #R$D3BE.
+C $D3AB Else add $00A0 to get corresponding entry in #R$E200.
+C $D3AF Read entry into A.
+C $D3B0 Subtract $01E1 to get corresponding entry in #R$E01F.
+C $D3B5 If low three bits (wizard number) of object properties equal #R$D391 jump to #R$D3C8.
+@ $D3BE label=ignore_object
+C $D3BE Restore loop counter and address in #R$E01F.
+C $D3C0 Increment address and loop back to #R$D39C for 160 iterations.
+C $D3C3 Restore registers and return.
+@ $D3C8 label=owner_matches
+C $D3C8 Store address of object properties entry in #R$E005.
+C $D3CB Call CHAN-OPEN in ROM to set output channel to 2 (Screen).
+C $D3D0 Convert address of entry to coordinates.
+C $D3D3 Use PRINT-A routine in ROM to print AT control code followed by coordinates H, L.
+C $D3DA Print filled block twice to invert pixels.
+C $D3E0 Print AT code followed by coordinates H+1, L.
+C $D3EA Print filled block twice to invert pixels.
+C $D3EE Jump back to #R$D3BE.
 
 u $D3F0
 
@@ -3581,11 +3606,11 @@ C $DFF4 Restore position in #R$E01F and store in #R$E005.
 C $DFF8 Convert position to coordinates and store in #R$DF4C then print the sprite.
 C $E003 Jump back to #R$DF93.
 
-@ $E005 label=unknown66
-g $E005 unknown66
+@ $E005 label=temp_entry_pointer
+g $E005 Temporary pointer to object table entry.
 W $E005
 
-c $E007 Calculate coordinates for an address in #R$E01F.
+c $E007 Calculate Spectrum screen coordinates for an entry in #R$E01F.
 @ $E007 label=address_to_coordinate
 C $E007 Load #R$E005 into HL.
 C $E00A Clear carry flag.
