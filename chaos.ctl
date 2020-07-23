@@ -2629,11 +2629,28 @@ C $BD1A Else print the current object name at coordinates (0,22).
 C $BD20 Set ATTR-T to bright green on black.
 C $BD25 If bit 3 of #R$AC10 is set print #MPRINTLINK($31).
 C $BD31 On return jump to #R$BD88 (Z flag is always set).
-C $BD33 Add $0141 to address to get corresponding entry in #R$E160.
+C $BD33 Else Add $0141 to address to get corresponding entry in #R$E160.
 C $BD37 If animation frame is 4 print #MPRINTLINK($32) and jump to #R$BD88.
-C $BD43 Add $0140 to address to get corresponding entry in #R$E2A0.
+C $BD43 Else Add $0140 to address to get corresponding entry in #R$E2A0.
 C $BD47 Set ATTR-T to bright white on black.
-C $BD4C
+C $BD4C If entry is not zero ??? jump to #R$BD5D.
+C $BD50 Else add $00A0 to address to get corresponding entry in #R$E340.
+C $BD54 If entry is zero ??? jump to #R$BD62.
+C $BD58 Else set ATTR-T to bright magenta on black.
+C $BD5D Print '#' character.
+C $BD62 If the object is a wizard jump to #R$BD88.
+C $BD6B Else get address of entry in #R$E200.
+C $BD6F Set ATTR-T to bright yellow on black.
+C $BD74 Print '(' character.
+C $BD7B Read entry from #R$E200 and mask lower 3 bits to get wizard number.
+C $BD7E Convert wizard number to object number and print the wizard name.
+C $BD83 Print ')' character.
+C $BD88 Perform a busy wait delay.
+@ $BD8A label=wait_outer_loop
+@ $BD8D label=wait_inner_loop
+C $BD92 Call #R$BDA5 to print cursor sprite at cursor coordinates.
+C $BD95 Return if object number at cursor position is zero.
+C $BD9B Else wait for three frames and set corresponding entry in #R$E0C0 to $01 then return.
 
 c $BDA5 Print cursor sprite.
 D $BDA5 
