@@ -1548,13 +1548,17 @@ g $A172 STRENG
 
 c $A173 WALKYS
 @ $A173 label=WALKYS
+D $A173 Clear bit 7 of every entry in #R$E200.
+C $A173 Set HL to address of #R$E200.
+C $A176 Set B to 159 as loop counter.
+C $A178 Clear bit 7 ??? of every entry and return.
 
 c $A17E GETPLA
 @ $A17E label=GETPLA
-C $A17E load word at #R$CD86 into HL
-C $A181 increment pointer and load byte into A
-C $A183 increment again and store back at #R$CD86
-C $A187 return
+C $A17E Load #R$CD86 into HL.
+C $A181 Increment pointer and load byte into A.
+C $A183 Increment again and store back at #R$CD86.
+C $A187 Return.
 
 @ $A188 label=explosion_sprite_pointer
 g $A188 sprite pointer for explosion routine
@@ -3606,9 +3610,9 @@ g $E160 map_animation_frame_table
 D $E160 Table is 16 columns by 10 rows. This holds the current animation frame for each map position.
 B $E160 Frame numbers $00 to $03, or $04 for dead.
 
-@ $E200 label=fourth_map_table
-g $E200 fourth_map_table
-D $E200 Table is 16 columns by 10 rows.
+@ $E200 label=map_object_properties_table
+g $E200 map_object_properties_table
+D $E200 Table is 16 columns by 10 rows. Bits 0-2 hold the wizard number that owns the object.
 
 @ $E2A0 label=fifth_map_table
 g $E2A0 fifth_map_table

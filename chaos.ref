@@ -15,6 +15,9 @@ GameStatusBuffer=Game variables
 [PageHeaders]
 Asm-g=Game variable
 
+[MemoryMap:GameStatusBuffer]
+EntryDescriptions=0
+
 [Paths]
 CodeFiles={address:04X}.html
 
