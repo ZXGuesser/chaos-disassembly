@@ -2780,11 +2780,31 @@ B $C077,$20 #HTML(#UDGARRAY*WOOP_Dsprite6(WOOP_Dsprite6))
 B $C097,$20 #HTML(#UDGARRAY*WOOP_Dsprite7(WOOP_Dsprite7))
 B $C0B7,$20 #HTML(#UDGARRAY*WOOP_Dsprite8(WOOP_Dsprite8))
 
-u $C0D7
+g $C0D7 unknown06
+@ $C0D7 label=unknown06
 
 c $C0D8 routine49
 @ $C0D8 label=routine49
-@ $C105 ssub=LD DE,$E0C0+1
+
+C $C0D8 Set #R$C0D7 ???
+C $C0DD Disable interrupts.
+C $C0DE Set B to 160 as loop counter.
+C $C0E0 Set HL to address of #R$E01F.
+C $C0E3 If object is not zero jump to #R$C0FF.
+C $C0E7 Preserve address.
+C $C0E8 Get offset within #R$E01F.
+C $C0EE Increment and mask off low nibble to get next column number.
+C $C0F1 Restore address.
+C $C0F2 If next column is zero jump to #R$C0FF.
+C $C0F4 Else set entry in #R$E01F to $01.
+C $C0F7 Set corresponding entry in #R$E160 to zero.
+C $C0FF Increment address to next entry in #R$E01F.
+C $C100 Loop for 160 iterations.
+C $C102 Fill #R$E0C0 with $01 ???
+C $C10F If #R$C0D7 is clear jump to #R$C11D
+C $C115 Else set ATTR-T to bright blue on black and draw border.
+C $C11D Clear #R$C0D7 ???
+C $C121 Enable interrupts and return.
 
 b $C123 sprite data for dragon breath
 @ $C123 label=dragon_breath_sprites
