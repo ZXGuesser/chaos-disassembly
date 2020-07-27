@@ -40,140 +40,140 @@ C $7D5B Add value of #R$AC0E variable as offset.
 C $7D5D Store $00 in byte pointed to by HL and return.
 
 ; macro to print out spell data
-@ $E440 expand=#DEFINE1(SPELLDATA,Message #PEEK({0}): Casting chance=#PEEK({0}+1)#RAW(,) Max distance=#EVAL(#PEEK({0}+2)/2)#RAW(,) Chaos/Law=#SIGNED(#PEEK({0}+3))#RAW(,) ???=#PEEK({0}+4))
+@ $E440 expand=#DEFINE1(SPELLDATA,Message #PEEK({0})#RAW(,) Casting chance=#PEEK({0}+1)#RAW(,) Max distance=#EVAL(#PEEK({0}+2)/2)#RAW(,) Chaos/Law=#SIGNED(#PEEK({0}+3))#RAW(,) ???=#PEEK({0}+4))
 
 @ $7D60 label=spells_table
 b $7D60 Spells table.
 D $7D60 5 bytes of spell data followed by address of spell routine.
-B $7D60,5 #SPELLDATA$7D60
+B $7D60,5 Spell 01: #SPELLDATA$7D60
 W $7D65,2
-B $7D67,5 #SPELLDATA$7D67
+B $7D67,5 Spell 02: #SPELLDATA$7D67
 W $7D6C,2
-B $7D6E,5 #SPELLDATA$7D6E
+B $7D6E,5 Spell 03: #SPELLDATA$7D6E
 W $7D73,2
-B $7D75,5 #SPELLDATA$7D75
+B $7D75,5 Spell 04: #SPELLDATA$7D75
 W $7D7A,2
-B $7D7C,5 #SPELLDATA$7D7C
+B $7D7C,5 Spell 05: #SPELLDATA$7D7C
 W $7D81,2
-B $7D83,5 #SPELLDATA$7D83
+B $7D83,5 Spell 06: #SPELLDATA$7D83
 W $7D88,2
-B $7D8A,5 #SPELLDATA$7D8A
+B $7D8A,5 Spell 07: #SPELLDATA$7D8A
 W $7D8F,2
-B $7D91,5 #SPELLDATA$7D91
+B $7D91,5 Spell 08: #SPELLDATA$7D91
 W $7D96,2
-B $7D98,5 #SPELLDATA$7D98
+B $7D98,5 Spell 09: #SPELLDATA$7D98
 W $7D9D,2
-B $7D9F,5 #SPELLDATA$7D9F
+B $7D9F,5 Spell 10: #SPELLDATA$7D9F
 W $7DA4,2
-B $7DA6,5 #SPELLDATA$7DA6
+B $7DA6,5 Spell 11: #SPELLDATA$7DA6
 W $7DAB,2
-B $7DAD,5 #SPELLDATA$7DAD
+B $7DAD,5 Spell 12: #SPELLDATA$7DAD
 W $7DB2,2
-B $7DB4,5 #SPELLDATA$7DB4
+B $7DB4,5 Spell 13: #SPELLDATA$7DB4
 W $7DB9,2
-B $7DBB,5 #SPELLDATA$7DBB
+B $7DBB,5 Spell 14: #SPELLDATA$7DBB
 W $7DC0,2
-B $7DC2,5 #SPELLDATA$7DC2
+B $7DC2,5 Spell 15: #SPELLDATA$7DC2
 W $7DC7,2
-B $7DC9,5 #SPELLDATA$7DC9
+B $7DC9,5 Spell 16: #SPELLDATA$7DC9
 W $7DCE,2
-B $7DD0,5 #SPELLDATA$7DD0
+B $7DD0,5 Spell 17: #SPELLDATA$7DD0
 W $7DD5,2
-B $7DD7,5 #SPELLDATA$7DD7
+B $7DD7,5 Spell 18: #SPELLDATA$7DD7
 W $7DDC,2
-B $7DDE,5 #SPELLDATA$7DDE
+B $7DDE,5 Spell 19: #SPELLDATA$7DDE
 W $7DE3,2
-B $7DE5,5 #SPELLDATA$7DE5
+B $7DE5,5 Spell 20: #SPELLDATA$7DE5
 W $7DEA,2
-B $7DEC,5 #SPELLDATA$7DEC
+B $7DEC,5 Spell 21: #SPELLDATA$7DEC
 W $7DF1,2
-B $7DF3,5 #SPELLDATA$7DF3
+B $7DF3,5 Spell 22: #SPELLDATA$7DF3
 W $7DF8,2
-B $7DFA,5 #SPELLDATA$7DFA
+B $7DFA,5 Spell 23: #SPELLDATA$7DFA
 W $7DFF,2
-B $7E01,5 #SPELLDATA$7E01
+B $7E01,5 Spell 24: #SPELLDATA$7E01
 W $7E06,2
-B $7E08,5 #SPELLDATA$7E08
+B $7E08,5 Spell 25: #SPELLDATA$7E08
 W $7E0D,2
-B $7E0F,5 #SPELLDATA$7E0F
+B $7E0F,5 Spell 26: #SPELLDATA$7E0F
 W $7E14,2
-B $7E16,5 #SPELLDATA$7E16
+B $7E16,5 Spell 27: #SPELLDATA$7E16
 W $7E1B,2
-B $7E1D,5 #SPELLDATA$7E1D
+B $7E1D,5 Spell 28: #SPELLDATA$7E1D
 W $7E22,2
-B $7E24,5 #SPELLDATA$7E24
+B $7E24,5 Spell 29: #SPELLDATA$7E24
 W $7E29,2
-B $7E2B,5 #SPELLDATA$7E2B
+B $7E2B,5 Spell 30: #SPELLDATA$7E2B
 W $7E30,2
-B $7E32,5 #SPELLDATA$7E32
+B $7E32,5 Spell 31: #SPELLDATA$7E32
 W $7E37,2
-B $7E39,5 #SPELLDATA$7E39
+B $7E39,5 Spell 32: #SPELLDATA$7E39
 W $7E3E,2
-B $7E40,5 #SPELLDATA$7E40
+B $7E40,5 Spell 33: #SPELLDATA$7E40
 W $7E45,2
-B $7E47,5 #SPELLDATA$7E47
+B $7E47,5 Spell 34: #SPELLDATA$7E47
 W $7E4C,2
-B $7E4E,5 #SPELLDATA$7E4E
+B $7E4E,5 Spell 35: #SPELLDATA$7E4E
 W $7E53,2
-B $7E55,5 #SPELLDATA$7E55
+B $7E55,5 Spell 36: #SPELLDATA$7E55
 W $7E5A,2
-B $7E5C,5 #SPELLDATA$7E5C
+B $7E5C,5 Spell 37: #SPELLDATA$7E5C
 W $7E61,2
-B $7E63,5 #SPELLDATA$7E63
+B $7E63,5 Spell 38: #SPELLDATA$7E63
 W $7E68,2
-B $7E6A,5 #SPELLDATA$7E6A
+B $7E6A,5 Spell 39: #SPELLDATA$7E6A
 W $7E6F,2
-B $7E71,5 #SPELLDATA$7E71
+B $7E71,5 Spell 40: #SPELLDATA$7E71
 W $7E76,2
-B $7E78,5 #SPELLDATA$7E78
+B $7E78,5 Spell 41: #SPELLDATA$7E78
 W $7E7D,2
-B $7E7F,5 #SPELLDATA$7E7F
+B $7E7F,5 Spell 42: #SPELLDATA$7E7F
 W $7E84,2
-B $7E86,5 #SPELLDATA$7E86
+B $7E86,5 Spell 43: #SPELLDATA$7E86
 W $7E8B,2
-B $7E8D,5 #SPELLDATA$7E8D
+B $7E8D,5 Spell 44: #SPELLDATA$7E8D
 W $7E92,2
-B $7E94,5 #SPELLDATA$7E94
+B $7E94,5 Spell 45: #SPELLDATA$7E94
 W $7E99,2
-B $7E9B,5 #SPELLDATA$7E9B
+B $7E9B,5 Spell 46: #SPELLDATA$7E9B
 W $7EA0,2
-B $7EA2,5 #SPELLDATA$7EA2
+B $7EA2,5 Spell 47: #SPELLDATA$7EA2
 W $7EA7,2
-B $7EA9,5 #SPELLDATA$7EA9
+B $7EA9,5 Spell 48: #SPELLDATA$7EA9
 W $7EAE,2
-B $7EB0,5 #SPELLDATA$7EB0
+B $7EB0,5 Spell 49: #SPELLDATA$7EB0
 W $7EB5,2
-B $7EB7,5 #SPELLDATA$7EB7
+B $7EB7,5 Spell 50: #SPELLDATA$7EB7
 W $7EBC,2
-B $7EBE,5 #SPELLDATA$7EBE
+B $7EBE,5 Spell 51: #SPELLDATA$7EBE
 W $7EC3,2
-B $7EC5,5 #SPELLDATA$7EC5
+B $7EC5,5 Spell 52: #SPELLDATA$7EC5
 W $7ECA,2
-B $7ECC,5 #SPELLDATA$7ECC
+B $7ECC,5 Spell 53: #SPELLDATA$7ECC
 W $7ED1,2
-B $7ED3,5 #SPELLDATA$7ED3
+B $7ED3,5 Spell 54: #SPELLDATA$7ED3
 W $7ED8,2
-B $7EDA,5 #SPELLDATA$7EDA
+B $7EDA,5 Spell 55: #SPELLDATA$7EDA
 W $7EDF,2
-B $7EE1,5 #SPELLDATA$7EE1
+B $7EE1,5 Spell 56: #SPELLDATA$7EE1
 W $7EE6,2
-B $7EE8,5 #SPELLDATA$7EE8
+B $7EE8,5 Spell 57: #SPELLDATA$7EE8
 W $7EED,2
-B $7EEF,5 #SPELLDATA$7EEF
+B $7EEF,5 Spell 58: #SPELLDATA$7EEF
 W $7EF4,2
-B $7EF6,5 #SPELLDATA$7EF6
+B $7EF6,5 Spell 59: #SPELLDATA$7EF6
 W $7EFB,2
-B $7EFD,5 #SPELLDATA$7EFD
+B $7EFD,5 Spell 60: #SPELLDATA$7EFD
 W $7F02,2
-B $7F04,5 #SPELLDATA$7F04
+B $7F04,5 Spell 61: #SPELLDATA$7F04
 W $7F09,2
-B $7F0B,5 #SPELLDATA$7F0B
+B $7F0B,5 Spell 62: #SPELLDATA$7F0B
 W $7F10,2
-B $7F12,5 #SPELLDATA$7F12
+B $7F12,5 Spell 63: #SPELLDATA$7F12
 W $7F17,2
-B $7F19,5 #SPELLDATA$7F19
+B $7F19,5 Spell 64: #SPELLDATA$7F19
 W $7F1E,2
-B $7F20,5 #SPELLDATA$7F20
+B $7F20,5 Spell 65: #SPELLDATA$7F20
 W $7F25,2
 
 @ $7F27 label=s_cursor_sprite
@@ -1292,12 +1292,12 @@ C $937A Return.
 @ $937B label=CURSP
 g $937B CURSP
 
-@ $937C label=unknown03
-g $937C unknown03
+@ $937C label=temp_coordinates
+g $937C Temporary coordinates varaiable for #R$9385 ???
 W $937C
 
-@ $937E label=unknown04
-g $937E unknown04
+@ $937E label=spell_letter
+g $937E Letter for spell selection.
 
 @ $937F label=unknown05
 g $937F unknown05
@@ -1306,21 +1306,88 @@ g $937F unknown05
 g $9380 Address of spell entry in #R$7D60.
 W $9380
 
-@ $9382 label=unknown07
-g $9382 unknown07
+@ $9382 label=temp_spell_pointer
+g $9382 Temporary spell pointer for #R$9385 ???
 W $9382
 
 @ $9384 label=unknown08
 g $9384 unknown08
 
-c $9385 routine05
-@ $9385 label=routine05
-
-@ $93CB ssub=LD A,($937C+$1)
-
-@ $93D0 ssub=LD ($937C+1),A
-
-@ $949A ssub=LD HL,$9156+$8
+c $9385 Display list of posessed spells.
+@ $9385 label=display_spells_list
+C $9385 Play #R$C2E3 and clear the screen.
+C $938B Set ATTR-T to bright yellow on black.
+C $9393 Print current player name at coordinates (0,0).
+C $939E Print #MPRINTLINK($53).
+C $93A3 Set B to 20 as loop counter.
+C $93A5 Set #R$937E to '@'. This is incremented to 'A' before printing in the first iteration of the loop.
+C $93AA Set #R$937C to coordinates (0,16).
+C $93B0 Copy #R$9154 to #R$9382.
+@ $93B6 label=spells_loop
+C $93B6 Preserve loop counter.
+C $93B7 Load spell number from address in #R$9382.
+C $93BB If spell number is zero jump to #R$9419.
+C $93BE Else load the column value from #R$937C.
+C $93C2 Subtract value from 16 and store back in #R$937C. This causes the value to toggle between 0 and 16.
+C $93C8 If the new column value is zero, add 2 to row value of #R$937C.
+@ $93D3 label=skip_new_row
+C $93D3 Copy spell number from address in #R$9382 into #R$937B.
+C $93DA Call #R$92F9 to get casting chance of spell between 0 and 9 which also sets #R$9380.
+C $93E0 Add 1 and divide by 2, giving a value between 0 and 5.
+C $93E3 Add $42 to give a bright colour between red and white with black background.
+C $93E5 Store in ATTR-T.
+C $93E8 Increment #R$937E.
+C $93EF Load #R$937C into BC.
+C $93F3 Print spell letter.
+C $93F8 Increment column.
+C $93F9 If #R$937F is zero (neutral) set A to '-'.
+@ $9403 label=spell_not_neutral
+C $9403 Else if negative (chaos) set A to '*'.
+@ $940A label=spell_not_chaotic
+C $940A Else positive (law) set A to '#CHR8593'.
+@ $940C label=print_symbol
+C $940C Print the symbol.
+C $9411 Print name of current spell.
+@ $9419 label=skip_spell
+C $9419 Move #R$9382 forward to next entry in #R$7F47.
+C $9421 Restore loop counter.
+C $9422 Jump back to #R$93B6 for 20 iterations.
+C $9424 Set coordinates to (0,22)
+C $9427 Set ATTR-T to bright yellow on black.
+C $942E Print #MPRINTLINK($58) and wait for no key to be pressed.
+@ $9434 label=get_spell_key
+C $9434 Call KEYBOARD in ROM.
+C $9437 If '0' is pressed return.
+@ $943C label=not_0
+C $943C Decrement key code and compare with last spell letter.
+C $9441 If greater than last spell ignore keypress and loop back to #R$9434.
+C $9444 If key code is less than '?' ignore keypress and loop back to #R$9434.
+C $9449 Else copy choice to B as loop counter.
+C $944A Load #R$9154 pointer into HL.
+C $944D Set DE to 2.
+C $9450 Clear carry flag and subtract 2 to compensate for addition in first iteration of loop.
+@ $9453 label=find_spell_loop
+C $9453 Add 2 to address.
+C $9454 Load the spell number.
+C $9456 If spell number at address is zero loop back to #R$9453.
+C $9458 Loop the number of iterations selected by the keypress.
+C $945A A now holds the spell number for the selected spell, store in #R$937B.
+C $945D If #R$9384 is set jump to #R$9496.
+C $9463 Else call #R$94A7 ???
+C $9466 On return jump back to #R$9385.
+@ $9469 label=cast_spell
+C $9469 Set HL to address of current player's spell in #R$9156.
+C $9473 Store #R$937B in casting table.
+C $9477 If spell number is less than 2 or greater than 33 return.
+C $947D Else clear bottom row and set ATTR-T to bright white on black.
+C $9485 Print #MPRINTLINK($5E) at coordinates (0,22).
+C $948D Wait for no key to be pressed.
+@ $9490 label=get_illusion_key
+C $9490 Call KEYBOARD in ROM.
+C $9493 If key code is 'N' return.
+C $9496 If key code is not 'Y' loop back and get another keypress.
+C $949A Else set HL to address of current player's spell in #R$915E.
+C $94A4 Set illusion flag and return.
 
 c $94A7 routine37
 @ $94A7 label=routine37
