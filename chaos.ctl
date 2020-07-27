@@ -7,7 +7,7 @@
 
 @ $7D00 label=start
 c $7D00 Start.
-C $7D00 Jump to initialization routine.
+C $7D00 Jump to main game routine.
 
 @ $7D03 label=unknown01
 g $7D03 unknown01
@@ -606,17 +606,17 @@ C $89CA Jump back to #R$89B1 if the number was less than 2.
 C $89CF Restore coordinates.
 C $89D0 Set ATTR-T to $47 (bright white on black).
 C $89D5 Load #R$89A8 into A and call #R$BAD6 to print it at coordinates in BC.
-C $89DB Set HL to #R$89EF (key bloop sound effect) and call play_sound_effect_in_HL.
+C $89DB Play key bloop sound effect.
 C $89E1 Call #R$907B.
 C $89E4 Clear flag byte that prevents entering a number less than 2.
 C $89E9 Load #R$89A8 into A and subtract $31 so that A = number pressed-1 and return.
 
 @ $89EF label=S60
 b $89EF S60
-D $89EF key bloop sound effect.
+D $89EF Key bloop sound effect.
 
-@ $89F9 label=init_routine
-c $89F9 Initialization routine.
+@ $89F9 label=main_loop
+c $89F9 The main game routine.
 C $89F9 Set border to black.
 C $89FC Set ATTR-T to black.
 C $89FF Set ATTR-P to black.
@@ -681,7 +681,7 @@ C $8B33 Call #R$BAD6 ??? with A set to $20 (space) to blank out letter under cur
 C $8B38 Decrement #R$89AC again ready for next letter.
 C $8B3F Decrement #R$89AE.
 C $8B43 Decrement #R$89AA pointer (move back over last character).
-C $8B4A Set HL to #R$89EF (key bloop sound) and call #R$C2F9.
+C $8B4A Play key bloop sound effect.
 C $8B50 Call #R$96E6 ??? then jump back to #R$8B19.
 @ $8B56 label=NO_DEL
 C $8B56 If string length equals 11 jump back to #R$8B19.
@@ -900,7 +900,7 @@ C $8EAA Call #R$8F8B ???
 C $8EAD Print message #MTWOPRINTLINK($10) at coordinates (2,2).
 C $8EB5 Set HL to #R$AC16.
 C $8EB8 Set #R$89AC to coordinates (10,3).
-C $8EBF Set #R$AC0E variable to $29 (row in #R$CDD3(game messages table 1) for pointer to the first wizards name).
+C $8EBF Set #R$AC0E to $29 (the first wizard's name #R$CDD3).
 C $8EC4 Load #R$AC0F into B as loop counter.
 @ $8EC8 label=ZAPEM
 C $8EC8 Preserve BC and HL.
@@ -910,7 +910,7 @@ C $8ED1 Load #R$AC0E variable back into A (message in message table 1).
 C $8ED5 Load BC with #R$89AC and increment twice (move two columns right).
 C $8EDF Print the wizard name.
 @ $8EE2 label=DEDED
-C $8EE2 Pop HL back and increment it (next byte in 16 byte table).
+C $8EE2 Restore address and advance to next entry in #R$AC16.
 C $8EE4 Increment #R$AC0E variable (next row in game message table 1).
 C $8EEB Restore loop counter from stack.
 C $8EEC Loop back to #R$8EC8 for #R$AC0F iterations.
@@ -941,8 +941,7 @@ C $8F50 Jump to #R$8F57 if bit 4 of byte at address in HL is set.
 C $8F54 Else move on to next byte.
 C $8F55 Loop back to #R$8F50 for eight iterations.
 @ $8F57 Label=FOUDIM
-C $8F57 Set A to forty nine - the row in #R$CDD3(game messages table 1) of wizard eight.
-C $8F59 Subtract loop counter to get row of wizard.
+C $8F57 Subtract loop counter from $31 to get row of wizard in #R$CDD3.
 C $8F5A Preserve AF.
 C $8F5B Load BC with coordinates (10,12).
 C $8F5E Set HL to four times the value in A.
@@ -951,10 +950,10 @@ C $8F67 Add two to resulting address to move to length byte.
 C $8F69 Read byte into A.
 C $8F6A Divide by two and copy result to E.
 C $8F6D Subtract E from sixteen and copy result to C.
-C $8F71 Pop row of #R$CDD3(game messages table 1) back into A.
+C $8F71 Restore row of #R$CDD3(game messages table 1).
 C $8F72 Print wizard name centred in box.
 C $8F75 Call #R$8F8B ???
-C $8F78 Print message $3D at coordinates (0,22) (#MPRINTLINK($3D)).
+C $8F78 Print #MPRINTLINK($3D) at coordinates (0,22).
 C $8F80 Call #R$96E6 ???
 C $8F83 Call KEY-SCAN in ROM to see if a key was pressed.
 C $8F88 Loop back to #R$8F0C if no key was pressed.
@@ -1016,7 +1015,7 @@ C $9032 Increment position in #R$E01F.
 C $9039 Jump back to #R$8FA2 for 159 iterations then return.
 
 @ $903E label=S61
-b $903E S61
+b $903E 'New spell for wizard' sound effect.
 
 u $9046
 @ $9046 label=LOW
@@ -1103,20 +1102,20 @@ C $90FC read the table entry and store in #R$DF4A
 C $9103 copy #R$89AC to #R$DF4C
 C $9109 call #R$DF4E then return
 
-@ $910D label=sound_effect_1
-b $910D sound_effect_1
-@ $9117 label=sound_effect_2
-b $9117 sound_effect_2
-@ $9121 label=sound_effect_3
-b $9121 sound_effect_3
-@ $912B label=sound_effect_4
-b $912B sound_effect_4
-@ $9135 label=sound_effect_5
-b $9135 sound_effect_5
-@ $913F label=sound_effect_6
-b $913F sound_effect_6
-@ $9149 label=sound_effect_7
-b $9149 sound_effect_7
+@ $910D label=sound_effect_01
+b $910D sound_effect_01
+@ $9117 label=sound_effect_02
+b $9117 sound_effect_02
+@ $9121 label=sound_effect_03
+b $9121 sound_effect_03
+@ $912B label=sound_effect_04
+b $912B sound_effect_04
+@ $9135 label=sound_effect_05
+b $9135 sound_effect_05
+@ $913F label=sound_effect_06
+b $913F sound_effect_06
+@ $9149 label=sound_effect_07
+b $9149 sound_effect_07
 
 @ $9153 label=casting_chance
 g $9153 Chance of casting selected spell.
@@ -2788,8 +2787,7 @@ C $BEC2 set A to message $34
 C $BEC4 set BC to coordinates (0,22)
 C $BEC7 call #R$BED7 to clear line 22
 C $BECA Print #MPRINTLINK($34) at coordinates (0,22)
-C $BECD set HL to address of "ENGAGED TO ENEMY" sound effect
-C $BED0 call play_sound_effect_in_HL
+C $BECD Play #R$C289
 C $BED3 re-enable interrupts
 C $BED4 restore BC, AF
 C $BED6 return
@@ -2881,43 +2879,43 @@ B $C1E3,$20 #HTML(#UDGARRAY*dragonbreathsprite6(dragonbreathsprite6))
 B $C203,$20 #HTML(#UDGARRAY*dragonbreathsprite7(dragonbreathsprite7))
 B $C223,$20 #HTML(#UDGARRAY*dragonbreathsprite8(dragonbreathsprite8))
 
-@ $C243 label=sound_effect_16
-b $C243 sound_effect_16
-@ $C24D label=sound_effect_17
-b $C24D sound_effect_17
-@ $C257 label=sound_effect_18
-b $C257 sound_effect_18
-@ $C261 label=sound_effect_19
-b $C261 sound_effect_19
-@ $C26B label=sound_effect_20
-b $C26B sound_effect_20
-@ $C275 label=sound_effect_21
-b $C275 sound_effect_21
+@ $C243 label=sound_effect_08
+b $C243 sound_effect_08
+@ $C24D label=sound_effect_09
+b $C24D sound_effect_09
+@ $C257 label=sound_effect_10
+b $C257 sound_effect_10
+@ $C261 label=sound_effect_11
+b $C261 sound_effect_11
+@ $C26B label=sound_effect_12
+b $C26B sound_effect_12
+@ $C275 label=sound_effect_13
+b $C275 sound_effect_13
 
-@ $C27F label=sound_effect_8
-b $C27F sound_effect_8
+@ $C27F label=sound_effect_14
+b $C27F sound_effect_14
 @ $C289 label=engaged_sound_effect
-b $C289 "ENGAGED TO ENEMY" sound effect
-@ $C293 label=sound_effect_9
-b $C293 sound_effect_9
+b $C289 'Engaged to enemy' sound effect.
+@ $C293 label=sound_effect_16
+b $C293 sound_effect_16
 @ $C29D label=S10
 b $C29D S10
-@ $C2A7 label=sound_effect_10
-b $C2A7 sound_effect_10
-@ $C2B1 label=sound_effect_11
-b $C2B1 sound_effect_11
-@ $C2BB label=sound_effect_12
-b $C2BB sound_effect_12
-@ $C2C5 label=sound_effect_13
-b $C2C5 sound_effect_13
-@ $C2CF label=sound_effect_14
-b $C2CF sound_effect_14
-@ $C2D9 label=sound_effect_15
-b $C2D9 sound_effect_15
+@ $C2A7 label=sound_effect_17
+b $C2A7 sound_effect_17
+@ $C2B1 label=sound_effect_18
+b $C2B1 sound_effect_18
+@ $C2BB label=sound_effect_19
+b $C2BB sound_effect_19
+@ $C2C5 label=sound_effect_20
+b $C2C5 sound_effect_20
+@ $C2CF label=sound_effect_21
+b $C2CF sound_effect_21
+@ $C2D9 label=sound_effect_22
+b $C2D9 sound_effect_22
 
-@ $C2E3 label=sound_effect_22
+@ $C2E3 label=sound_effect_23
 D $C2E3 This overlaps #R$C2E8 with the result that when copied the same 5 bytes are repeated.
-b $C2E3 sound_effect_22
+b $C2E3 sound_effect_23
 
 @ $C2E8 label=sound_effect_temp
 g $C2E8 sound effect data
