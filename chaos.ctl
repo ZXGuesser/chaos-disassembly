@@ -1217,13 +1217,13 @@ C $926A Print #MPRINTLINK($57) at coordinates (0,22)
 C $9272 call #R$92AA
 @ $9275 label=cast_s_key_loop
 C $9275 call KEYBOARD routine in ROM returning character code in A
-C $9278 set #R$9384 to zero ???
+C $9278 Clear #R$9384.
 C $927D if A equals '1' then call #R$9385 and jump back to #R$919C
 @ $9287 label=cast_s_not_1
 C $9287 else if A equals '4' then jump to #R$929E
 C $928B else if A equals '3' then jump to #R$92BE
 C $928F else if A does not equal '2' then loop back to #R$9275
-C $9293 '2' key was pressed, set #R$9384 ??? to 1
+C $9293 '2' key was pressed, set #R$9384.
 C $9298 call #R$9385 ??? then jump back to #R$919C
 @ $929E label=cast_s_continue
 C $929E '4' key was pressed, restore BC (player loop counter)
@@ -1310,11 +1310,12 @@ W $9380
 g $9382 Temporary spell pointer for #R$9385 ???
 W $9382
 
-@ $9384 label=unknown08
-g $9384 unknown08
+@ $9384 label=cast_spell_flag
+g $9384 Cast spell flag
+D $9384 If flag is set #R$9385 will cast the selected spell, otherwise it displays spell info.
 
 c $9385 Display list of posessed spells.
-@ $9385 label=display_spells_list
+@ $9385 label=select_spell
 C $9385 Play #R$C2E3 and clear the screen.
 C $938B Set ATTR-T to bright yellow on black.
 C $9393 Print current player name at coordinates (0,0).
@@ -1372,7 +1373,7 @@ C $9454 Load the spell number.
 C $9456 If spell number at address is zero loop back to #R$9453.
 C $9458 Loop the number of iterations selected by the keypress.
 C $945A A now holds the spell number for the selected spell, store in #R$937B.
-C $945D If #R$9384 is set jump to #R$9496.
+C $945D If #R$9384 is set jump to #R$9469.
 C $9463 Else call #R$94A7 ???
 C $9466 On return jump back to #R$9385.
 @ $9469 label=cast_spell
