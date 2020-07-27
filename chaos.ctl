@@ -4,6 +4,7 @@
 @ $7D00 expand=#DEFINE1(MPRINTLINK,#R#(#DPEEK(#EVAL($CDD3+({0}*4)))))
 @ $7D00 expand=#DEFINE1(MTWOPRINTLINK,#R#(#DPEEK(#EVAL($8809+({0}*4)))))
 @ $7D00 expand=#DEFINE1(SPRITE,#UDGARRAY#(2,#PEEK({0}+2),4;#DPEEK({0})-#EVAL(#DPEEK({0})+$1F)-8))
+@ $7D00 expand=#DEFINE0,1(SOUNDEFFECT,#HTML(<audio controls src="../sounds/{0}"></audio>))
 
 @ $7D00 label=start
 c $7D00 Start.
@@ -612,8 +613,8 @@ C $89E4 Clear flag byte that prevents entering a number less than 2.
 C $89E9 Load #R$89A8 into A and subtract $31 so that A = number pressed-1 and return.
 
 @ $89EF label=S60
-b $89EF S60
-D $89EF Key bloop sound effect.
+b $89EF Key bloop sound effect.
+B $89EF #SOUNDEFFECT(S60.mp3)
 
 @ $89F9 label=main_loop
 c $89F9 The main game routine.
@@ -1016,6 +1017,7 @@ C $9039 Jump back to #R$8FA2 for 159 iterations then return.
 
 @ $903E label=S61
 b $903E 'New spell for wizard' sound effect.
+B $903E #SOUNDEFFECT(S61.mp3)
 
 u $9046
 @ $9046 label=LOW
@@ -1104,18 +1106,31 @@ C $9109 call #R$DF4E then return
 
 @ $910D label=sound_effect_01
 b $910D sound_effect_01
+B $910D #SOUNDEFFECT(sound_effect_01.mp3)
+
 @ $9117 label=sound_effect_02
 b $9117 sound_effect_02
+B $9117 #SOUNDEFFECT(sound_effect_02.mp3)
+
 @ $9121 label=sound_effect_03
 b $9121 sound_effect_03
+B $9121 #SOUNDEFFECT(sound_effect_03.mp3)
+
 @ $912B label=sound_effect_04
 b $912B sound_effect_04
+B $912B #SOUNDEFFECT(sound_effect_04.mp3)
+
 @ $9135 label=sound_effect_05
 b $9135 sound_effect_05
+B $9135 #SOUNDEFFECT(sound_effect_05.mp3)
+
 @ $913F label=sound_effect_06
 b $913F sound_effect_06
+B $913F #SOUNDEFFECT(sound_effect_06.mp3)
+
 @ $9149 label=sound_effect_07
 b $9149 sound_effect_07
+B $9149 #SOUNDEFFECT(sound_effect_07.mp3)
 
 @ $9153 label=casting_chance
 g $9153 Chance of casting selected spell.
@@ -2881,41 +2896,72 @@ B $C223,$20 #HTML(#UDGARRAY*dragonbreathsprite8(dragonbreathsprite8))
 
 @ $C243 label=sound_effect_08
 b $C243 sound_effect_08
+B $C243 #SOUNDEFFECT(sound_effect_08.mp3)
+
 @ $C24D label=sound_effect_09
 b $C24D sound_effect_09
+B $C24D #SOUNDEFFECT(sound_effect_09.mp3)
+
 @ $C257 label=sound_effect_10
 b $C257 sound_effect_10
+B $C257 #SOUNDEFFECT(sound_effect_10.mp3)
+
 @ $C261 label=sound_effect_11
 b $C261 sound_effect_11
+B $C261 #SOUNDEFFECT(sound_effect_11.mp3)
+
 @ $C26B label=sound_effect_12
 b $C26B sound_effect_12
+B $C26B #SOUNDEFFECT(sound_effect_12.mp3)
+
 @ $C275 label=sound_effect_13
 b $C275 sound_effect_13
+B $C275 #SOUNDEFFECT(sound_effect_13.mp3)
 
 @ $C27F label=sound_effect_14
 b $C27F sound_effect_14
+B $C27F #SOUNDEFFECT(sound_effect_14.mp3)
+
 @ $C289 label=engaged_sound_effect
 b $C289 'Engaged to enemy' sound effect.
+B $C289 #SOUNDEFFECT(engaged_sound_effect.mp3)
+
 @ $C293 label=sound_effect_16
 b $C293 sound_effect_16
+B $C293 #SOUNDEFFECT(sound_effect_16.mp3)
+
 @ $C29D label=S10
 b $C29D S10
+B $C29D #SOUNDEFFECT(S10.mp3)
+
 @ $C2A7 label=sound_effect_17
 b $C2A7 sound_effect_17
+B $C2A7 #SOUNDEFFECT(sound_effect_17.mp3)
+
 @ $C2B1 label=sound_effect_18
 b $C2B1 sound_effect_18
+B $C2B1 #SOUNDEFFECT(sound_effect_18.mp3)
+
 @ $C2BB label=sound_effect_19
 b $C2BB sound_effect_19
+B $C2BB #SOUNDEFFECT(sound_effect_19.mp3)
+
 @ $C2C5 label=sound_effect_20
 b $C2C5 sound_effect_20
+B $C2C5 #SOUNDEFFECT(sound_effect_20.mp3)
+
 @ $C2CF label=sound_effect_21
 b $C2CF sound_effect_21
+B $C2CF #SOUNDEFFECT(sound_effect_21.mp3)
+
 @ $C2D9 label=sound_effect_22
 b $C2D9 sound_effect_22
+B $C2D9 #SOUNDEFFECT(sound_effect_22.mp3)
 
 @ $C2E3 label=sound_effect_23
 D $C2E3 This overlaps #R$C2E8 with the result that when copied the same 5 bytes are repeated.
 b $C2E3 sound_effect_23
+B $C2E3 #SOUNDEFFECT(sound_effect_23.mp3)
 
 @ $C2E8 label=sound_effect_temp
 g $C2E8 sound effect data
