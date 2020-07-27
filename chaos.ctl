@@ -40,140 +40,140 @@ C $7D5B Add value of #R$AC0E variable as offset.
 C $7D5D Store $00 in byte pointed to by HL and return.
 
 ; macro to print out spell data
-@ $E440 expand=#DEFINE1(SPELLDATA,Message #PEEK({0})#RAW(,) Casting chance=#PEEK({0}+1)#RAW(,) Max distance=#EVAL(#PEEK({0}+2)/2)#RAW(,) Chaos/Law=#SIGNED(#PEEK({0}+3))#RAW(,) ???=#PEEK({0}+4))
+@ $E440 expand=#DEFINE1(SPELLDATA,Message $#N(#PEEK({0})) (#MPRINTLINK(#PEEK({0})))#RAW(,) Casting chance=#PEEK({0}+1)#RAW(,) Max distance=#EVAL(#PEEK({0}+2)/2)#RAW(,) Chaos/Law=#SIGNED(#PEEK({0}+3))#RAW(,) ???=#PEEK({0}+4))
 
 @ $7D60 label=spells_table
 b $7D60 Spells table.
 D $7D60 5 bytes of spell data followed by address of spell routine.
-B $7D60,5 Spell 01: #SPELLDATA$7D60
+B $7D60,5 Spell $01: #SPELLDATA$7D60
 W $7D65,2
-B $7D67,5 Spell 02: #SPELLDATA$7D67
+B $7D67,5 Spell $02: #SPELLDATA$7D67
 W $7D6C,2
-B $7D6E,5 Spell 03: #SPELLDATA$7D6E
+B $7D6E,5 Spell $03: #SPELLDATA$7D6E
 W $7D73,2
-B $7D75,5 Spell 04: #SPELLDATA$7D75
+B $7D75,5 Spell $04: #SPELLDATA$7D75
 W $7D7A,2
-B $7D7C,5 Spell 05: #SPELLDATA$7D7C
+B $7D7C,5 Spell $05: #SPELLDATA$7D7C
 W $7D81,2
-B $7D83,5 Spell 06: #SPELLDATA$7D83
+B $7D83,5 Spell $06: #SPELLDATA$7D83
 W $7D88,2
-B $7D8A,5 Spell 07: #SPELLDATA$7D8A
+B $7D8A,5 Spell $07: #SPELLDATA$7D8A
 W $7D8F,2
-B $7D91,5 Spell 08: #SPELLDATA$7D91
+B $7D91,5 Spell $08: #SPELLDATA$7D91
 W $7D96,2
-B $7D98,5 Spell 09: #SPELLDATA$7D98
+B $7D98,5 Spell $09: #SPELLDATA$7D98
 W $7D9D,2
-B $7D9F,5 Spell 10: #SPELLDATA$7D9F
+B $7D9F,5 Spell $0A: #SPELLDATA$7D9F
 W $7DA4,2
-B $7DA6,5 Spell 11: #SPELLDATA$7DA6
+B $7DA6,5 Spell $0B: #SPELLDATA$7DA6
 W $7DAB,2
-B $7DAD,5 Spell 12: #SPELLDATA$7DAD
+B $7DAD,5 Spell $0C: #SPELLDATA$7DAD
 W $7DB2,2
-B $7DB4,5 Spell 13: #SPELLDATA$7DB4
+B $7DB4,5 Spell $0D: #SPELLDATA$7DB4
 W $7DB9,2
-B $7DBB,5 Spell 14: #SPELLDATA$7DBB
+B $7DBB,5 Spell $0E: #SPELLDATA$7DBB
 W $7DC0,2
-B $7DC2,5 Spell 15: #SPELLDATA$7DC2
+B $7DC2,5 Spell $0F: #SPELLDATA$7DC2
 W $7DC7,2
-B $7DC9,5 Spell 16: #SPELLDATA$7DC9
+B $7DC9,5 Spell $10: #SPELLDATA$7DC9
 W $7DCE,2
-B $7DD0,5 Spell 17: #SPELLDATA$7DD0
+B $7DD0,5 Spell $11: #SPELLDATA$7DD0
 W $7DD5,2
-B $7DD7,5 Spell 18: #SPELLDATA$7DD7
+B $7DD7,5 Spell $12: #SPELLDATA$7DD7
 W $7DDC,2
-B $7DDE,5 Spell 19: #SPELLDATA$7DDE
+B $7DDE,5 Spell $13: #SPELLDATA$7DDE
 W $7DE3,2
-B $7DE5,5 Spell 20: #SPELLDATA$7DE5
+B $7DE5,5 Spell $14: #SPELLDATA$7DE5
 W $7DEA,2
-B $7DEC,5 Spell 21: #SPELLDATA$7DEC
+B $7DEC,5 Spell $15: #SPELLDATA$7DEC
 W $7DF1,2
-B $7DF3,5 Spell 22: #SPELLDATA$7DF3
+B $7DF3,5 Spell $16: #SPELLDATA$7DF3
 W $7DF8,2
-B $7DFA,5 Spell 23: #SPELLDATA$7DFA
+B $7DFA,5 Spell $17: #SPELLDATA$7DFA
 W $7DFF,2
-B $7E01,5 Spell 24: #SPELLDATA$7E01
+B $7E01,5 Spell $18: #SPELLDATA$7E01
 W $7E06,2
-B $7E08,5 Spell 25: #SPELLDATA$7E08
+B $7E08,5 Spell $19: #SPELLDATA$7E08
 W $7E0D,2
-B $7E0F,5 Spell 26: #SPELLDATA$7E0F
+B $7E0F,5 Spell $1A: #SPELLDATA$7E0F
 W $7E14,2
-B $7E16,5 Spell 27: #SPELLDATA$7E16
+B $7E16,5 Spell $1B: #SPELLDATA$7E16
 W $7E1B,2
-B $7E1D,5 Spell 28: #SPELLDATA$7E1D
+B $7E1D,5 Spell $1C: #SPELLDATA$7E1D
 W $7E22,2
-B $7E24,5 Spell 29: #SPELLDATA$7E24
+B $7E24,5 Spell $1D: #SPELLDATA$7E24
 W $7E29,2
-B $7E2B,5 Spell 30: #SPELLDATA$7E2B
+B $7E2B,5 Spell $1E: #SPELLDATA$7E2B
 W $7E30,2
-B $7E32,5 Spell 31: #SPELLDATA$7E32
+B $7E32,5 Spell $1F: #SPELLDATA$7E32
 W $7E37,2
-B $7E39,5 Spell 32: #SPELLDATA$7E39
+B $7E39,5 Spell $20: #SPELLDATA$7E39
 W $7E3E,2
-B $7E40,5 Spell 33: #SPELLDATA$7E40
+B $7E40,5 Spell $21: #SPELLDATA$7E40
 W $7E45,2
-B $7E47,5 Spell 34: #SPELLDATA$7E47
+B $7E47,5 Spell $22: #SPELLDATA$7E47
 W $7E4C,2
-B $7E4E,5 Spell 35: #SPELLDATA$7E4E
+B $7E4E,5 Spell $23: #SPELLDATA$7E4E
 W $7E53,2
-B $7E55,5 Spell 36: #SPELLDATA$7E55
+B $7E55,5 Spell $24: #SPELLDATA$7E55
 W $7E5A,2
-B $7E5C,5 Spell 37: #SPELLDATA$7E5C
+B $7E5C,5 Spell $25: #SPELLDATA$7E5C
 W $7E61,2
-B $7E63,5 Spell 38: #SPELLDATA$7E63
+B $7E63,5 Spell $26: #SPELLDATA$7E63
 W $7E68,2
-B $7E6A,5 Spell 39: #SPELLDATA$7E6A
+B $7E6A,5 Spell $27: #SPELLDATA$7E6A
 W $7E6F,2
-B $7E71,5 Spell 40: #SPELLDATA$7E71
+B $7E71,5 Spell $28: #SPELLDATA$7E71
 W $7E76,2
-B $7E78,5 Spell 41: #SPELLDATA$7E78
+B $7E78,5 Spell $29: #SPELLDATA$7E78
 W $7E7D,2
-B $7E7F,5 Spell 42: #SPELLDATA$7E7F
+B $7E7F,5 Spell $2A: #SPELLDATA$7E7F
 W $7E84,2
-B $7E86,5 Spell 43: #SPELLDATA$7E86
+B $7E86,5 Spell $2B: #SPELLDATA$7E86
 W $7E8B,2
-B $7E8D,5 Spell 44: #SPELLDATA$7E8D
+B $7E8D,5 Spell $2C: #SPELLDATA$7E8D
 W $7E92,2
-B $7E94,5 Spell 45: #SPELLDATA$7E94
+B $7E94,5 Spell $2D: #SPELLDATA$7E94
 W $7E99,2
-B $7E9B,5 Spell 46: #SPELLDATA$7E9B
+B $7E9B,5 Spell $2E: #SPELLDATA$7E9B
 W $7EA0,2
-B $7EA2,5 Spell 47: #SPELLDATA$7EA2
+B $7EA2,5 Spell $2F: #SPELLDATA$7EA2
 W $7EA7,2
-B $7EA9,5 Spell 48: #SPELLDATA$7EA9
+B $7EA9,5 Spell $30: #SPELLDATA$7EA9
 W $7EAE,2
-B $7EB0,5 Spell 49: #SPELLDATA$7EB0
+B $7EB0,5 Spell $31: #SPELLDATA$7EB0
 W $7EB5,2
-B $7EB7,5 Spell 50: #SPELLDATA$7EB7
+B $7EB7,5 Spell $32: #SPELLDATA$7EB7
 W $7EBC,2
-B $7EBE,5 Spell 51: #SPELLDATA$7EBE
+B $7EBE,5 Spell $33: #SPELLDATA$7EBE
 W $7EC3,2
-B $7EC5,5 Spell 52: #SPELLDATA$7EC5
+B $7EC5,5 Spell $34: #SPELLDATA$7EC5
 W $7ECA,2
-B $7ECC,5 Spell 53: #SPELLDATA$7ECC
+B $7ECC,5 Spell $35: #SPELLDATA$7ECC
 W $7ED1,2
-B $7ED3,5 Spell 54: #SPELLDATA$7ED3
+B $7ED3,5 Spell $36: #SPELLDATA$7ED3
 W $7ED8,2
-B $7EDA,5 Spell 55: #SPELLDATA$7EDA
+B $7EDA,5 Spell $37: #SPELLDATA$7EDA
 W $7EDF,2
-B $7EE1,5 Spell 56: #SPELLDATA$7EE1
+B $7EE1,5 Spell $38: #SPELLDATA$7EE1
 W $7EE6,2
-B $7EE8,5 Spell 57: #SPELLDATA$7EE8
+B $7EE8,5 Spell $39: #SPELLDATA$7EE8
 W $7EED,2
-B $7EEF,5 Spell 58: #SPELLDATA$7EEF
+B $7EEF,5 Spell $3A: #SPELLDATA$7EEF
 W $7EF4,2
-B $7EF6,5 Spell 59: #SPELLDATA$7EF6
+B $7EF6,5 Spell $3B: #SPELLDATA$7EF6
 W $7EFB,2
-B $7EFD,5 Spell 60: #SPELLDATA$7EFD
+B $7EFD,5 Spell $3C: #SPELLDATA$7EFD
 W $7F02,2
-B $7F04,5 Spell 61: #SPELLDATA$7F04
+B $7F04,5 Spell $3D: #SPELLDATA$7F04
 W $7F09,2
-B $7F0B,5 Spell 62: #SPELLDATA$7F0B
+B $7F0B,5 Spell $3E: #SPELLDATA$7F0B
 W $7F10,2
-B $7F12,5 Spell 63: #SPELLDATA$7F12
+B $7F12,5 Spell $3F: #SPELLDATA$7F12
 W $7F17,2
-B $7F19,5 Spell 64: #SPELLDATA$7F19
+B $7F19,5 Spell $40: #SPELLDATA$7F19
 W $7F1E,2
-B $7F20,5 Spell 65: #SPELLDATA$7F20
+B $7F20,5 Spell $41: #SPELLDATA$7F20
 W $7F25,2
 
 @ $7F27 label=s_cursor_sprite
@@ -962,65 +962,58 @@ C $8F8A Else return (to BASIC).
 
 @ $8F8B label=ATTRDO
 c $8F8B ATTRDO
-C $8F8B increment ATTR-T
-C $8F92 return unless ATTR-T is $08
-C $8F95 else set ATTR-T to $01 (dark blue on black)
+C $8F8B Increment ATTR-T.
+C $8F92 If ATTR-T is not $08 return.
+C $8F95 Else set ATTR-T to $01 (dark blue on black).
 @ $8F9A label=TREPUT
-C $8F9A set HL to address of map area object code table
-C $8F9D store HL in "position of cursor" variable
-C $8FA0 load B with 159 as loop counter
+C $8F9A Set HL to address of #R$E01F.
+C $8F9D Store in #R$AC12.
+C $8FA0 Set B to 159 as loop counter.
 @ $8FA2 label=TRFILO
-C $8FA2 preserve loop counter
-C $8FA3 load byte from address in HL (entry in map area object table)
-C $8FA4 if byte read is not $24 jump to #R$9031
-C $8FA9 add $0281 to address to get address of same cell in ???fifth map area table???
-C $8FA3 load byte from address in HL (entry in ???fifth map area table???)
-C $8FAD load byte from address in HL (entry in ???fifth map area table???)
-C $8FAE if byte read is zero jump to #R$9031
-C $8FB2 store this byte in #R$A172
-C $8FB5 call #R$904B
-C $8FB8 if value is greater than 4 jump to #R$9031
-C $8FBD subtract 41 from #R$A172 and store result in #R$AC0E
-C $8FC5 set ATTR-T to $46 (bright yellow on black) and print message #MTWOPRINTLINK($0F) at coordinates (0,22).
-C $8FD2 move coordinates right one column
-C $8FD3 Print message number in #R$A172
-C $8FD9 set HL to address of #R$903E and call routine to copy ten bytes to data block at #R$C2E8
-C $8FDF enable interrupts
-C $8FE0 load B with 10 as a loop counter
+C $8FA2 Preserve loop counter.
+C $8FA3 If object is not $24 (Magic Wood) jump to #R$9031.
+C $8FA9 Add $0281 to address to get corresponding entry in #R$E2A0.
+C $8FAD Load entry from #R$E2A0.
+C $8FAE If zero jump to #R$9031.
+C $8FB2 Store in #R$A172 ???
+C $8FB5 Get a random number from 0 to 9.
+C $8FB8 If greater than 4 jump to #R$9031.
+C $8FBD Else subtract 41 from value in #R$A172 to get wizard number and store result in #R$AC0E.
+C $8FC5 Set ATTR-T to $46 (bright yellow on black) and print message #MTWOPRINTLINK($0F) at coordinates (0,22).
+C $8FD2 Increment column coordinate to leave a space.
+C $8FD3 Print wizard name.
+C $8FD9 Play #R$903E sound effect.
+C $8FDF Enable interrupts.
+C $8FE0 Set B to 10 as a loop counter.
 @ $8FE2 label=WAYLOO
-C $8FE2 call #R$96E6 ten times
-C $8FE7 call routine at #R$BED7
+C $8FE2 Call #R$96E6 ten times to pause for approximately 1.5 seconds.
+C $8FE7 Clear bottom row.
 @ $8FEA label=RUNDY
-C $8FEA call #R$904B
-C $8FED jump back to #R$8FEA if #R$907A is less than 2 or greater than 65
-C $8FFA else store it in #R$937B
-C $8FFD call #R$92AA
-C $9000 read #R$9154 into HL
-C $9003 add two to pointer
-C $9005 set B to nineteen as a loop counter
+C $8FEA Get a random number with lower nibble less than 10 in #R$907A.
+C $8FED Jump back to #R$8FEA if #R$907A is less than $02 or greater than $41.
+C $8FFA Else store in #R$937B.
+C $8FFD Calculate address of spell table for player.
+C $9000 Load address of first spell into HL.
+C $9003 Add two to skip over first spell (always Disbelieve).
+C $9005 Set B to 19 as a loop counter.
 @ $9007 label=PRILOO
-C $9007 read byte from address
-C $9008 if byte is zero jump to #R$900F
-C $900B add two to pointer
-C $900D loop back to #R$9007 eighteen times
+C $9007 If spell number is 0 jump to #R$900F.
+C $900B Else move address on to next spell.
+C $900D Loop back to #R$9007 for 19 iterations.
 @ $900F label=INITGO
-C $900F copy value of #R$937B to the address in HL
-C $9013 load #R$A172 into A
-C $9016 load position of cursor into HL
-C $9019 store #R$A172 at the position of the cursor
-C $901A add $0281 to address (from map area object code table to ???fifth map area table???)
-C $901E set byte in ???fifth map area table??? to zero
-C $9020 load position of cursor into HL
-C $9023 add $01E1 to address (from map area object code table to ???fourth map area table???)
-C $9027 subtract 41 from #R$A172
-C $902C store result at address in ???fourth map area table???
-C $902D call routine at #R$C0DD
-C $9030 wait for interrupt
+C $900F Store #R$937B at the address in HL.
+C $9013 Load #R$A172 into A ???
+C $9016 Store at current position in #R$E01F.
+C $901A Add $0281 to address to get corresponding entry in #R$E2A0.
+C $901E Set entry to zero.
+C $9020 Add $01E1 to address of current position in #R$E01F to get corresponding entry in #R$E200.
+C $9027 Subtract 41 from #R$A172 to get wizard number and store in #R$E200.
+C $902D call routine at #R$C0DD ???
+C $9030 Wait for next interrupt.
 @ $9031 label=N_HERE
-C $9031 restore loop counter
-C $9032 increment position of cursor
-C $9039 jump back to #R$8FA2 158 times
-C $903D return
+C $9031 Restore loop counter.
+C $9032 Increment position in #R$E01F.
+C $9039 Jump back to #R$8FA2 for 159 iterations then return.
 
 @ $903E label=S61
 b $903E S61
@@ -1038,30 +1031,30 @@ g $9049 COMPAR
 @ $904A label=SPELNO
 g $904A SPELNO
 
-c $904B RANDY
+c $904B Generate a semi-random number.
 @ $904B label=RANDY
-C $904B preserve HL
+D $904B Stores a number with lower nibble less than 10 in #R$907A, and returns value from 0 to 9 in A.
+C $904B Preserve HL.
 @ $904C label=RANDO
-C $904C copy R register to A
-C $904E add value of SEED system variable
-C $9052 set msb
-C $9054 copy value to B register as loop counter
+C $904C Copy R. register to A.
+C $904E Add value of SEED system variable.
+C $9052 Set most significan bit.
+C $9054 Copy value to B register as outer loop counter.
 @ $9055 label=PODER
-C $9055 push loop counter
-C $9056 set B to fifteen as loop counter
+C $9055 Preserve loop counter.
+C $9056 Set B to 15 as inner loop counter.
 @ $9058 label=PODEI
-C $9058 jump back to #R$9058 (do nothing) fourteen times
-C $905B pop loop counter
-C $905C loop back to #R$9055
-C $905E copy R register to A
-C $9060 mask lowest three bits and copy to H
-C $9063 copy R register to A then to L
-C $9066 copy R register to A then add byte at the address in HL twice
-C $906A add the SEED system variable
-C $906E store the result in #R$907A
-C $9071 mask the lower four bits
-C $9073 if the result is less than ten jump back to #R$904C
-C $9078 else restore HL and return
+C $9058 Loop back and execute NOP for 15 iterations.
+C $905B Restore loop counter.
+C $905C Loop back to #R$9055.
+C $905E Copy R register to A.
+C $9060 Copy lowest three bits to H.
+C $9063 Copy R register to L. HL now contains a semi-random address below $0800.
+C $9066 Copy R register to A then add byte at the address in HL twice.
+C $906A Add the SEED system variable.
+C $906E Store result in #R$907A ???
+C $9071 If the lower nibble is greater than 9 jump back to #R$904C.
+C $9078 Else restore HL and return.
 
 @ $907A label=RANUM
 g $907A RANUM
@@ -1232,16 +1225,16 @@ C $92A3 decrement B
 C $92A4 jump back to #R$9185 if there are still players to process
 C $92A7 else jump to #R$95C7 ???
 
-c $92AA GETHIS
+c $92AA Calculate address of spells for current player.
 @ $92AA label=GETHIS
-C $92AA point HL at table of possessed spells
-C $92AD load #R$AC0E variable into DE
-C $92B3 set B to $28 (length of spell data for each wizard) as loop counter
-C $92B5 set A to zero
-C $92B6 add DE to HL as an offset into the table of possessed spells
-C $92B7 loop back to #R$92B6 39 times so that HL points to correct wizard's spells
-C $92B9 increment HL and store its value in #R$9154
-C $92BD return
+C $92AA Set HL to address of #R$7F47.
+C $92AD Load #R$AC0E into DE.
+C $92B3 Set B to $28 (length of spell data for each wizard) as loop counter.
+C $92B5 Set A to zero.
+C $92B6 Add player number to address.
+C $92B7 Loop back to #R$92B6 for $28 iterations so that HL points to correct wizard's spells.
+C $92B9 Increment HL and store in #R$9154.
+C $92BD Return.
 
 c $92BE user selected "Examine board" from options in #R$9168 routine
 @ $92BE label=examine_board
@@ -1505,14 +1498,15 @@ C $96E4 increment C and return
 
 c $96E6 PAUSER
 @ $96E6 label=PAUSER
-C $96E6 stack BC
-C $96E7 load B with 255 as outer loop counter
-C $96E9 preserve outer loop counter
-C $96EA load B with 160 as inner loop counter
-C $96EC loop back to #R$96EC 159 times
-C $96EE restore outer loop counter
-C $96EF loop back to #R$96E9 254 times
-C $96F1 pop BC and return
+D $96E6 Loop 40800 times to delay for approximately 0.15 seconds.
+C $96E6 Preserve BC.
+C $96E7 Set B to 255 as outer loop counter.
+C $96E9 Preserve outer loop counter.
+C $96EA Set B to 160 as inner loop counter.
+C $96EC Loop back to #R$96EC for 160 iterations.
+C $96EE Restore outer loop counter.
+C $96EF Loop back to #R$96E9 for 255 iterations.
+C $96F1 Restore BC and return.
 
 c $96F3 routine08
 @ $96F3 label=routine08
