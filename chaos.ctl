@@ -3046,7 +3046,7 @@ C $C44F If bit 6 is set and bit 7 is clear print #MPRINTLINK($41) spell property
 C $C45D If bit 5 is set print #MPRINTLINK($42) spell property.
 @ $C469 label=not_flying
 C $C469 If bit 3 is set print #MPRINTLINK($43) spell property.
-C $C476 If zero jump to #R$C4B8.
+C $C476 Jump to #R$C51B.
 @ $C479 label=not_wizard_2
 C $C479 Increment x coordinate.
 C $C47A Get CHAOS/LAW attribute of object.
