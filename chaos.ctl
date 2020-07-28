@@ -1445,7 +1445,7 @@ C $9627 set HL to #R$9156+8 (second half of 16 byte table used by #R$9168) ???
 C $962A add #R$AC0E as offset in table
 C $9631 copy byte at offset into #R$9166 ???
 C $9632 if byte is non zero then jump forward to #R$964C
-C $9638 else get a random number between 11 and 15 in A
+C $9638 else get a random number from 0 to 9 in A
 C $963B load #R$9153 into E, increment it, and compare with random value
 C $9641 if #R$9153 + 1 is greater than random value then skip to #R$964C
 C $9644 else set spell successful flag to zero and skip forward to #R$9659 ???
@@ -2777,7 +2777,7 @@ c $BE21 routine45
 c $BE52 routine46
 @ $BE52 label=routine46
 
-c $BE94 get a random number from 11 to 15 in A register
+c $BE94 Generate a random number from 0 to 9
 @ $BE94 label=get_random
 C $BE94 preserve HL and DE
 C $BE96 copy value of R register into E
@@ -2788,7 +2788,7 @@ C $BE9E load byte from resulting address into E
 C $BEA1 add value of R register
 C $BEA4 add value of SEED system variable
 C $BEA8 mask off lower four bits
-C $BEAA jump back to #R$BE96 if A is less than eleven
+C $BEAA jump back to #R$BE96 if A is greater than 9
 C $BEAF restore DE and HL
 C $BE81 return
 
