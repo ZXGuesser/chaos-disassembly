@@ -181,8 +181,9 @@ W $7F25,2
 b $7F27 S cursor sprite data.
 B $7F27,$20,8 #HTML(#UDGARRAY2,,4;$7F27-$7F46-8(scursorsprite) )S cursor.
 
-@ $7F47 label=posesssed_spell_tables
+@ $7F47 label=possesssed_spell_tables
 g $7F47 Table of possessed spells.
+D $7F47 20 pairs of bytes containing ??? followed by spell number.
 B $7F47,$28 wizard 1
 B $7F6F,$28 wizard 2
 B $7F97,$28 wizard 3
@@ -819,34 +820,35 @@ C $8DA4 Get R register into L.
 C $8DA7 Read byte from a semi-random address in first 2kB of ROM.
 C $8DA8 Add semi-random byte from address in #R$CD86.
 C $8DAC Select lowest 6 bits.
-C $8DAE Jump back to #R$8D9F unless value in the range $02 to $41. This selects any valid spell number excluding disbelieve. The preceding mask also excludes spells $40 and $41 (turmoil) rendering the upper range check unnecessary.
+C $8DAE Jump back to #R$8D9F unless value in the range $02 to $41. This selects any valid spell number excluding disbelieve. The preceding mask also #LINK:Facts#turmoil_spell(excludes spells $40 and $41 (turmoil)) rendering the upper range check unnecessary.
 C $8DB8 Increment #R$CD86 to next semi-random byte.
 C $8DBC Store spell number in #R$937B.
-C $8DBF Call #R$92F9 ???
-C $8DC2 Read fourth value from spell table at address in IX.
-C $8DC5 Store A at address held in #R$9154.
+C $8DBF Get address of spell table entry in IX.
+C $8DC2 Read fourth byte from spell entry ???
+C $8DC5 Store at address in #R$9154.
 C $8DC9 Increment address and copy #R$937B there.
-C $8DCE Increment address and update pointer in #R$9154.
+C $8DCE Increment address and #R$9154 pointer.
 C $8DD2 Restore loop counter.
 C $8DD3 Loop back to #R$8D9E for #R$904A iterations.
 C $8DD5 If player is human, jump to #R$8E08.
-C $8DDB Call #R$92AA ???
-C $8DDE Set HL to address held in #R$9154 and decrement.
-C $8DE2 Set B to nineteen as outer loop counter.
+C $8DDB Get address of spells for current player.
+C $8DDE Set HL to address of wizard's first spell number.
+C $8DE1 Decrement to address of first entry in possessed spell table.
+C $8DE2 Set B to 19 as outer loop counter.
 @ $8DE4 label=OUTL_
-C $8DE4 Preserve outer loop counter and address (#R$9154)-1.
-C $8DE6 Set B to nineteen as inner loop counter.
+C $8DE4 Preserve outer loop counter and address in possessed spell table.
+C $8DE6 Set B to 19 as inner loop counter.
 @ $8DE8 label=INL_
 C $8DE8 Preserve inner loop counter.
-C $8DE9 Read four bytes from address in HL into E, D, C, and B.
-C $8DF0 Move pointer back to the third byte.
-C $8DF1 If byte in E (first byte read) is greater than or equal to C (third byte read) jump to #R$8E01.
-C $8DF7 Move pointer forwards again and write D to memory at pointer (fourth byte).
-C $8DF9 Move pointer back and write E to third byte, B to second byte, and C to first byte.
-C $8DFF Move pointer back to the third byte read.
+C $8DE9 Read ??? and spell number from entry address in HL into E and D.
+C $8DED Move forward and read next entry into C and B.
+C $8DF0 Move pointer back to the ??? of the second entry.
+C $8DF1 If first ??? is not greater than or equal to second ??? jump to #R$8E01.
+C $8DF7 Else swap table entries.
+C $8DFF Move pointer back to ??? of the second entry.
 @ $8E01 label=NOBIGA
-C $8E01 Restore inner loop counter and loop back to #R$8DE8 for nineteen iterations.
-C $8E04 Restore address (#R$9154)-1 and outer loop counter and loop back to #R$8DE4 for nineteen iterations.
+C $8E01 Restore inner loop counter and loop back to #R$8DE8 for 19 iterations.
+C $8E04 Restore address of first table entry and outer loop counter and loop back to #R$8DE4 for 19 iterations.
 @ $8E08 label=DONSOR
 C $8E08 Increment #R$AC0E variable.
 C $8E0F Restore loop counter and jump back to #R$8AD8 for #R$AC0F iterations.
