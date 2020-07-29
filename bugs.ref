@@ -1,0 +1,13 @@
+
+
+[Bug:Spell generation randomness]
+The wizard selection prompts at the start of the game generate buffer of random bytes based on the length of keypresses and state of the Z80's refresh counter.
+
+These values are used later when assigning spells, but because the code loops back to #R$8AD2(after the buffer pointer is reset), the first players randomness is used each time.
+
+[Bug:Magic Wood spell randomness]
+A wizard can #R$8F9A(obtain new spells) from a Magic Wood tree. The spell number is generated but the random number routine #R$904B and checked to ensure it is in the correct range.
+
+A possible bug is that #R$904B loops until the low nibble of the value generated is in the range 0 to 9, which means spell numbers $nA to $nF are never generated.
+
+A wizard is able to obtain the #LINK:Facts#turmoil_spell(Turmoil spell) from a Magic Wood tree.

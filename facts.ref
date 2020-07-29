@@ -1,4 +1,7 @@
 
 
-[Fact:assemblerlabels:Assembler labels]
-There is a block of data at #R$A425 which appears to have been left behind by the assembler. It contains labels and addresses for some some routines and data. These original labels have been retained in the disassmbly.
+[Fact:Assembler labels]
+There is a #R$A425(block of data) which appears to have been left behind by the assembler. It contains labels and addresses for some some routines and data. These original labels have been retained in the disassmbly.
+
+[Fact:Turmoil spell]
+When spells are assigned to wizards at the start of the game the Turmoil spell is #R$8DAC(not included). Gollop is quoted as thinking "it wasn’t very useful or good" so omitted it, however players can still #R$8F9A(obtain it from a Magic Wood).

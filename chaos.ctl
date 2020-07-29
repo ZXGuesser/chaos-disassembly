@@ -181,8 +181,8 @@ W $7F25,2
 b $7F27 S cursor sprite data.
 B $7F27,$20,8 #HTML(#UDGARRAY2,,4;$7F27-$7F46-8(scursorsprite) )S cursor.
 
-@ $7F47 label=posessed_spell_tables
-g $7F47 Table of posessed spells.
+@ $7F47 label=posesssed_spell_tables
+g $7F47 Table of possessed spells.
 B $7F47,$28 wizard 1
 B $7F6F,$28 wizard 2
 B $7F97,$28 wizard 3
@@ -583,7 +583,6 @@ g $89A8 NUM
 @ $89A9 label=GAMTUN
 g $89A9 GAMTUN
 @ $89AA label=player_name_string
-@ $89AA ssub=DEFW $EA39+$23
 g $89AA player name string pointer
 @ $89AC label=POSPRI
 g $89AC POSPRI
@@ -626,13 +625,9 @@ C $8A07 Set P-FLAGS to 3 (OVER mode).
 C $8A0C Disable interrupts.
 C $8A0D Clear the screen.
 C $8A10 Zero out 32 bytes at #R$AC16.
-@ $8A13 ssub=LD DE,$AC16+1
 C $8A1D Zero out #R$7F47.
-@ $8A20 ssub=LD DE,$7F47+1
 C $8A2A Zero out #R$E01F.
-@ $8A2D ssub=LD DE,$E01F+1
 C $8A37 Zero out #R$E0C0(other five map area tables). These tables hold the data for what object are on the screen and their state.
-@ $8A3A ssub=LD DE,$E0C0+1
 C $8A44 Set #R$C3A4 to zero.
 C $8A49 Set ATTR-T to $5A (bright red on magenta) and draw border.
 C $8A51 Set ATTR-T to $43 (bright magenta on black).
@@ -660,7 +655,7 @@ C $8AC0 Set B to ten as a loop counter.
 C $8AC2 Call #R$96E6 ten times to delay for approximately 1.5 seconds.
 C $8AC9 Set #R$AC0E to zero.
 C $8ACE Get #R$AC0F into B as loop counter.
-C $8AD2 Reset #R$CD86 to beggining of #R$D3F2. As each user makes selections at the following prompts, semi-random bytes are stored in #R$D3F2. This is then used a source of randomness when assigning spells. The bytes generated above are overwritten.
+C $8AD2 Reset #R$CD86 to beginning of #R$D3F2. As each user makes selections at the following prompts, semi-random bytes are stored in #R$D3F2. This is then used a source of randomness when assigning spells. The bytes generated above are overwritten.
 @ $8AD8 label=STALOO
 C $8AD8 Preserve loop counter.
 C $8AD9 Clear the screen.
@@ -731,7 +726,7 @@ C $8C29 Preserve the loop counter.
 C $8C2A Copy #R$89A8 to #R$90DF.
 C $8C30 Increment #R$89A8.
 C $8C34 Call #R$90F0 (print character sprite).
-C $8C37 Sdd three to #R$89AC.
+C $8C37 Add three to #R$89AC.
 C $8C42 Restore loop counter.
 C $8C43 Loop back to #R$8C29 for eight iterations.
 C $8C45 Call #R$89B0 with coordinates (19,11).
@@ -788,7 +783,7 @@ C $8D20 Set fifth byte of wizard stats to 1 (movement allowance).
 C $8D23 Get a random number in the range 0-9.
 C $8D26 Halve it and add 3.
 C $8D2A Add #R$9049 divided by 4.
-C $8D33 Store in sixth byte of wizard stats (manouvre rating).
+C $8D33 Store in sixth byte of wizard stats (manoeuvre rating).
 C $8D35 Get a random number in the range 0-9.
 C $8D38 Divide it by 4 and add 6.
 C $8D3E Store in seventh byte of wizard stats (magic resistance).
@@ -824,7 +819,7 @@ C $8DA4 Get R register into L.
 C $8DA7 Read byte from a semi-random address in first 2kB of ROM.
 C $8DA8 Add semi-random byte from address in #R$CD86.
 C $8DAC Select lowest 6 bits.
-C $8DAE Jump back to #R$8D9F unless value in the range $02 to $41. This selects any valid spell number excluding disbelieve. The preceding mask also excludes spells $40 and $41 (turmoil).
+C $8DAE Jump back to #R$8D9F unless value in the range $02 to $41. This selects any valid spell number excluding disbelieve. The preceding mask also excludes spells $40 and $41 (turmoil) rendering the upper range check unnecessary.
 C $8DB8 Increment #R$CD86 to next semi-random byte.
 C $8DBC Store spell number in #R$937B.
 C $8DBF Call #R$92F9 ???
@@ -1043,7 +1038,7 @@ C $904B Preserve HL.
 @ $904C label=RANDO
 C $904C Copy R. register to A.
 C $904E Add value of SEED system variable.
-C $9052 Set most significan bit.
+C $9052 Set most significant bit.
 C $9054 Copy value to B register as outer loop counter.
 @ $9055 label=PODER
 C $9055 Preserve loop counter.
@@ -1137,7 +1132,6 @@ B $9149 #SOUNDEFFECT(sound_effect_07.mp3)
 g $9153 Chance of casting selected spell.
 
 @ $9154 label=HISPEL
-@ $9154 ssub=DEFW $7F47+$2F
 g $9154 HISPEL
 W $9154
 
@@ -1157,7 +1151,6 @@ g $9167 spell successful flag
 c $9168 CAST_S
 @ $9168 label=CAST_S
 C $9168 Clear #R$9156 and #R$915E to zeros.
-@ $916D ssub=LD DE,$9156+1
 C $9175 set UDG system variable to point to #R$7F27(S cursor sprite data)
 C $917B load #R$AC0F into B as player loop counter
 C $917F set #R$AC0E to zero
@@ -1301,7 +1294,7 @@ C $937A Return.
 g $937B CURSP
 
 @ $937C label=temp_coordinates
-g $937C Temporary coordinates varaiable for #R$9385 ???
+g $937C Temporary coordinates variable for #R$9385 ???
 W $937C
 
 @ $937E label=spell_letter
@@ -1322,7 +1315,7 @@ W $9382
 g $9384 Cast spell flag
 D $9384 If flag is set #R$9385 will cast the selected spell, otherwise it displays spell info.
 
-c $9385 Display list of posessed spells.
+c $9385 Display list of possessed spells.
 @ $9385 label=select_spell
 C $9385 Play #R$C2E3 and clear the screen.
 C $938B Set ATTR-T to bright yellow on black.
@@ -1401,8 +1394,6 @@ C $94A4 Set illusion flag and return.
 c $94A7 routine37
 @ $94A7 label=routine37
 
-@ $94B6 ssub=LD HL,$E01F+$9F
-
 c $95B8 Get player controlled flag from #R$AC26 table
 @ $95B8 label=get_player_controlled_flag
 C $95B8 set HL to address of #R$AC26 table
@@ -1441,7 +1432,6 @@ C $961B call #R$92F9 ???
 C $961E Display wizard name, the spell being cast, and spell casting range
 C $9621 wait for a keypress
 C $9624 clear bottom of screen (line 22)
-@ $9627 ssub=LD HL,$9156+8
 C $9627 set HL to #R$9156+8 (second half of 16 byte table used by #R$9168) ???
 C $962A add #R$AC0E as offset in table
 C $9631 copy byte at offset into #R$9166 ???
@@ -1453,7 +1443,6 @@ C $9644 else set spell successful flag to zero and skip forward to #R$9659 ???
 C $964C set spell successful flag to one
 C $9651 add #R$937F to #R$C3A4 and store result in #R$C3A4 ???
 C $9659 load call address for spell from spell table into HL (IX set by earlier call to #R$92F9)
-@ $965F ssub=LD ($9662+1),HL
 C $965F overwrite the address of the following CALL instruction (self modifying code)
 @ $9662 label=spell_cast_function_call
 C $9662 call CreatureCast spell
@@ -1526,7 +1515,6 @@ C $96F1 Restore BC and return.
 c $96F3 routine08
 @ $96F3 label=routine08
 C $9732 Self modifying code
-@ $9732 ssub=LD ($9735+1),HL
 C $9738
 
 @ $975F label=unknown10
@@ -1557,7 +1545,6 @@ C $97CD return
 g $97CE unknown11
 
 @ $97CF label=unknown12
-@ $97CF ssub=DEFW $E01F+$9B
 g $97CF unknown12
 W $97CF
 
@@ -1613,12 +1600,8 @@ c $9C59 Lightning spell
 c $9DE0 DarkPowerEtc spell
 @ $9DE0 label=dark_power_spell
 
-@ $9E43 ssub=LD HL,$D908-$100
-
 c $9F50 INTERO
 @ $9F50 label=INTERO
-
-@ $A162 ssub=LD HL,$E01F+$57
 
 @ $A172 label=STRENG
 g $A172 STRENG
@@ -2185,7 +2168,6 @@ B $ABDF
 g $ABFC unknown13
 
 @ $ABFD label=unknown14
-@ $ABFD ssub=DEFW $E01F+$9F
 g $ABFD unknown14
 W $ABFD
 
@@ -2247,7 +2229,6 @@ g $AC11 unknown28
 g $AC12 Address of object table entry for current cursor position.
 W $AC12
 
-@ $AC14 ssub=DEFW $E01F+$9E
 @ $AC14 label=D_ADD
 g $AC14 D_ADD
 W $AC14
@@ -2427,7 +2408,7 @@ C $B765 else store $01 in #R$B754 and return
 @ $B769 label=unknown50
 g $B769 unknown50
 
-@ $B76A lgabel=unknown51
+@ $B76A label=unknown51
 g $B76A unknown51
 
 @ $B76b label=unknown52
@@ -2439,8 +2420,6 @@ g $B76D unknown_table_5
 
 c $B7D3 routine30
 @ $B7D3 label=routine30
-@ $B7E4 ssub=LD HL,$B76D+99
-@ $B7E7 ssub=LD DE,$B76D+101
 
 c $B7FD routine31
 @ $B7FD label=routine31
@@ -2495,14 +2474,12 @@ C $BAD4 restore A register and return
 c $BAD6 DH_P
 D $BAD6 Print double height font.
 @ $BAD6 label=DH_P
-@ $BAD6 ssub=LD HL,$D908-$100
 @ $BAD6 keep
 C $BAD6 Set CHARS to #R$D908 - $100 (data for top half of font).
 C $BADC Preserve AF.
 C $BADD Print top half of char in A.
 C $BAE0 Restore AF.
 C $BAE1 Increment B to move one row down.
-@ $BAE2 ssub=LD HL,$DB08-$100
 @ $BAE2 keep
 C $BAE2 Set CHARS to #R$DC08 - $100 (data for bottom half of font).
 C $BAE8 Print bottom half of char in A.
@@ -2675,7 +2652,7 @@ C $BCA0 On return wait for next interrupt, then jump to #R$BCE5.
 @ $BCA3 label=not_I
 C $BCA3 Call KEYBOARD in ROM.
 C $BCA6 If decoded key is greater than '8' or less than '1' jump to #R$BCE5.
-C $BCB0 Subtract $31 to convert keycode into player number.
+C $BCB0 Subtract $31 to convert key code into player number.
 C $BCB2 If value is greater than or equal to #R$AC0F jump to #R$BCE5.
 C $BCB9 Else store number in #R$D391.
 C $BCBC Call #R$C0DD ???
@@ -2782,7 +2759,6 @@ c $BE94 Generate a random number from 0 to 9
 @ $BE94 label=get_random
 C $BE94 preserve HL and DE
 C $BE96 copy value of R register into E
-@ $BE99 ssub=LD HL,$E01F+$96
 C $BE99 set HL to address of #R$E01F+$96
 C $BE9C add byte in E
 C $BE9E load byte from resulting address into E
@@ -3166,7 +3142,7 @@ C $C5FC preserve AF
 C $C5FD skip to #R$C608 if #R$C3A0 flag is clear
 C $C603 call #R$BAD6 to print a comma
 C $C608 restore AF
-C $C609 Print current spell property (e.g. undead, flying, etc)
+C $C609 Print current spell property (e.g. undead, flying, etc.)
 C $C60C set flag at #R$C3A0 so comma is printed next time
 C $C611 return
 
@@ -3243,17 +3219,12 @@ W $C8B7
 
 c $C8B9 routine58
 @ $C8B9 label=routine58
-@ $C8B9 ssub=LD HL,$D3F2+$1
 
 c $C8C7 routine59
 @ $C8C7 label=routine59
 
-@ $C94A ssub=LD HL,$D3F2+$F
-
 c $C955 routine60
 @ $C955 label=routine60
-
-@ $C9CD ssub=LD HL,$D3F2+$F3
 
 c $C9D4 routine61
 @ $C9D4 label=routine61
@@ -3262,7 +3233,6 @@ C $C9D7 decrement HL twice
 C $C9D9 store #R$CD86
 
 @ $CA16 label=unknown61
-@ $CA16 ssub=DEFW $E01F+$46
 g $CA16 unknown61
 W $CA16
 
@@ -3278,8 +3248,6 @@ c $CA7C routine63
 c $CA92 routine64
 @ $CA92 label=routine64
 
-@ $CB9C ssub=LD HL,$D3F2+$F
-
 @ $CBB8 label=unknown63
 g $CBB8 unknown63
 
@@ -3288,8 +3256,6 @@ c $CBB9 routine65
 
 c $CBC7 routine66
 @ $CBC7 label=routine66
-
-@ $CC3A ssub=LD HL,$D3F2+$A1
 
 @ $CC55 label=unknown64
 g $CC55 unknown64
@@ -3318,7 +3284,6 @@ C $CC9E increment #R$AC12 pointer
 C $CCA5 restore loop counter
 C $CCA6 execute loop 158 times
 C $CCA8 call #R$C64C with #R$D3F2 in HL and #R$C7BB in A ??
-@ $CCB1 ssub=LD HL,$D3F2+1
 C $CCB1 set #R$CD86 to second byte of #R$D3F2
 C $CCB7 copy #R$C78B to #R$AC14
 C $CCBD set #R$CC55 to zero and return
@@ -3876,7 +3841,7 @@ W $E43E Object 48: Wizard 7.
 @ $E440 expand=#DEFINE1,1(ANIMSPELL,#FOR(0,3)||$n|#SPRITE#(({0}+($n*3)))(*frame$n)||#UDGARRAY*frame0;frame1;frame2;frame3({1}))
 @ $E440 expand=#DEFINE1,1(SPELLSPRITE,#SPRITE{0}({1}))
 @ $E440 expand=#DEFINE1,(SPELLNAME,#FOR(0,12)||$n|#CHR(#PEEK({0}+$n))||)
-@ $E440 expand=#DEFINE1(SPELLSTATS,Combat=#PEEK({0})#RAW(,) Ranged combat=#PEEK({0}+1)#RAW(,) Range=#PEEK({0}+2)#RAW(,) Defence=#PEEK({0}+3)#RAW(,) Movement allowance=#PEEK({0}+4)#RAW(,) Manouvre rating=#PEEK({0}+5)#RAW(,) Magic resistance=#PEEK({0}+6)#RAW(,) Casting chance=#PEEK({0}+7)#RAW(,) Chaos/Law=#SIGNED(#PEEK({0}+8))#RAW(,) Animation delay=#PEEK({0}+9))
+@ $E440 expand=#DEFINE1(SPELLSTATS,Combat=#PEEK({0})#RAW(,) Ranged combat=#PEEK({0}+1)#RAW(,) Range=#PEEK({0}+2)#RAW(,) Defence=#PEEK({0}+3)#RAW(,) Movement allowance=#PEEK({0}+4)#RAW(,) Manoeuvre rating=#PEEK({0}+5)#RAW(,) Magic resistance=#PEEK({0}+6)#RAW(,) Casting chance=#PEEK({0}+7)#RAW(,) Chaos/Law=#SIGNED(#PEEK({0}+8))#RAW(,) Animation delay=#PEEK({0}+9))
 
 b $E440 object data table
 @ $E440 label=nothing
@@ -4306,7 +4271,7 @@ g $EA39 wizard data
 @ $EA39 expand=#DEFINE1(WIZARDNAME,#FOR(0,#EVAL(#PEEK($CE79+({0}*4))-1))||$n|#CHR(#PEEK(#DPEEK($CE77+({0}*4))+$n))||)
 
 ; macro to print out wizard stats from memory
-@ $EA39 expand=#DEFINE1(WIZARDSTATS,Combat=#PEEK({0})#RAW(,) Ranged combat=#PEEK({0}+1)#RAW(,) Range=#PEEK({0}+2)#RAW(,) Defence=#PEEK({0}+3)#RAW(,) Movement allowance=#PEEK({0}+4)#RAW(,) Manouvre rating=#PEEK({0}+5)#RAW(,) Magic resistance=#PEEK({0}+6)#RAW(,) Spells=#PEEK({0}+7)#RAW(,) Ability=#PEEK({0}+8)#RAW(,) Animation delay=#PEEK({0}+9))
+@ $EA39 expand=#DEFINE1(WIZARDSTATS,Combat=#PEEK({0})#RAW(,) Ranged combat=#PEEK({0}+1)#RAW(,) Range=#PEEK({0}+2)#RAW(,) Defence=#PEEK({0}+3)#RAW(,) Movement allowance=#PEEK({0}+4)#RAW(,) Manoeuvre rating=#PEEK({0}+5)#RAW(,) Magic resistance=#PEEK({0}+6)#RAW(,) Spells=#PEEK({0}+7)#RAW(,) Ability=#PEEK({0}+8)#RAW(,) Animation delay=#PEEK({0}+9))
 
 D $EA39 The first two names memory in the released tape were obviously written over existing strings. Based on Gollop's blog post about the origins of Chaos they were most likely JEVARELL and LARGEFART.
 D $EA39 This data is overwritten during character creation at the start of the game
@@ -4382,7 +4347,6 @@ B $EB51,$20 #HTML(#UDGARRAY2,,4;$EB51-$EB70-8(nothingsprite) )nothing
 B $EB71,$20 #HTML(#UDGARRAY2,,4;$EB71-$EB90-8(kingcobrasprite0) )king cobra 0
 @ $EB91 label=kingcobrasprite1
 B $EB91,$20 #HTML(#UDGARRAY2,,4;$EB91-$EBB0-8(kingcobrasprite1) )king cobra 1
-@ $EBB1 ssub=DEFW $EB51+$722
 W $EBB1 unknown83
 @ $EBB3 label=kingcobrasprite2
 B $EBB3,$20 #HTML(#UDGARRAY2,,4;$EBB3-$EBD2-8(kingcobrasprite2) )king cobra 2
@@ -4688,7 +4652,7 @@ u $FE34
 
 c $FE56 switch to interrupt mode 2
 @ $FE56 label=set_IM2_mode
-C $FE56 set I to $09 for the high byte of the interrupt vector. The lower byte is assumed to always be $FF so that the value $FE69 will be read from adress $09FF in ROM
+C $FE56 set I to $09 for the high byte of the interrupt vector. The lower byte is assumed to always be $FF so that the value $FE69 will be read from address $09FF in ROM
 C $FE5A set interrupt mode 2
 C $FE5C return
 
