@@ -616,7 +616,7 @@ C $89E9 Load #R$89A8 into A and subtract $31 so that A = number pressed-1 and re
 b $89EF Key bloop sound effect.
 B $89EF #SOUNDEFFECT(S60.mp3)
 
-@ $89F9 label=main_loop
+@ $89F9 label=main_routine
 c $89F9 The main game routine.
 C $89F9 Set border to black.
 C $89FC Set ATTR-T to black.
@@ -624,7 +624,7 @@ C $89FF Set ATTR-P to black.
 C $8A02 Set MASK-P to all transparent.
 C $8A07 Set P-FLAGS to 3 (OVER mode).
 C $8A0C Disable interrupts.
-C $8A0D Call #R$C5EE ???
+C $8A0D Clear the screen.
 C $8A10 Zero out 32 bytes at #R$AC16.
 @ $8A13 ssub=LD DE,$AC16+1
 C $8A1D Zero out #R$7F47.
@@ -645,28 +645,28 @@ C $8A78 Set ATTR-T to $44 (bright green on black).
 C $8A7D Print message #MTWOPRINTLINK($0E) at coordinates (2,11).
 C $8A85 Set BC to coordinates (20,9).
 C $8A88 Set the flag to prevent numbers less than 2 in input.
-C $8A8D Call #R$89B0 ???
+C $8A8D Get number input from 2 to 8. This also appends 4 semi-random bytes to #R$D3F2. When the game is loaded #R$CD86 is pointing at the fourth byte in the buffer.
 C $8A90 Increment the number input and store in #R$AC0F.
 C $8A94 Set ATTR-T to $46 (bright yellow on black).
 C $8A99 Print message #MTWOPRINTLINK($08) at coordinates (2,14).
 C $8AA1 Set ATTR-T to $43 (bright magenta on black).
 C $8AA6 Print message #MTWOPRINTLINK($03) at coordinates (2,16).
-C $8AAE Call #R$89B0 with coordinates 29,14.
+C $8AAE Set coordinates (29,14) and get number input from 1 to 8. This also appends 4 semi-random bytes to #R$D3F2.
 C $8AB4 Store input in #R$89A7.
 C $8AB7 Multiply level by four and add fifteen.
 C $8ABD Store the result in #R$89A9.
 C $8AC0 Set B to ten as a loop counter.
 @ $8AC2 label=REPWAT
-C $8AC2 Preserve BC and call #R$96E6 ??? then restore BC.
-C $8AC7 Repeat for ten iterations.
+C $8AC2 Call #R$96E6 ten times to delay for approximately 1.5 seconds.
 C $8AC9 Set #R$AC0E to zero.
-C $8ACE Get #R$AC0F into B, and store #R$D3F2 in #R$CD86.
+C $8ACE Get #R$AC0F into B as loop counter.
+C $8AD2 Reset #R$CD86 to beggining of #R$D3F2. As each user makes selections at the following prompts, semi-random bytes are stored in #R$D3F2. This is then used a source of randomness when assigning spells. The bytes generated above are overwritten.
 @ $8AD8 label=STALOO
-C $8AD8 Preserve BC.
-C $8AD9 call #R$C5EE ???
+C $8AD8 Preserve loop counter.
+C $8AD9 Clear the screen.
 C $8ADC Set ATTR-T to $69 (bright cyan on black) and draw border.
 C $8AE4 Set ATTR-T to $46 (bright yellow on black) and print message #MTWOPRINTLINK($04) at coordinates (2,2).
-C $8AF1 Get current player number, add $31 to convert to char value and call #R$BAD6.
+C $8AF1 Print current player number.
 C $8AF9 Set ATTR-T to $43 (bright magenta on black) and print message #MTWOPRINTLINK($09) at coordinates (2,4).
 C $8B06 Get address of wizard object data for current player.
 C $8B09 Set #R$89AE to zero.
@@ -678,12 +678,12 @@ C $8B1F If key is 'enter' jump to #R$8B95.
 C $8B24 If key is not 'delete' jump to #R$8B56.
 C $8B28 If #R$89AE is zero jump back to #R$8B19.
 C $8B2E Load #R$89AC into BC and decrement (move cursor left over letter to delete).
-C $8B33 Call #R$BAD6 ??? with A set to $20 (space) to blank out letter under cursor.
+C $8B33 Print space character to blank out letter under cursor.
 C $8B38 Decrement #R$89AC again ready for next letter.
 C $8B3F Decrement #R$89AE.
 C $8B43 Decrement #R$89AA pointer (move back over last character).
 C $8B4A Play key bloop sound effect.
-C $8B50 Call #R$96E6 ??? then jump back to #R$8B19.
+C $8B50 Pause for approximately 0.15 seconds then jump back to #R$8B19.
 @ $8B56 label=NO_DEL
 C $8B56 If string length equals 11 jump back to #R$8B19.
 C $8B5E If #R$89AF is 'space' jump to #R$8B6F.
@@ -695,7 +695,7 @@ C $8B77 Increment #R$89AE.
 C $8B7B Load #R$89AC into BC and call #R$BAD6 to print character still in A (space) at those coordinates.
 C $8B82 Increment #R$89AC.
 C $8B89 Play key bloop sound effect.
-C $8B8F Call #R$907B ??? then jump back to #R$8B19.
+C $8B8F Append 4 semi-random bytes to #R$D3F2 then jump back to #R$8B19.
 @ $8B95 label=ENTER
 C $8B95 Read string length into A. If zero jump back to #R$8B19.
 C $8B9C Set HL = #R$AC0E + $29.
@@ -703,10 +703,10 @@ C $8BA4 Multiply result by four.
 C $8BA6 Add result to address of #R$CDD3(game messages table 1) to point at offset to relevant wizard data.
 C $8BAA Move past address word in table to wizard name length.
 C $8BAC Read #R$89AE variable again and write into table.
-C $8BB0 Call #R$907B ???
+C $8BB0 Append 4 semi-random bytes to #R$D3F2.
 C $8BB3 Set ATTR-T to $43 (bright magenta on black) and print message #MTWOPRINTLINK($05) at coordinates (2,9).
 C $8BC0 Set ATTR-T to $46 (bright yellow on black).
-C $8BC5 Set #R$AC2E to zero (current player is human).
+C $8BC5 Clear #R$AC2E (current player is human).
 @ $8BCA label=Y_OR_N
 C $8BCA Call KEYBOARD in Spectrum ROM.
 C $8BCD If keypress is 'Y' jump to #R$8BDF.
@@ -720,7 +720,7 @@ C $8BF1 Write $01 to #R$AC26 + #R$AC0E.
 C $8BF3 Set #R$AC2E.
 @ $8BF8 label=NOT_CC
 C $8BF8 Play key bloop sound effect.
-C $8BFE Call #R$907B ???
+C $8BFE Append 4 semi-random bytes to #R$D3F2.
 C $8C01 Set ATTR-T to $43 (bright magenta on black) and print message #MTWOPRINTLINK($0C) at coordinates (2,11).
 C $8C0E Set ATTR-T to $45 (bright cyan on black) and print message #MTWOPRINTLINK($0D) at coordinates (2,13).
 C $8C1B Set #R$89AC to coordinates (3,13).
@@ -755,7 +755,7 @@ C $8CA3 Print character sprite.
 C $8CA6 Add three to #R$89AC.
 C $8CB0 Restore loop counter from stack.
 C $8CB1 Loop back to #R$8C97 for eight iterations.
-C $8CB3 Call #R$89B0 with coordinates (16,16) ???
+C $8CB3 Set coordinates to (16,16) and get number input from 1 to 8. This also appends 4 semi-random bytes to #R$D3F2.
 C $8CB9 Add number returned to address of #R$90D7 giving address of byte in attribute table corresponding to chosen colour.
 C $8CC0 Read attribute byte from attribute table and set ATTR-T.
 C $8CC4 Set #R$89AC to coordinates (17,16) and print character sprite.
@@ -765,7 +765,7 @@ C $8CD5 Set DE to three.
 C $8CD8 Read ATTR-T onto A.
 C $8CDB Set B to four as a loop counter.
 @ $8CDD label=PUTATL
-C $8CDD Add three to HL to point at next attr byte in wizard data
+C $8CDD Add three to HL to point at next attribute byte in wizard data.
 C $8CDE Write attribute byte to wizard data.
 C $8CDF Loop back to #R$8CDD for four iterations.
 C $8CE1 Set #R$9049 to zero.
@@ -775,54 +775,58 @@ C $8CEC Else copy #R$89A7 to #R$9049.
 C $8CF2 Get address of first sprite pointer in wizard object data of the current player.
 C $8CF5 Read #R$89AA into HL.
 C $8CF8 Move past player name string to player stats.
-C $8CFD Call #R$904B ???
-C $8D00 Halve value in A and add one, add #R$9049 divided by two.
+C $8CFD Get a random number in the range 0-9.
+C $8D00 Halve it and add 1.
+C $8D03 Add #R$9049 divided by 2.
 C $8D0A Store calculated value in first byte of wizard stats (combat).
 C $8D0B Set second and third bytes of wizard stats to zero (ranged combat and range).
-C $8D11 Call #R$904B ???
-C $8D14 Halve value, add one, add to #R$9049 divided by two.
+C $8D11 Get a random number in the range 0-9.
+C $8D14 Halve it and add 1.
+C $8D17 Add #R$9049 divided by 2.
 C $8D1E Store in fourth byte of wizard stats (defence).
-C $8D20 Set fifth byte of wizard stats to one (movement allowance).
-C $8D23 Call #R$904B ???
-C $8D26 Halve value, add three, add to #R$9049 divided by four.
+C $8D20 Set fifth byte of wizard stats to 1 (movement allowance).
+C $8D23 Get a random number in the range 0-9.
+C $8D26 Halve it and add 3.
+C $8D2A Add #R$9049 divided by 4.
 C $8D33 Store in sixth byte of wizard stats (manouvre rating).
-C $8D35 Call #R$904B ???
-C $8D38 Divide value by four, add six and store in seventh byte of wizard stats (magic resistance).
-C $8D40 Call #R$904B ???
-C $8D43 Halve value, add eleven, add #R$9049.
-C $8D4C If result is less than twenty one jump to #R$8D53 else set A to twenty. In other words limit the value to twenty.
+C $8D35 Get a random number in the range 0-9.
+C $8D38 Divide it by 4 and add 6.
+C $8D3E Store in seventh byte of wizard stats (magic resistance).
+C $8D40 Get a random number in the range 0-9.
+C $8D43 Halve it and add 11.
+C $8D47 Add #R$9049.
+C $8D4C Cap the value at 20.
 @ $8D53 label=NOTMOR
 C $8D53 Store value in #R$904A and in eighth byte of wizard stats (spells).
 C $8D58 Set ninth byte in wizard stats to zero (ability).
-C $8D5B Halve #R$9049 and subtract from five.
+C $8D5B Halve #R$9049 and subtract from 5.
 C $8D64 Store result in #R$A172.
-C $8D67 Call #R$904B ???
-C $8D6A Compare returned value with #R$A172.
-C $8D6F If random value is less than #R$A172 jump to #R$8D7A.
-C $8D72 Call #R$904B ???
-C $8D75 Halve value and store in ninth byte of wizard stats (ability).
+C $8D67 Get a random number in the range 0-9.
+C $8D6A If less than #R$A172 jump to #R$8D7A.
+C $8D72 Get a random number in the range 0-9.
+C $8D75 Halve it and store in ninth byte of wizard stats (ability).
 @ $8D7A label=NOABIL
-C $8D7A call #R$92AA ???
-C $8D7D Decrement #R$9154 to first byte in table of spells possesed by current wizard.
-C $8D84 Call #R$904B ???
-C $8D87 Add twelve to value and store at address in #R$9154.
+C $8D7A Get address of current player's first spell in #R$7F47.
+C $8D7D Decrement #R$9154 to first byte in wizard's spells ???
+C $8D84 Get a random number in the range 0-9.
+C $8D87 Add 12 to value and store at address in #R$9154 ???
 C $8D8D Set first spell to $01 (disbelieve).
 C $8D90 Set #R$9154 to next address.
-C $8D94 Set #R$CD86 to #R$D3F2.
-C $8D9A Get #R$904A into B.
+C $8D94 Reset #R$CD86 to beginning of #R$D3F2.
+C $8D9A Set B to #R$904A as loop counter.
 @ $8D9E label=INSPLO
 C $8D9E Preserve BC.
 @ $8D9F label=RIND
 C $8D9F Copy R register into A.
-C $8DA1 Mask lowest three bits.
+C $8DA1 Select lowest three bits.
 C $8DA3 Copy to H.
 C $8DA4 Get R register into L.
-C $8DA7 Read byte at address in HL.
-C $8DA8 Add byte at address held in #R$CD86.
-C $8DAC Mask lowest six bits.
-C $8DAE Jump back to #R$8D9F unless 1 < A < 66.
-C $8DB8 Increment #R$CD86.
-C $8DB9 Store A in #R$937B.
+C $8DA7 Read byte from a semi-random address in first 2kB of ROM.
+C $8DA8 Add semi-random byte from address in #R$CD86.
+C $8DAC Select lowest 6 bits.
+C $8DAE Jump back to #R$8D9F unless value in the range $02 to $41. This selects any valid spell number excluding disbelieve. The preceding mask also excludes spells $40 and $41 (turmoil).
+C $8DB8 Increment #R$CD86 to next semi-random byte.
+C $8DBC Store spell number in #R$937B.
 C $8DBF Call #R$92F9 ???
 C $8DC2 Read fourth value from spell table at address in IX.
 C $8DC5 Store A at address held in #R$9154.
@@ -1053,7 +1057,7 @@ C $9060 Copy lowest three bits to H.
 C $9063 Copy R register to L. HL now contains a semi-random address below $0800.
 C $9066 Copy R register to A then add byte at the address in HL twice.
 C $906A Add the SEED system variable.
-C $906E Store result in #R$907A ???
+C $906E Store result in #R$907A.
 C $9071 If the lower nibble is greater than 9 jump back to #R$904C.
 C $9078 Else restore HL and return.
 
@@ -1062,22 +1066,19 @@ g $907A RANUM
 
 @ $907B label=NKEY2
 c $907B NKEY2
-D $907B generate four random numbers at address held in #R$CD86 based on the length of time a key is held down for.
-C $907B preserve HL, DE, and BC registers
+D $907B Generate four semi-random bytes at address held in #R$CD86.
+C $907B preserve registers.
 @ $907E label=WAIT1
-C $907E stack BC again
-C $907F call KEY-SCAN in Spectrum ROM to see if a key was pressed.
-C $9082 pop BC
-C $9083 increment C
-C $9084 copy E register to A (key value returned in the range 0 to 39)
-C $9085 jump back to #R$907E if a key is still being pressed
-C $9088 load contents of #R$CD86 into HL
-C $908B store C at address in HL
-C $908C double value in C register and store at next address
-C $9090 copy R register into A and store at next address
-C $9094 double the value in A and store at next address
-C $9097 set #R$CD86 to next address
-C $909B restore BC, DE, and HL registers and return
+C $907E Call KEY-SCAN in Spectrum ROM to see if a key was pressed.
+C $9083 Increment C
+C $9084 Copy key value to A.
+C $9085 If a key is still being pressed jump back to #R$907E.
+C $9088 Store C at address in #R$CD86.
+C $908C Double value in C register and store at next address.
+C $9090 Copy R register into A and store at next address.
+C $9094 Double the value in A and store at next address.
+C $9097 Set #R$CD86 to next address.
+C $909B Restore registers and return.
 
 b $909F Starting positions table.
 D $909F table of starting positions for 2-8 player games. Value is the offset in the map table of the place where the player will start.
@@ -2721,7 +2722,7 @@ C $BD62 If the object is a wizard jump to #R$BD88.
 C $BD6B Else get address of entry in #R$E200.
 C $BD6F Set ATTR-T to bright yellow on black.
 C $BD74 Print '(' character.
-C $BD7B Read entry from #R$E200 and mask lower 3 bits to get wizard number.
+C $BD7B Read entry from #R$E200 and mask bits to get wizard number.
 C $BD7E Convert wizard number to object number and print the wizard name.
 C $BD83 Print ')' character.
 C $BD88 Perform a busy wait delay.
@@ -2787,7 +2788,7 @@ C $BE9C add byte in E
 C $BE9E load byte from resulting address into E
 C $BEA1 add value of R register
 C $BEA4 add value of SEED system variable
-C $BEA8 mask off lower four bits
+C $BEA8 select lower four bits
 C $BEAA jump back to #R$BE96 if A is greater than 9
 C $BEAF restore DE and HL
 C $BE81 return
@@ -2868,7 +2869,7 @@ C $C0E0 Set HL to address of #R$E01F.
 C $C0E3 If object is not zero jump to #R$C0FF.
 C $C0E7 Preserve address.
 C $C0E8 Get offset within #R$E01F.
-C $C0EE Increment and mask off low nibble to get next column number.
+C $C0EE Increment and select low nibble to get next column number.
 C $C0F1 Restore address.
 C $C0F2 If next column is zero jump to #R$C0FF.
 C $C0F4 Else set entry in #R$E01F to $01.
