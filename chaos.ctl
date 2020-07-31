@@ -625,10 +625,10 @@ C $8A02 Set MASK-P to all transparent.
 C $8A07 Set P-FLAGS to 3 (OVER mode).
 C $8A0C Disable interrupts.
 C $8A0D Clear the screen.
-C $8A10 Zero out 32 bytes at #R$AC16.
+C $8A10 Zero out #R$AC16, #R$AC1E, #R$AC26, #R$AC2E, #R$AC2F, #R$AC30, #R$AC31, #R$AC32, #R$AC33, #R$AC34, and #R$AC35.
 C $8A1D Zero out #R$7F47.
 C $8A2A Zero out #R$E01F.
-C $8A37 Zero out #R$E0C0(other five map area tables). These tables hold the data for what object are on the screen and their state.
+C $8A37 Zero out #R$E0C0, #R$E160, #R$E200, #R$E2A0, and #R$E340.
 C $8A44 Set #R$C3A4 to zero.
 C $8A49 Set ATTR-T to $5A (bright red on magenta) and draw border.
 C $8A51 Set ATTR-T to $43 (bright magenta on black).
@@ -657,6 +657,7 @@ C $8AC2 Call #R$96E6 ten times to delay for approximately 1.5 seconds.
 C $8AC9 Set #R$AC0E to zero.
 C $8ACE Get #R$AC0F into B as loop counter.
 C $8AD2 Reset #R$CD86 to beginning of #R$D3F2. As each user makes selections at the following prompts, semi-random bytes are stored in #R$D3F2. This is then used a source of randomness when assigning spells. The bytes generated above are overwritten.
+N $8AD8 This is the wizard creation loop where the user enters the wizard name, whether it is a human or computer player, and selects the appearance. The wizard's attributes are then generated randomly.
 @ $8AD8 label=STALOO
 C $8AD8 Preserve loop counter.
 C $8AD9 Clear the screen.
@@ -852,10 +853,11 @@ C $8E04 Restore address of first table entry and outer loop counter and loop bac
 @ $8E08 label=DONSOR
 C $8E08 Increment #R$AC0E variable.
 C $8E0F Restore loop counter and jump back to #R$8AD8 for #R$AC0F iterations.
+N $8E14 Next the program sets the starting position of each wizard which depends on the number of players.
 C $8E14 Read #R$AC0F into A.
 C $8E17 Subtract two.
 C $8E19 Multiply by eight.
-C $8E1F And add result to #R$909F to get address of row in table for selected number of players.
+C $8E1F And add result to address of #R$909F get starting positions for selected number of players.
 C $8E26 Store this address in variable at #R$8321.
 C $8E29 Set #R$AC0E variable to zero.
 C $8E2E Read #R$AC0F into B as loop counter.
@@ -863,19 +865,18 @@ C $8E2E Read #R$AC0F into B as loop counter.
 C $8E32 Read byte from address held in #R$8321 into A.
 C $8E36 Increment address in temporary variable at #R$8321.
 C $8E3A Set HL to #R$E01F.
-C $8E3D Calculate address in table by adding the value just read from current player data in #R$909F table.
-C $8E41 Add forty one to contents of #R$AC0E variable and store at calculated address (the wizards have object codes 41-48).
-C $8E47 Add $1E1 to HL to get address of same position in table at #R$E200.
-C $8E4B Store contents of #R$AC0E variable at calculated address.
+C $8E3D Calculate address in table by adding the value just read from current player offset in #R$909F table.
+C $8E41 Add $29 to #R$AC0E to get object number of wizard and store at calculated address.
+C $8E47 Store #R$AC0E at corresponding entry in #R$E200.
 C $8E4F Increment #R$AC0E variable.
 C $8E53 Loop back to #R$8E32 for #R$AC0F iterations.
-C $8E55 Set #R$7D03 variable to zero.
+C $8E55 Set #R$7D03 to zero ???
 C $8E5A Read #R$AC0F into A, double it, add 15 and copy the result to B as a loop counter.
+N $8E62 This is the main game loop. A loop counter ends the game in a tie after a certain number of turns, which is the number of players multiplied by 2, plus 15.
 @ $8E62 label=TURLOO
 C $8E62 Preserve loop counter.
-C $8E63 call #R$9168 ???
-C $8E66 Load #R$AC34 variable and increment it.
-C $8E6A Jump to #R$8E93 if #R$AC34 + 1 is equal to #R$AC0F.
+C $8E63 Each player in turn casts their spell.
+C $8E66 If only one wizard is alive jump to #R$8E93.
 C $8E70 Call #R$9F50 ???
 C $8E73 Call #R$8F9A ???
 C $8E76 Call #R$A173 ???
@@ -886,11 +887,10 @@ C $8E7F Set B to ten as loop counter.
 C $8E81 Preserve BC, call #R$96E6, Restore BC.
 C $8E86 Loop back to #R$8E81 for ten iterations.
 C $8E88 Switch to interrupt mode 1.
-C $8E8B Read #R$AC34 variable into A and add one.
-C $8E8F Compare #R$AC34 +1 with #R$AC0F.
+C $8E8B Compare #R$AC34 +1 with #R$AC0F.
 @ $8E93 label=GO_END
 C $8E93 Restore loop counter.
-C $8E94 Jump to #R$8F04 if #R$AC34 + 1 was equal to #R$AC0F.
+C $8E94 If only one wizard is alive jump to #R$8F04.
 C $8E96 Increment variable #R$7D03.
 C $8E9A Loop back to #R$8E62 for (#R$AC0F * 2) + 15 iterations.
 C $8E9C Call #R$C5EE ???
@@ -2261,8 +2261,8 @@ g $AC32 unknown31
 @ $AC33 label=unknown32
 g $AC33 unknown32
 
-@ $AC34 label=unknown33
-g $AC34 unknown33
+@ $AC34 label=num_dead_wizards
+g $AC34 Number of wizards that have been killed.
 
 @ $AC35 label=unknown34
 g $AC35 unknown34
