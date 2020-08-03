@@ -661,7 +661,7 @@ N $8AD8 This is the wizard creation loop where the user enters the wizard name, 
 @ $8AD8 label=STALOO
 C $8AD8 Preserve loop counter.
 C $8AD9 Clear the screen.
-C $8ADC Set ATTR-T to $69 (bright cyan on black) and draw border.
+C $8ADC Set ATTR-T to $69 (bright blue on cyan) and draw border.
 C $8AE4 Set ATTR-T to $46 (bright yellow on black) and print message #MTWOPRINTLINK($04) at coordinates (2,2).
 C $8AF1 Print current player number.
 C $8AF9 Set ATTR-T to $43 (bright magenta on black) and print message #MTWOPRINTLINK($09) at coordinates (2,4).
@@ -965,8 +965,10 @@ C $8F8A Else return (to BASIC).
 c $8F8B ATTRDO
 C $8F8B Increment ATTR-T.
 C $8F92 If ATTR-T is not $08 return.
-C $8F95 Else set ATTR-T to $01 (dark blue on black).
+C $8F95 Else set ATTR-T to $01 (dark blue on black) and fall through to #R$8F9A.
+
 @ $8F9A label=TREPUT
+c $8F9A TREPUT
 C $8F9A Set HL to address of #R$E01F.
 C $8F9D Store in #R$AC12.
 C $8FA0 Set B to 159 as loop counter.
@@ -1221,13 +1223,13 @@ C $9272 call #R$92AA
 @ $9275 label=cast_s_key_loop
 C $9275 call KEYBOARD routine in ROM returning character code in A
 C $9278 Clear #R$9384.
-C $927D if A equals '1' then call #R$9385 and jump back to #R$919C
+C $927D if A equals '1' then display spells then jump back to #R$919C
 @ $9287 label=cast_s_not_1
 C $9287 else if A equals '4' then jump to #R$929E
 C $928B else if A equals '3' then jump to #R$92BE
 C $928F else if A does not equal '2' then loop back to #R$9275
 C $9293 '2' key was pressed, set #R$9384.
-C $9298 call #R$9385 ??? then jump back to #R$919C
+C $9298 Select spell then jump back to #R$919C
 @ $929E label=cast_s_continue
 C $929E '4' key was pressed, restore BC (player loop counter)
 C $929F increment #R$AC0E variable
@@ -1265,7 +1267,7 @@ C $92EC disable interrupts
 C $92ED set UDG system variable to address of S cursor sprite
 C $92F3 call #R$C5EE and jump back to #R$919C in #R$9168 routine
 
-c $92F9 CHAN_C
+c $92F9 Calculate the casting chance of the current spell.
 @ $92F9 label=CHAN_C
 C $92F9 Add #R$937B - 1 to address of #R$7D60 7 times to get address of current spell entry.
 @ $9306 label=spell_add_loop
@@ -1302,8 +1304,8 @@ W $937C
 @ $937E label=spell_letter
 g $937E Letter for spell selection.
 
-@ $937F label=unknown05
-g $937F unknown05
+@ $937F label=spell_chaos_law
+g $937F Chaos/Law of current spell.
 
 @ $9380 label=current_spell_pointer
 g $9380 Address of spell entry in #R$7D60.
@@ -1383,7 +1385,7 @@ C $9466 On return jump back to #R$9385.
 C $9469 Set HL to address of current player's spell in #R$9156.
 C $9473 Store #R$937B in casting table.
 C $9477 If spell number is less than 2 or greater than 33 return.
-C $947D Else clear bottom row and set ATTR-T to bright white on black.
+C $947D Else clear bottom row and set ATTR-T to $47 (bright white on black).
 C $9485 Print #MPRINTLINK($5E) at coordinates (0,22).
 C $948D Wait for no key to be pressed.
 @ $9490 label=get_illusion_key
@@ -1395,6 +1397,45 @@ C $94A4 Set illusion flag and return.
 
 c $94A7 routine37
 @ $94A7 label=routine37
+C $94A7 Calculate the casting chance of the current spell.
+C $94AA If #R$937B is $01 (Disbelieve) or greater than or equal to $22 jump to #R$94E2.
+C $94B6 Write current spell number to last entry in #R$E01F and set #R$AC12. This position is off the right of the play area.
+C $94BD Set corresponding entry in #R$E2A0 to zero ???
+C $94C3 Set bit 0 of #R$C39E to signal that #R$C3B3 should display casting chance. Also sets bit 1 but this will get changed again.
+C $94C8 Copy #R$9153 to #R$FFFF.
+C $94CE Display information about the object.
+C $94D1 Clear #R$C39E.
+C $94D6 Set temporary object table entry back to $00.
+C $94DB Set #R$AC12 to first entry in #R$E01F and return.
+@ $94E2 label=not_creature
+C $94E2 Clear the screen and play #R$C2E3.
+C $94EB Set ATTR-T to $69 (bright blue on cyan) and draw border.
+C $94F3 Set ATTR-T to $46 (bright yellow on black) and print name of spell at coordinates (8,5).
+C $9502 If spell is neutral jump to #R$9543.
+C $9508 If spell is lawful jump to #R$9529.
+C $950B Set ATTR-T to $43 (bright magenta on black) and print #MPRINTLINK($46) at coordinates (8,7).
+C $9518 Convert #R$937F to positive value and print as a digit.
+C $9522 Print ')' character and jump to #R$9543.
+@ $9529 label=lawful_spell
+C $9529 Set ATTR-T to $45 (bright cyan on black) and print #MPRINTLINK($47) at coordinates (8,7).
+C $9536 Print #R$937F as a digit, followed by a ')' character.
+@ $9543 label=done_ch_law
+C $9543 Set ATTR-T to $44 (bright green on black) and print #MPRINTLINK($4F) at coordinates (8,11).
+C $9550 Set ATTR-T to $46 (bright yellow on black).
+C $9555 If #R$9153 equals 9 (100% chance) print #MPRINTLINK($50).
+@ $9564 label=not_certain
+C $9564 Else print #R$9153 as a digit.
+@ $9569 label=percentage
+C $9569 Print "0%".
+C $9573 Set ATTR-T to $44 (bright green on black) and print #MPRINTLINK($4A) at coordinates (8,15).
+C $9580 Set ATTR-T to $46 (bright yellow on black).
+C $9585 Load the range attribute of the current spell into A and divide by 2.
+C $958E If less than 10 print value as a digit and jump to #R$95A4.
+@ $959A label=max_range
+C $959A Else print "20". This is for spells which can be cast anywhere on the game board.
+@ $95A4 label=done_range
+C $95A4 Set ATTR-T to $4D (bright cyan on blue) and print #MPRINTLINK($3D) at coordinates (0,22).
+C $95B1 Wait for a keypress and return.
 
 c $95B8 Get player controlled flag from #R$AC26 table
 @ $95B8 label=get_player_controlled_flag
@@ -2413,9 +2454,9 @@ g $B769 unknown50
 @ $B76A label=unknown51
 g $B76A unknown51
 
-@ $B76b label=unknown52
-g $B76b unknown52
-W $B76b
+@ $B76B label=unknown52
+g $B76B unknown52
+W $B76B
 
 @ $B76D label=unknown_table_5
 g $B76D unknown_table_5
@@ -3016,8 +3057,9 @@ B $C37D #HTML(#UDGARRAY2,,4;$C37D-$C39C-8(cursorsprite2))
 
 @ $C39D label=unknown70
 g $C39D unknown70
-@ $C39E label=unknown71
-g $C39E unknown71 
+@ $C39E label=object_info_flags
+g $C39E Flags used by #R$C3B3.
+D $C39E Bit 0 signals that casting chance should be displayed. Bit 1 signals that object is a wizard. Bit 2 is set when ??? but never used.
 @ $C39F label=object_number
 g $C39F Object number in #R$E3E0(object address table).
 @ $C3A0 label=display_comma_flag
@@ -3039,14 +3081,14 @@ c $C3B3 Display information about the object at the current cursor position.
 C $C3B3 Disable interrupts and preserve registers.
 C $C3B8 If object at cursor position is blank, jump to #R$C5E8
 C $C3C0 Else store code for current object in #R$C39F.
-C $C3C3 If the current object is a wizard, bit 1 of #R$C39E is set, else it is cleared.
+C $C3C3 If the current object is a wizard, set bit 1 of #R$C39E else clear it.
 @ $C3CF label=not_wizard
 C $C3CF Read corresponding entry in #R$E2A0.
 C $C3D7 If not zero store in #R$C39D and set bit 2 of #R$C39E. ???
 C $C3E2 Clear the screen and play #R$C2E3.
 C $C3EB Set ATTR-T to bright green on black and draw border.
 C $C3F3 Set ATTR-T to black on bright green and print #MPRINTLINK($3D) at coordinates (0,22).
-C $C400 Set ATTR-T to bright yellow on black and print creature's name at (4,2).
+C $C400 Set ATTR-T to bright yellow on black and print object's name at (4,2).
 C $C40E Clear #R$C3A0.
 C $C412 If bit 1 (wizard object) of #R$C39E is clear jump to #R$C479.
 C $C419 Set BC to coordinates (4,4).
@@ -4677,5 +4719,5 @@ C $FE6E jump to $0038 in ROM (the IM1 interrupt service routine)
 
 u $FE71
 
-@ $FFFF label=unknown67
-g $FFFF unknown67
+@ $FFFF label=temp_casting_chance
+g $FFFF Temporary casting chance.
