@@ -1379,7 +1379,7 @@ C $9456 If spell number at address is zero loop back to #R$9453.
 C $9458 Loop the number of iterations selected by the keypress.
 C $945A A now holds the spell number for the selected spell, store in #R$937B.
 C $945D If #R$9384 is set jump to #R$9469.
-C $9463 Else call #R$94A7 ???
+C $9463 Else Display information about the selected spell.
 C $9466 On return jump back to #R$9385.
 @ $9469 label=cast_spell
 C $9469 Set HL to address of current player's spell in #R$9156.
@@ -1395,8 +1395,8 @@ C $9496 If key code is not 'Y' loop back and get another keypress.
 C $949A Else set HL to address of current player's spell in #R$915E.
 C $94A4 Set illusion flag and return.
 
-c $94A7 routine37
-@ $94A7 label=routine37
+c $94A7 Display information about the selected spell.
+@ $94A7 label=display_spell_info
 C $94A7 Calculate the casting chance of the current spell.
 C $94AA If #R$937B is $01 (Disbelieve) or greater than or equal to $22 jump to #R$94E2.
 C $94B6 Write current spell number to last entry in #R$E01F and set #R$AC12. This position is off the right of the play area.
@@ -2834,8 +2834,8 @@ C $BEDB Print #MPRINTLINK($01) at coordinates (0,22)
 C $BEE3 restore BC, HL, DE, AF
 C $BEE7 return
 
-@ $BEE8 label=unknown74
-g $BEE8 unknown74
+@ $BEE8 label=total_distance
+g $BEE8 Distance between to pairs of coordinates.
 
 @ $BEE9 label=unknown75
 g $BEE9 unknown75
@@ -2845,14 +2845,36 @@ W $BEE9
 g $BEEB unknown76
 W $BEEB
 
-@ $BEED label=unknown77
-g $BEED unknown77
+@ $BEED label=x_difference
+g $BEED Difference between two x-coordinates.
 
-@ $BEEE label=unknown78
-g $BEEE unknown78
+@ $BEEE label=y_difference
+g $BEEE Difference between two y-coordinates.
 
-c $BEEF routine48
-@ $BEEF label=routine48
+c $BEEF Calculate the distance between two pairs of coordinates.
+N $BEEF The result is stored in #R$BEE8. The value in the A register is compared with the result.
+@ $BEEF label=calculate_distance
+C $BEEF Preserve registers.
+C $BEF3 Clear A and flags. This is unnecessary.
+C $BEF4 Load #R$BEE9 into HL.
+C $BEF7 Load #R$BEEB into DE.
+C $BEFB If y-coordinate of #R$BEEB is greater than or equal to y-coordinate of #R$BEE9, store D-H in #R$BEEE.
+@ $BF06 label=D_less_than_H
+C $BF06 Else store H-D in #R$BEEE.
+@ $BF16 label=done_y_diff
+C $BF0B If x-coordinate of #R$BEEB is greater than or equal to y-coordinate of #R$BEE9, store E-L in #R$BEED.
+@ $BF16 label=E_less_than_L
+C $BF16 Else store L-E in #R$BEED.
+@ $BF1B label=done_x_diff
+C $BF1B Load #R$BEEE into H and #R$BEED into L.
+C $BF1F If #R$BEEE is greater than or equal to #R$BEED, double it and add #R$BEED.
+@ $BF29 label=y_diff_less
+C $BF29 Else double #R$BEED and add #R$BEEE.
+@ $BF2D label=done_difference
+C $BF2D Store result in #R$BEE8.
+C $BF31 Restore A register and compare with result.
+C $BF33 Restore remaining registers and return.
+
 
 b $BF37 sprite data for attack effect
 @ $BF37 label=attack_effect_sprites
