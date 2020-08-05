@@ -875,7 +875,7 @@ C $8E5A Read #R$AC0F into A, double it, add 15 and copy the result to B as a loo
 N $8E62 This is the main game loop. A loop counter ends the game in a tie after a certain number of turns, which is the number of players multiplied by 2, plus 15.
 @ $8E62 label=TURLOO
 C $8E62 Preserve loop counter.
-C $8E63 Each player in turn casts their spell.
+C $8E63 Each player in turn selects their spell, and then the spells are cast.
 C $8E66 If only one wizard is alive jump to #R$8E93.
 C $8E70 Call #R$9F50 ???
 C $8E73 Call #R$8F9A ???
@@ -1154,6 +1154,7 @@ g $9167 spell successful flag
 
 c $9168 CAST_S
 @ $9168 label=CAST_S
+D $9168 Loop through each player to select their spell to cast, then jump into #R$95C7.
 C $9168 Clear #R$9156 and #R$915E to zeros.
 C $9175 set UDG system variable to point to #R$7F27(S cursor sprite data)
 C $917B load #R$AC0F into B as player loop counter
@@ -1669,12 +1670,35 @@ W $A188
 
 c $A18A routine20
 @ $A18A label=routine20
+R $A18A IX Spell address
+C $A18A If max distance byte of spell is zero jump to #R$A1A5.
+C $A190 Else play #R$912B.
+C $A199 Set #R$B60B to 3 ???
+C $A19E Call #R$B626 ???
+C $A1A1 Call #R$C0DD ???
+C $A1A4 Wait for next interrupt.
+C $A1A5 Disable interrupts.
+C $A1A6 Set ATTR-T to $45 (bright cyan on black).
+C $A1AB Play #R$910D.
+C $A1B4 Set #R$A1E6 to first entry in #R$A1E8.
+C $A1BA Get coordinates from address of current object table entry.
+C $A1C3 Store coordinates in #R$DF4C.
+C $A1C6 Set B to 18 as loop counter.
+C $A1C8 Preserve loop counter
+C $A1C9 Load #R$A1E8 entry into DE and increment pointer.
+C $A1D3 Swap sprite address into HL and store in #R$DF4A.
+C $A1D7 Print the sprite.
+C $A1DA Play #R$912B again.
+C $A1DD Restore the loop counter and loop for 18 iterations.
+C $A1A1 Call #R$C0DD ???
+C $A1E3 Enable interrupts.
+C $A1E4 Wait for next interrupt and return.
 
 @ $A1E6 label=twirl_sprite_pointer
 g $A1E6 sprite pointer for twirl routine
 W $A1E6
 
-@ $A1E8 twirl_sprites_table
+@ $A1E8 label=twirl_sprites_table
 w $A1E8 table of pointers to twirl sprites
 D $A1E8 #HTML(#UDGARRAY2,,4;$A20C-$A22B-8(*twirlsprite0)) #HTML(#UDGARRAY2,,4;$A22C-$A24B-8(*twirlsprite1)) #HTML(#UDGARRAY2,,4;$A24C-$A26B-8(*twirlsprite2)) #HTML(#UDGARRAY2,,4;$A26C-$A28B-8(*twirlsprite3)) #HTML(#UDGARRAY2,,4;$A28C-$A2AB-8(*twirlsprite4)) #HTML(#UDGARRAY2,,4;$A2AC-$A2CB-8(*twirlsprite5)) #HTML(#UDGARRAY2,,4;$A2CD-$A2EC-8(*twirlsprite6)) #HTML(#UDGARRAY2,,4;$A2E5-$A304-8(*twirlsprite7)) #HTML(#UDGARRAY2,,4;$A305-$A324-8(*twirlsprite8)) #HTML(#UDGARRAY2,,4;$A325-$A344-8(*twirlsprite9)) #HTML(#UDGARRAY*twirlsprite0,5;twirlsprite1;twirlsprite2;twirlsprite3;twirlsprite0;twirlsprite1;twirlsprite2;twirlsprite3;twirlsprite0;twirlsprite1;twirlsprite2;twirlsprite3;twirlsprite4;twirlsprite5;twirlsprite6;twirlsprite7;twirlsprite8;twirlsprite9,100(twirlsprite)) animation cycle twirlsprite 0,1,2,3,0,1,2,3,0,1,2,3,4,5,6,7,8,9
 
@@ -2902,8 +2926,10 @@ g $C0D7 unknown06
 
 c $C0D8 routine49
 @ $C0D8 label=routine49
+C $C0D8 Set #R$C0D7 ??? and fall through to #R$C0DD ???
 
-C $C0D8 Set #R$C0D7 ???
+c $C0DD routine50
+@ $C0DD label=routine50
 C $C0DD Disable interrupts.
 C $C0DE Set B to 160 as loop counter.
 C $C0E0 Set HL to address of #R$E01F.
