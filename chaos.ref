@@ -14,7 +14,7 @@ GameStatusBuffer=Game variables
 
 [PageHeaders]
 Asm-g=Game variable
-GameIndex=The incomplete<>RAM disassembly
+GameIndex=The incomplete commented<>disassembly
 
 [MemoryMap:GameStatusBuffer]
 EntryDescriptions=0
