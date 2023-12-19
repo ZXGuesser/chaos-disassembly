@@ -1,10 +1,10 @@
 ; define macros
-@ $7D00 expand=#DEFINE1(DPEEK,#EVAL(((#PEEK({0}+1))*$100)+#PEEK{0}))
-@ $7D00 expand=#DEFINE1(SIGNED,#IF({0}>127)(-#EVAL(256-{0}),{0}))
-@ $7D00 expand=#DEFINE1(MPRINTLINK,#R#(#DPEEK(#EVAL($CDD3+({0}*4)))))
-@ $7D00 expand=#DEFINE1(MTWOPRINTLINK,#R#(#DPEEK(#EVAL($8809+({0}*4)))))
-@ $7D00 expand=#DEFINE1(SPRITE,#UDGARRAY#(2,#PEEK({0}+2),4;#DPEEK({0})-#EVAL(#DPEEK({0})+$1F)-8))
-@ $7D00 expand=#DEFINE0,1(SOUNDEFFECT,#HTML(<audio controls src="../sounds/{0}"></audio>))
+@ $7D00 expand=#DEF(#DPEEK(a) #EVAL(((#PEEK($a+1))*$100)+#PEEK$a))
+@ $7D00 expand=#DEF(#SIGNED(a) #IF($a>127)(-#EVAL(256-$a),$a))
+@ $7D00 expand=#DEF(#MPRINTLINK(a) #R#(#DPEEK(#EVAL($CDD3+($a*4)))))
+@ $7D00 expand=#DEF(#MTWOPRINTLINK(a) #R#(#DPEEK(#EVAL($8809+($a*4)))))
+@ $7D00 expand=#DEF(#SPRITE(a) #UDGARRAY#(2,#PEEK($a+2),4;#DPEEK($a)-#EVAL(#DPEEK($a)+$1F)-8))
+@ $7D00 expand=#DEF(#SOUNDEFFECT()(a) #HTML(<audio controls src="../sounds/$a"></audio>))
 
 @ $7D00 label=start
 c $7D00 Start.
@@ -41,7 +41,7 @@ C $7D5B Add value of #R$AC0E variable as offset.
 C $7D5D Store $00 in byte pointed to by HL and return.
 
 ; macro to print out spell data
-@ $E440 expand=#DEFINE1(SPELLDATA,Message $#N(#PEEK({0})) (#MPRINTLINK(#PEEK({0})))#RAW(,) Casting chance=#PEEK({0}+1)#RAW(,) Max distance=#EVAL(#PEEK({0}+2)/2)#RAW(,) Chaos/Law=#SIGNED(#PEEK({0}+3))#RAW(,) ???=#PEEK({0}+4))
+@ $E440 expand=#DEF(#SPELLDATA(a) Message $#N(#PEEK($a)) (#MPRINTLINK(#PEEK($a)))#RAW(,) Casting chance=#PEEK($a+1)#RAW(,) Max distance=#EVAL(#PEEK($a+2)/2)#RAW(,) Chaos/Law=#SIGNED(#PEEK($a+3))#RAW(,) ???=#PEEK($a+4))
 
 @ $7D60 label=spells_table
 b $7D60 Spells table.
@@ -3598,7 +3598,7 @@ c $D887 routine84
 c $D8DE routine85
 @ $D8DE label=routine85
 
-@ $D908 expand=#DEFINE0(DOUBLEFONT,#UDGARRAY#(1,,4;#PC;#EVAL(#PC+$300))(font#N(((#PC-$D908) / 8) + $20)))
+@ $D908 expand=#DEF(#DOUBLEFONT,#UDGARRAY#(1,,4;#PC;#EVAL(#PC+$300))(font#N(((#PC-$D908) / 8) + $20)))
 
 b $D908 Font data.
 D $D908 #HTML(Images show top and bottom rows of font combined.)
@@ -3930,10 +3930,10 @@ W $E43C Object 47: Wizard 6.
 W $E43E Object 48: Wizard 7.
 
 
-@ $E440 expand=#DEFINE1,1(ANIMSPELL,#FOR(0,3)||$n|#SPRITE#(({0}+($n*3)))(*frame$n)||#UDGARRAY*frame0;frame1;frame2;frame3({1}))
-@ $E440 expand=#DEFINE1,1(SPELLSPRITE,#SPRITE{0}({1}))
-@ $E440 expand=#DEFINE1,(SPELLNAME,#FOR(0,12)||$n|#CHR(#PEEK({0}+$n))||)
-@ $E440 expand=#DEFINE1(SPELLSTATS,Combat=#PEEK({0})#RAW(,) Ranged combat=#PEEK({0}+1)#RAW(,) Range=#PEEK({0}+2)#RAW(,) Defence=#PEEK({0}+3)#RAW(,) Movement allowance=#PEEK({0}+4)#RAW(,) Manoeuvre rating=#PEEK({0}+5)#RAW(,) Magic resistance=#PEEK({0}+6)#RAW(,) Casting chance=#PEEK({0}+7)#RAW(,) Chaos/Law=#SIGNED(#PEEK({0}+8))#RAW(,) Animation delay=#PEEK({0}+9))
+@ $E440 expand=#DEF(#ANIMSPELL(a)(b) #FOR(0,3)||$n|#SPRITE#(($a+($n*3)))(*frame$n)||#UDGARRAY*frame0;frame1;frame2;frame3($b))
+@ $E440 expand=#DEF(#SPELLSPRITE(a)(b) #SPRITE$a($b))
+@ $E440 expand=#DEF(#SPELLNAME(a) #FOR(0,12)||$n|#CHR(#PEEK($a+$n))||)
+@ $E440 expand=#DEF(#SPELLSTATS(a) Combat=#PEEK($a)#RAW(,) Ranged combat=#PEEK($a+1)#RAW(,) Range=#PEEK($a+2)#RAW(,) Defence=#PEEK($a+3)#RAW(,) Movement allowance=#PEEK($a+4)#RAW(,) Manoeuvre rating=#PEEK($a+5)#RAW(,) Magic resistance=#PEEK($a+6)#RAW(,) Casting chance=#PEEK($a+7)#RAW(,) Chaos/Law=#SIGNED(#PEEK($a+8))#RAW(,) Animation delay=#PEEK($a+9))
 
 b $E440 object data table
 @ $E440 label=nothing
@@ -4360,10 +4360,10 @@ L $EA2D,3,4
 
 g $EA39 wizard data
 ; macro to print wizard name for wizard n by looking up address and length in games message table 1
-@ $EA39 expand=#DEFINE1(WIZARDNAME,#FOR(0,#EVAL(#PEEK($CE79+({0}*4))-1))||$n|#CHR(#PEEK(#DPEEK($CE77+({0}*4))+$n))||)
+@ $EA39 expand=#DEF(#WIZARDNAME(a) #FOR(0,#EVAL(#PEEK($CE79+($a*4))-1))||$n|#CHR(#PEEK(#DPEEK($CE77+($a*4))+$n))||)
 
 ; macro to print out wizard stats from memory
-@ $EA39 expand=#DEFINE1(WIZARDSTATS,Combat=#PEEK({0})#RAW(,) Ranged combat=#PEEK({0}+1)#RAW(,) Range=#PEEK({0}+2)#RAW(,) Defence=#PEEK({0}+3)#RAW(,) Movement allowance=#PEEK({0}+4)#RAW(,) Manoeuvre rating=#PEEK({0}+5)#RAW(,) Magic resistance=#PEEK({0}+6)#RAW(,) Spells=#PEEK({0}+7)#RAW(,) Ability=#PEEK({0}+8)#RAW(,) Animation delay=#PEEK({0}+9))
+@ $EA39 expand=#DEF(#WIZARDSTATS(a) Combat=#PEEK($a)#RAW(,) Ranged combat=#PEEK($a+1)#RAW(,) Range=#PEEK($a+2)#RAW(,) Defence=#PEEK($a+3)#RAW(,) Movement allowance=#PEEK($a+4)#RAW(,) Manoeuvre rating=#PEEK($a+5)#RAW(,) Magic resistance=#PEEK($a+6)#RAW(,) Spells=#PEEK($a+7)#RAW(,) Ability=#PEEK($a+8)#RAW(,) Animation delay=#PEEK($a+9))
 
 D $EA39 The first two names memory in the released tape were obviously written over existing strings. Based on Gollop's blog post about the origins of Chaos they were most likely JEVARELL and LARGEFART.
 D $EA39 This data is overwritten during character creation at the start of the game
