@@ -298,15 +298,19 @@ C $8347 Pop loop counter and repeat outer loop three times before returning.
 
 c $834B routine03
 @ $834B label=routine03
+D $834B Returns the modifier byte for the #R$AC0E.
 C $834B Add #R$AC0E variable to address of #R$AC16.
 C $8355 Read byte from that address into A and Return.
 
 @ $8357 label=routine04
 c $8357 routine04
+D $8357 This is called by spells that the wizard casts on himself.
 C $8357 If player is human, display wizard name, spell being cast, and spell casting range.
-C $8360 Call #R$9760 ???
-C $8363 Call #R$97D1 ???
-C $8366 Call #R$A18A ??? and return.
+@ $8360 label=Spell_Buffs_AI_Entry
+C $8360 Call #R$9760 to determine if a spell succeeds and then updates the global Chaos/Law balance.
+C $8363 Call #R$97D1 to calculate the coordinates of the current player.
+C $8366 Call #R$A18A to display the twirling effect on the target of the spell.
+C $8369 Return.
 
 # spell names from comments on chaos
 @ $836A label=magic_armour_spell
@@ -418,19 +422,19 @@ C $84BC Display SPELL FAILS or SPELL SUCCEEDS message and return.
 @ $84C0 label=shadow_form_spell
 c $84C0 ShadowForm spell.
 C $84C0 Jump to #R$84D3 if player is human.
-C $84C6 Else call #R$834B to get byte from #R$AC16.
-C $84C9 Jump to #R$84D3 if bit 5 zero.
-C $84CD Set #R$975F variable to zero and return.
-C $84D3 Call #R$8357 ???
-C $84D6 Display SPELL FAILS or SPELL SUCCEEDS message.
-C $84D9 Return if #R$9167 is clear.
-C $84DE Get address of the wizard object data of the current player.
-C $84E1 Load address from #R$8321 into HL and add $0005.
-C $84E8 Store zero at resulting address ???
-C $84EA Add $0006 to address and store zero at resulting address ???
-C $84F0 Get byte from #R$AC16.
-C $84F3 Set bit 3. 
-C $84F5 Store result back in #R$AC16 and return.
+C $84C6 Get the moodifier byte for the current wizard.
+C $84C9 If the wizard does not yet have Shadow Form then jump to #R$84D3.
+C $84CD Otherwise set #R$975F to 0.
+C $84D2 Return.
+C $84D3 Display wizard's data, update L/C balance, and display a twirling effect on his sprite.
+C $84D9 Return if the spell failed.
+C $84E1 Set up pointer to wizard animation first frame.
+C $84E4 Set up offset to second frame.
+C $84E8 Set frame attribute colours to black on black.
+C $84EA Set up offset to fourth frame.
+C $84EE Set frame attribute colours to black on black.
+C $84F0 Set the Shadow Form flag on this wizard's modifier byte.
+C $84F6 Return.
 
 @ $84F7 label=subversion_spell
 c $84F7 Subversion spell.
@@ -468,6 +472,26 @@ c $85F6 RaiseDead spell.
 
 @ $86C3 label=RAISDO 
 c $86C3 RAISDO
+C $86C3 Call #R$A18A to display turning animation at spell target.
+C $86C6 Call #R$9760 to determine if a spell succeeds and then update the global Chaos/Law balance.
+C $86C9 If the spell failed then return.
+C $86CE Otherwise load HL with the cursor position.
+C $86D1 Load DE with an offset into table 3 [animation frames].
+C $86D4 Point HL into table 3.
+C $86D5 Set the corresponding animation frame to 0 - PRAISE JESUS! HE IS RAISED FROM THE DEAD!
+C $86D7 Load DE with an offset of 160 bytes.
+C $86DA Point HL at the corresponding byte in table 4 [owners etc.]
+C $86DB Load E with 96 to represent bit5=UNDEAD"???" and bit6="???"
+C $86DD Load A with the current player number.
+C $86E0 Set the two flags for the resurrected object.
+C $86E1 Store the object's attributes in table 4.
+C $86E2 Load DE with an offset into table 6 "???"
+C $86E5 Point HL into table 6.
+C $86E6 Set the byte to 0 because "???"
+C $86E8 Call #R$C0DD to set empty cells in map 1 from '0' to '1'. set map 2 to '1' and draw the border.
+C $86EB Call #R$97A3 to display whether the spell succeeded or failed.
+C $86EE Return.
+
 
 @ $86EB label=ENDRAS
 
@@ -496,19 +520,86 @@ C $8730 If #R$872B < 30 then jump back to #R$871A.
 C $8735 Display wizard name, spell being cast, and spell casting range.
 C $8738 Call #R$8741 and return.
 
-@ $873C label=CRE000
-g $873C CRE000
-@ $873D label=FLA481
-g $873D FLA481
-@ $873E label=HID641
-g $873E HID641
-@ $873F label=BOD801
-g $873F BOD801
-@ $8740 label=FRA321
-g $8740 FRA321
+@ $873C label=turmoil_temp_object_id
+g $873C turmoil_temp_object_id
+@ $873D label=turmoil_temp_flags
+g $873D turmoil_temp_flags
+@ $873E label=turmoil_temp_mount
+g $873E turmoil_temp_mount
+@ $873F label=turmoil_temp_corpse
+g $873F turmoil_temp_anim_corpse
+@ $8740 label=turmoil_temp_anim_frame
+g $8740 turmoil_temp_anim_frame
 
 @ $8741 label=TUR_DO
 c $8741 TUR_DO
+D $8741 The Turmoil spell jumbles objects around on the board. Gollop once said there is a bug so the spell doesn't work as often as it should!
+C $8741 Call #R$9760 to determine whether the spell will succeed.
+C $8744 If the spell failed then jump to #R$87EB to display message and return.
+C $874B Call #R$A173 to set all objects as movable.
+C $874E Point HL at #R$E01F.
+C $8751 Copy the address of #R$E01F into #R$AC14.
+C $8754 Set loop counter to map size.
+C $8756 Preserve loop counter.
+C $8757 Load the byte at the current position.
+C $8758 If the map is empty at this position then jump to #R$87DF to move on.
+C $875C Point HL at the corresponding byte in table 4.
+C $8760 Test bit 7 for the current object to see if it is movable in this turn.
+C $8762 If we are not moving this object then jump to #R$87DF to move along.
+C $8764 Load HL with address of current map position.
+C $8767 Store the current object code in #R$873C [CREature 000?]
+C $876A Set up offset into table 3.
+C $876D Point HL into table 3 [animation frame].
+C $876E Load the animation byte into A.
+C $876F Store it in #R$8740.
+C $8772 Set up offset to table 4.
+C $8775 Point HL into table 4 [owner + flags].
+C $8776 Load A with the owner/flags info for the current object.
+C $8777 Store it in #R$873D.
+C $877A Point HL into table 5.
+C $877B Copy the byte from table 5 into #R$873E, in case a wizard was mounted on this creature.
+C $877F Point HL into table 6 ["???"]
+C $8780 Copy the byte from table 6 into #R$873F.
+C $8784 Call #R$904B to put a random number in #R$907A.
+C $8787 Point HL at #R$907A.
+C $878A If the value in A is greater than or equal to 159, which would take us off the map, then jump back to #$8784.
+C $8790 A now has a value that is a position in the map so load HL with #R$E01F.
+C $8793 Set up the random offset in DE.
+C $8796 Add the offset to HL and store in #R$AC12.
+C $879A Load the object code for the random position.
+C $879B If the destination is not available then jump to #R$8784.
+C $879E If the object is in the border then jump to #R$8784.
+C $87A3 Call #R$A18A to display the twirling animation over the object.
+C $87A6 Load HL with the cursor position, i.e. destination.
+C $87A9 Load A with the object code.
+C $87AC Store the object in the new position.
+C $87AD Set up an offset to table 3 [animation].
+C $87B0 Point HL at the animation byte for the new position.
+C $87B1 Copy the object's animation data to the new position.
+C $87B5 Point HL into table 4 [owner/flags].
+C $87B9 Load A with the owner/flag info the current object
+C $87BC Make sure bit 7 is set to show that the object has been moved.
+C $87BE Store the owner/flag information for the current object.
+C $87BF Point HL into table 5 - IDs of mounted wizards.
+C $87C0 Copy the wizard ID [could have been 0 if no wizard was mounted on the creature] for this object into table 5, indicating that this wizard is now mounted.
+C $87C4 Point HL into table 6 which contains ..."???"
+C $87C5 Copy the byte that was in the old table 6 position to the new position "???"
+C $87C9 Load HL with the current map pointer.
+C $87CC Set the current map slot to empty.
+C $87CE Set the corresponding slot in map 5 to empty.
+C $87D4 Set the corresponding slot in map 6 to empty.
+C $87DA Call #R$C0D8 to set empty cells in map 1 to '1' ,  and draw the border.
+C $87DD Wait for an interrupt.
+C $87DE Wait for an interrupt.
+C $87DF Reload current map position into HL.
+C $87E2 Increment map pointer.
+C $87E3 Store it in #R$AC14.
+C $87E6 Restore loop counter.
+C $87E7 Decrement loop counter.
+C $87E8 Loop back.
+C $87EB Call #R$97A3 to display whether the spell succeeded or failed.
+C $87EE Return.
+
 @ $8756 label=MOLLOO
 @ $8784 label=RANMOL
 @ $87DF label=MOLEND
@@ -1148,6 +1239,7 @@ B $915E,8 Illusion flag for each spell.
 
 @ $9166 label=unknown02
 g $9166 unknown02
+D $9166 unknown02 is used as a copy of the byte in the illusion table, to indicate if the current spell is an illusion. See #R$9760.
 
 @ $9167 label=spell_success_flag
 g $9167 spell successful flag
@@ -1322,6 +1414,7 @@ D $9384 If flag is set #R$9385 will cast the selected spell, otherwise it displa
 
 c $9385 Display list of possessed spells.
 @ $9385 label=select_spell
+D $9385 Used when casting a spell [#R$9168] to display a list of the wizard's spells and choose one to cast.
 C $9385 Play #R$C2E3 and clear the screen.
 C $938B Set ATTR-T to bright yellow on black.
 C $9393 Print current player name at coordinates (0,0).
@@ -1448,6 +1541,7 @@ C $95C6 return
 
 c $95C7 routine06
 @ $95C7 label=routine06
+D $95C7 Used when casting a spell [#R$9168] to load wizard modifier, determine if the spell will succeed => update L/C balance & cast spell.
 C $95C7 call #R$C5EE
 C $95CA switch to interrupt mode 2
 C $95CD call #R$C0DD ???
@@ -1531,6 +1625,7 @@ C $96D0 return
 
 c $96D1 routine07
 @ $96D1 label=routine07
+D $96D1 A busy wait loop that also plays a sound effect.
 C $96D1 stack BC
 C $96D2 set HL to address of sound effect at #R$9117
 C $96D5 call play_sound_effect_in_HL
@@ -1566,9 +1661,32 @@ g $975F unknown10
 
 c $9760 routine09
 @ $9760 label=routine09
+D $9760 This routine determines if a spell succeeds and then updates the global Chaos/Law balance.
+C $9760 Load unknown2 which is set at $9631 as a flag for an illusionary target.
+C $9763 If they are casting an illusion then jump to $9778 because illusions ALWAYS succeed. Like budgies.
+C $9766 They want to cast a real creature so call get_random to see if they suck seed.  NB: I think the comments for the routine at $BE94 are incorrect, in that I think we are returned a number in the range 0-10 and not 11-15. I checked this in the debugger.
+C $9769 Load the casting chance value of the current spell into E and increment the value.
+C $976E Compare the random number with the casting chance in E. If the random number is less than E then the spell failed.
+C $9772 Set spell_success_flag to 0. How American. "You didn't fail, you just didn't succeed."
+C $9777 Return.
+C $9778 Right - we've got rid of the boys, this is where the MEN hang out!  Let's start by setting the spell_success_flag to 1 (since that's what SET means, after all).
+C $977D Oh FFS, another unknown - biab...   Well, looking at $930E we are loading the current spell's effect on the Chaos/Law balance of our universe.
+C $9780 This makes sense - we have just successfully cast the spell so add the current CH_LAW value to the spell's delta and store back in the global CH_LAW variable.
+C $9785 Return.
 
 c $9786 routine10
 @ $9786 label=routine10
+D $9786 Sees if a spell's target is in range and sets P flag if so.
+D $9786 This must be returning the P flag set if the target is in range.
+C $9786 Load HL with the address of the current wizard in #R$E01F from #R$AC14.
+C $9789 Call #R$C703 to calculate his map coordinates and store in #R$BEE9.
+C $978F Load HL with the position of the cursor.
+C $9792 Call #R$C703 to convert the cursor position into map coordinates and store in #R$BEEB.
+C $9798 Call #R$BEEF to calculate distance to cursor and set #R$BEE8.
+C $979B Load HL with the distance to the cursor.
+C $979E Load A with the maximum casting distance for the current spell.
+C $97A1 Compare the two values: if the distance to the target is less than or equal to the maximum then P will be set for success.
+C $97A2 Return.
 
 c $97A3 routine11
 @ $97A3 label=routine11
@@ -1587,6 +1705,7 @@ C $97CD return
 
 @ $97CE label=unknown11
 g $97CE unknown11
+D $97CE This contains the number of attempts for the current spell.
 
 @ $97CF label=unknown12
 g $97CF unknown12
@@ -1594,12 +1713,103 @@ W $97CF
 
 c $97D1 routine12
 @ $97D1 label=routine12
+D $97D1 The wizard is casting on the spells (such as Magic Armour) on himself. This routine finds the current wizard on the map to save the player having to navigate and highlight themselves!
+C $97D1 Store the address of the map_area_object_table in unknown12.
+C $97D7 Set loop counter to 159 so that we can process all 160 bytes in the table.
+C $97D9 Load the object code for the current position in the map.
+C $97DA Subtract 41 because our first wizard has code 41.
+C $97DC Point HL at the byte ID of the current player (a number from 0 to 7) and compare it with the value in A for the current object on the map.
+C $97E0 The current object on the map is the current player so jump ahead to $97FB.
+C $97E2 Reload HL with the address of the map that we stored at the start of this routine.
+C $97E5 Move HL along to the corresponding byte in the 5th map area table.
+C $97E9 Load the byte from the 5th map area and subtract 41 to get an object ID.
+C $97EC Compare the object ID with the current player's ID.
+C $97F0 Again, we have found our player that is casting the spell on himself so jump to $97FB.
+C $97F2 Increment the map pointer that is being stored in unknown12.
+C $97F9 Loop back to $97D9.
+C $97FB Copy the map pointer from HL into D_ADD & cursor_position & X_ADD.  -  even though routine53 in a minute only uses HL, and even copies that into unknown66....!
+C $9807 Call routine53 to convert a memory address into a set of coordinates in HL.
+C $980A Store the coordinates of our newly located wizard who is casting something on himself (eew).
+C $980D Return.
 
 c $980E OFBORD
 @ $980E label=OFBORD
+D $980E Sets the Z flag if the x-coord of the cursor is in the right-hand border.
+D $980E The map slots go from (1,1) to (15,10)
+C $980E Preserve HL.
+C $980F Load HL with the address of a map object.
+C $9812 Convert address into map position coordinates.
+C $9815 Set Z flag if x-coordinate is 16, i.e. in the border.
+C $9818 Restore HL.
+C $9819 Return.
 
 c $981A routine13
 @ $981A label=routine13
+C $981A Clear the bottom row of the screen.
+C $981D Call routine12 to find the coordinates of the current player and store them in $BC94 = cursor_coordinates.
+C $9820 Call routine to set IM2.
+C $9823 Set ATTR P to black on black.
+C $9828 Set MASK P to 255 so that all attribute bits are taken from screen, not ATTR P.
+C $982D Call #R$C0D8.
+C $9830 Enable interrupts.
+C $9831 Wait for one.
+C $9832 Set P FLAG to 3 to enable "OVER 1".
+C $9837 Clear the bottom row of the screen.
+C $983A unknown11 contains the number of attempts for the current spell so load the value into B.
+C $983E Preserve BC.
+C $983F Call KEYBOARD in ROM to set LAST K.
+C $9845 If the user pressed 'S' to select the current object then jump to $9856.
+C $9849 Else if they pressed 'K' to cancel this operation then jump back to $983F.
+C $984D Restore BC.
+C $984E Play sound effect 11.
+C $9854 Enable interrupts.
+C $9855 Return.
+C $9856 Wait for no key to be pressed.
+C $9859 Call $9786 to see if the target is in range.
+C $985C If the target is in range then jump to #R$9877.
+C $985F Otherwise clear the bottom row.
+C $9862 Set print coordinates to (0,22).
+C $9865 Set ATTR T to bright cyan on black.
+C $986A Print #R$D03A  = "OUT OF RANGE".
+C $986F Wait for no key to be pressed.
+C $9872 Wait for a key to be pressed.
+C $9875 Jump back to #R$983F.
+C $9877 Load the object at the #R$AC12 into A.
+C $987B If it is an empty cell then jump to #R$9892.
+C $987E Otherwise load the current spell into A.
+C $9881 If it is >=36, i.e. Magic Wood,Shadow Wood, Magic Castle, Dark Citadel or Wall, then jump to #R$983F.
+C $9886 Otherwise load HL with the cursor position.
+C $9889 Set up an offset to table 3.
+C $988C Point HL into the corresponding byte in table 3.
+C $988D Load the current animation frame number into A.
+C $988E If the object is not dead then jump back to #R$983F.
+C $9892 Call #R$98F1 to ... "???".
+C $9895 Jump to #R$983F to get another target.
+C $9897 Call #R$9C0F to ... "???".
+C $989A Jump to #R$983F to get another target.
+C $989C Call #R$98DB to ... "???".
+C $989F If "???" then jump to #R$98BA to proceed with the spell.
+C $98A1 Otherwise set ATTR T to bright cyan on black.
+C $98A6 Clear the bottom row of the screen.
+C $98A9 Print #R$D280 "MAGIC FIRE" at (0,22).
+C $98B1 Wait for no key to be pressed.
+C $98B4 Wait for a key to be pressed.
+C $98B7 Jump back to #R$983F.
+C $98BA Call #R$A18A to display the twirling animation over the target.
+C $98BD See if the spell succeeded.
+C $98C1 If it failed then jump to #R$98D6.
+C $98C3 Otherwise call #R$9941 to update map tables.
+C $98C6 Restore BC which contains the number of attempts for this spell - stored at #R$983E.
+C $98C8 Load the remaining number of attempts into A.
+C $98C9 If more attempts are left to be made then jump to #R$98CB.
+C $98CD Otherwise call #R$97A3 to display whether the spell succeeded or failed.
+C $98D0 Restore BC.
+C $98D1 Decrement the number of attempts of this spell left to be made.
+C $98D2 If more attempts remain then jump to #R$983E.
+C $98D5 Return.
+C $98D6 Restore BC.
+C $98D7 Call #R$97A3 to display whether the spell succeeded or failed.
+C $98DA Return.
 
 c $98DB routine14
 @ $98DB label=routine14
@@ -1612,6 +1822,22 @@ g $9940 unknown79
 
 c $9941 routine16
 @ $9941 label=routine16
+D $9941 Sets information in #R$E0C0, #R$E160, #R$E200 for a new object.
+C $9941 Load HL with the cursor position.
+C $9944 Load A with the code of the current spell being cast.
+C $9947 If it is for a gooey blob (7E47) or Magic Fire (7E4E) then jump to #R$9958.
+C $994F Copy the object code at the cursor coordinates to #R$E340. "???"
+C $9955 Load A with the code of the current spell.
+C $9958 Load HL with the cursor position.
+C $995B Load A with the code of the current spell being cast.
+C $995C Set the animation frame timeout in #R$E0C0 to 1.
+C $9962 Set the animation frame in #R$E160 to 0.
+C $9966 Store the owner number in #R$E200.
+C $996B Load A with #R$9166 - this is a copy of the byte from #R$915E to indicate whether the current spell is an illusion.
+C $996F If it is a real object then jump to #R$9973.
+C $9971 Otherwise set bit 4 in #R$E200 to indicate the object is an illusion.
+C $9973 Wait for an interrupt.
+C $9974 Return.
 
 # spell names from comments on chaos
 c $9975 CreatureCast spell
@@ -1619,6 +1845,65 @@ c $9975 CreatureCast spell
 
 c $99F1 Disbelieve spell
 @ $99F1 label=disbelieve_spell
+C $99F1 Jump to disbelieve_spell_6 if this routine is being called for a computer-controlled player.
+C $99F8 Call routine41 to display the board and allow the player to interact with objects on-screen.
+C $99FB Call KEYBOARD in ROM to see if the player has pressed a key.
+C $9A00 We are only checking here to see if they pressed either 'S' (Select) or 'K' (Cancel). If the user pressed 'S' to select an object to disbelieve then jump to disbelieve_spell_1.
+C $9A02 If the user didn't press either 'S' or 'K' then jump back to $99F8 to wait for one of these keys.
+C $9A06 The user pressed 'K' to cancel their current choice so play sound effect 11.
+D $C2F6 This sound is played when the user cancels a spell (and perhaps at other times too).
+C $9A0C The user has cancelled the spell so enable interrupts and return.
+C $9A0E Right - let's get cracking with this spell. Er, by waiting for them not to be pressing a key.
+C $9A11 Load the object at the current cursor position into and if the cretin of a player has tried to select an empty cell then jump back to disbelieve_spell_0 to start again.
+C $9A18 Similarly, if they have selected an object that can't be disbelieved (object code for Gooey Blob onwards) then go back to let them choose something else.
+C $9A1D They have chosen an object that can be disbelieved (2 King Cobra - 33 Zombie) so call disbelieve_spell_2 to carry out the spell.
+C $9A20 Return.
+C $9A21 Call routine20 to display a twirling animation at the cursor to indicate that a spell is being cast there.
+C $9A24 Now we need to see if the spell is going to succeed or fail. Load HL with the address in map_area_object_table for the current cursor position.
+C $9A27 Set spell_success_flag to 0.
+C $9A2C Point HL at the entry for the owner number/asleep/undead information in map_area_table_4 that corresponds to the cursor position.
+C $9A30 If the creature is real then jump to #R$9A45.
+C $9A34 If the creature is an illusion then we need to see if the wizard has MOUNTED it so set HL to the corresponding entry in map_area_table_5
+C $9A38 Copy the byte (a wizard ID) from table 5 to the map area. This is because when the spell is cast on a mounted wizard, the mount disappears so we are going to move the wizard from table 5 to table 1.
+C $9A3D Call disbelieve_spell_4 to play sound effect and animate an explosion.
+C $9A40 Set spell_success_flag to 1.
+C $9A45 Call routine11 to display a message on the bottom line as to whether the casting spell of the spell succeeded or failed.
+C $9A4B Set bit 5 of the object's byte in map_area_table_5 so that the object is marked to be disbelieved at #R$9ABE.
+C $9A52 Play sound effect 3.
+C $9A5B Set ATTR T to bright yellow on black.
+C $9A60 Set explosion_sprite_pointer to the first frame of the explosion animation.
+C $9A66 We need to convert the address of the map object into coordinates: Store the cursor position in unknown66 ready for use in the call to address_to_coordinate.
+C $9A6F HL now contains game board coordinates in the form (L,H) of where to display the animation so store them in LC_POS.
+C $9A72 Set loop counter to 7 for the seven frames of animation of the explosion.
+C $9A74 Disable interrupts.
+C $9A75 Preserve loop counter.
+C $9A76 Print the current animation frame for the explosion.
+C $9A7F Play sound effect.
+C $9A82 Point HL at the next animation frame - 32 bytes per frame since we are using 2x2 sprites.
+C $9A8C Restore loop counter.
+C $9A8D Loop back round to display the next frame of the explosion animation.
+C $9A8F Call routine49_0 to update the map area data, animation frame data and redraw the border.
+C $9A92 Enable interrupts.
+C $9A93 Wait for an interrupt.
+C $9A94 Return.
+
+D $9A95 Called for computer-controlled players.
+C $9A95 Load HL with the map position of an enemy wizard.
+C $9A98 Store the enemy wizard's address in #R$C78B.
+C $9A9B ... "???"
+
+
+C $9AB1 Call GETPLA to increment HL through the map area and load the current object code into A.
+C $9AB4 If the current object code is *NOT* FF then jump ahead to disbelieve_spell_8 to process it (I saw this somewhere else, and at the time wondered if he is using FF as an 'EOF'-type marker).
+C $9AB8 We are at the end of the map so reset unknown10 [I can only ever see this being assigned to, not read...] ???
+C $9ABD Return.
+C $9ABE Point HL at the map area object table and load the byte for the current position into A (as indicated by the offset DE).
+C $9AC9 Similarly to earlier at $9A18, if the current object cannot be disbelieved then jump back to disbelieve_spell7 
+C $9ACE Point HL to the current object's entry in map_area_table_4 and test bit 5 to see if the object has been set as 'disbelieved'.
+C $9AD4 If bit 5 is not set then jump back to  disbelieve_spell_7 to process the next map object, i.e. keep looking for the object which is set to be disbelieved.
+C $9AD6 We have an object that has been set as disbelieved so display a message at the bottom of the screen with the wizard's name, spell name, spell range  by calling display_wizard_spell_range.
+C $9AD9 Jump to the routine that displays the twirling animation / sees if the spell will succeed / play sound effect / etc.
+C $9ADC Return.
 
 c $9ADD Trees&Castles spell
 @ $9ADD label=trees_castles_spell
@@ -1646,6 +1931,213 @@ c $9DE0 DarkPowerEtc spell
 
 c $9F50 INTERO
 @ $9F50 label=INTERO
+D $9F50 Tables 2 and 6 get a workout in here...
+C $9F50 Point HL at the beginning of the map table.
+C $9F53 Store this address in $AC12.
+C $9F56 Call routine to reset bit 7 for all entries in the 4th map table so that they can be moved.
+C $9F59 Set loop counter for table size.
+C $9F5B Preserve loop counter.
+C $9F5C Load HL with current cursor position in the map.
+C $9F5F Save it temporarily in D_ADD.
+C $9F62 Set offset into table 4 [with the owner numbers + properties]
+C $9F65 Point HL into the corresponding byte in table 4.
+C $9F66 Test bit 7 that indicates whether the object has already moved, or been killed, in this turn.
+C $9F68 If bit 7 was set then jump to $A114 to skip this object.
+C $9F6B Otherwise object is alive & movable so get HL back out of D_ADD.
+C $9F6E Load the object from the map into A.
+C $9F6F If the object is is not a gooey blob or magic fire then jump to $A114. [NB These two objects spawn themselves randomly.]
+C $9F79 Load offset into 4th table.
+C $9F7C Point HL at corresponding byte in 4th table.
+C $9F7D Load byte into A.
+C $9F7E Mask off the owner number for this object.
+C $9F80 Save this object's owner number in $AC0E.
+C $9F83 Get a random number.
+C $9F86 If it is >=9 then jump to $A0C6 to ... "???"
+C $9F8B Otherwise load the map address back into HL.
+C $9F8E Load the current object into A.
+C $9F8F If the object code is for Magic Fire then jump to $9F9B.
+C $9F93 Otherwise we are looking at the Gooey Blob & get another random number.
+C $9F96 If it is bigger than 8 then jump to $A0C6.
+C $9F9B PROCESSING MAGIC FIRE:  Generate a random number...
+C $9F9E ... until it is less than or equal to 8.
+C $9FA0 Point HL at SPATAB at $CD2A.
+C $9FA6 Reset D as we don't want it in a moment.
+C $9FA8 Double the random number in A - is it a two byte pointer?
+C $9FAA And load it into E.
+C $9FAB Add the number in E to HL.
+C $9FAC Store HL in CD3A = SPADAT ?? *not used elsewhere in this routine)
+C $9FAF Call routine ADSPA at $CD3C to ....? [ADD SPACES "???"]
+C $9FB2 Load HL with current cursor position in the map.
+C $9FB5 Load high byte of address into A.
+C $9FB6 And add low byte of address.
+C $9FB7 If the total sets the zero flag than jump to $A114 - eh? some sort of boundary?
+C $9FBA Call routine $9786 to see if the target is in range.
+C $9FBD Load A with $BEE8.
+C $9FC0 If it is greater than 4 then jump to $A114.
+C $9FC5 Load HL with current cursor position in the map.
+C $9FC8 Load A with the current object.
+C $9FC9 If it is 0 for an empty cell then jump to $A09B.
+C $9FCD If it is wizard1 then jump to $A011.
+C $9FD2 If it is a Dark Citadel, Wall or another wizard then jump to $A0C6.
+C $9FD7 If it is a Magic Wood then jump to $A0C6.
+C $9FDC Set up an offset of two tables.
+C $9FDF Point HL into table 3.
+C $9FE0 Load the current animation data into A.
+C $9FE1 It is is frame 4 for a dead object then jump to $A09B.
+C $9FE6 Set up an offset for a single table.
+C $9FE9 Point HL into table 4.
+C $9FEA Load A with the byte from table 4 for the owner information.
+C $9FEB Mask off the lower three bits.
+C $9FED Point HL at the current player variable.
+C $9FF0 Compare it with the player number in A.
+C $9FF1 If they are the same then jump to $A114.
+C $9FF4 Load HL with current cursor position in the map.
+C $9FF7 If the current object is a after bat in the creature table then jump to $A03D.
+C $9FFD If the current object is before a horse in the creature table then jump to $A03D.
+C $A002 If the current object is one of wizards 2-8 then jump to $A011.
+C $A007 Set up a four table offset.
+C $A00A Add to HL to make it point into table 5.
+C $A00B Load the byte from table 5.
+C $A00C Compare with 41.
+C $A00E If it is a creature rather than a wizard then jump to $A03D.
+
+C $A011 Point HL at the current player variable.
+C $A014 Subtract 41 (wizard 1's object code) from A.
+C $A016 Compare the result with the current player pointed to by HL.
+C $A017 If they are the same then jump to $A114.
+C $A01A Add 41 back onto A to get the object's code back.
+C $A01C Load HL with the cursor pointer.
+C $A01F And preserve it on the stack.
+C $A020 Load HL with the cursor pointer.
+C $A023 Set up an offset of four tables.
+C $A026 Point HL into table 5.
+C $A027 Set the corresponding byte in table 5 to 0.
+C $A029 Load HL with the cursor pointer.
+C $A02C Store the cursor pointer in $AC12.
+C $A030 Call routine $C0D8 to ... (update map tables? and drawn border)
+C $A033 Gonna hazard a guess that a wizard has been killed at this point...
+C $A036 Restore HL with the cursor position.
+C $A037 And store it in $AC12.
+C $A03A Jump to $A09B.
+C $A03D Load HL with the cursor pointer.
+C $A040 Load A with the object's code.
+C $A041 Compare it with 35 for Magic Fire.
+C $A04B If the object is after Magic Fire in the table then jump to $A0C6.
+C $A04E Load DE with an offset.
+C $A051 Add to HL to make it point into table 3.
+C $A052 Load A with the current animation frame.
+C $A053 If it is frame 4 then jump to $A09B.
+C $A057 Load HL with the cursor pointer.
+C $A05A Load A with the object's code.
+C $A05B Point HL into table 5.
+C $A05F Store the object's code in table 5.
+C $A060 Move HL back to table 4.
+C $A065 Load the byte into A [owner, asleep, disbelieved, moved/killed]
+C $A066 Mask off the owner bits.
+C $A068 Point HL into table 6.
+C $A06C Save the owner into table 6.
+C $A06D Jump to $A09B.
+C $A06F Play sound effect 5.
+C $A075 Load HL with the cursor pointer.
+C $A078 Load D with the object code.
+C $A079 Load E with the offset for the "DEFENCE" attribute.
+C $A07B Call $BE0A to return this objects DEFENCE value.
+C $A07E Store the value in $A172.
+C $A081 Generate a random number.
+C $A084 Point HL at the stored DEFENCE value.
+C $A087 Add the DEFENCE value to the random number.
+C $A088 Store the total in STRENG $A172.
+C $A089 Generate a random number.
+C $A08C Add 5 to it.
+C $A08E Compare it with the object's STRENG value.
+C $A092 If the random value in A is bigger then the STRENG value pointed at by HL then jump to $A0C6.
+C $A095 Otherwise play sound effect 6.
+C $A09B Restore the cursor position.
+C $A09E Restore pointer into map area 1.
+C $A09F Point HL at D_ADD in $AC14 which holds the cursor pointer.
+C $A0A2 Load the byte using HL which represents a location in map area 1.
+C $A0A3 Set up an offset into map area 3 for the current animation value.
+C $A0A6 Point HL at the byte with the current animation value.
+C $A0A7 Reset the byte.
+C $A0A9 Set up an offset into table 4.
+C $A0AC Point HL at the corresponding entry in table 4.
+C $A0AD Load A with the number of the current player (0-7).
+C $A0B0 Add 128 to 'toggle' bit 7 (why not just set it? Am I wrong here?..) - why???
+C $A0B2 Store the byte in table 4.
+C $A0B3 Load HL with cursor position.
+C $A0B6 Add the offset so that HL points into table 2.
+C $A0B7 Set bit 7 of the corresponding byte to show that the object has moved/died?
+C $A0B9 Load HL with the cursor position.
+C $A0BC Store cursor position in $AC14 D_ADD.
+C $A0BF Call routine to update #R$E01f, #R$E160 & draw border.
+C $A0C2 Play a sound effect.
+C $A0C5 Enable interrupts.
+
+C $A0C6 Generate a random number.
+C $A0C9 It if is bigger than 2 then jump to $A114.
+C $A0CE Load HL with the cursor position.
+C $A0D1 Load A with the object from the map.
+C $A0D2 If the object is Magic Fire then jump to $A0DE.
+C $A0D6 Otherwise generate a random number.
+C $A0D9 If it is bigger than 3 then jump to $A114.
+C $A0DE Otherwise load HL with the cursor position.
+C $A0E1 Set up an offset into table 5.
+C $A0E4 Point HL at the entry in table 5.
+C $A0E5 Load A with the byte from table 5.
+C $A0E6 If it is 0 then jump to $A0FE.
+C $A0E9 Otherwise store 0 in table 5.
+C $A0EB Point HL at the entry in table 5.
+C $A0EE Load A with the object from the map table.
+C $A0EF Set up an offset into table 6.
+C $A0F2 Add offset to HL.
+C $A0F3 Load into A the byte from table 6.
+C $A0F4 Set the byte in table 6 to 0.
+C $A0F6 Set up an offset worth "two tables".
+C $A0F9 Move HL back so that it points into table 4.
+C $A0FB Store the byte that came from table 6 in table 4.
+C $A0FC Jump to $A109.
+C $A0FE Load HL with the cursor position.
+C $A101 Set the byte on the map to '1' which represente 'nothing'.
+C $A103 Set up an offset worth 5 tables.
+C $A106 Add to HL so that HL now points into table 6.
+C $A107 Set the byte in table 6 to 0.
+C $A109 Call routine at $C0DD
+C $A10C Point HL at sound effect 7.
+C $A10F Play sound effect.
+C $A112 Enable interrupts.
+C $A113 Wait for an interrupt.
+C $A114 Restore loop counter.
+C $A115 Move the cursor along one position and store.
+C $A11C Decrement loop counter.
+C $A11D Loop back if not finished.
+C $A120 Otherwise point HL back at the start of the map area.
+C $A123 Set the cursor_position to the same address/value.
+C $A126 Set the loop counter to the size of the map.
+C $A128 Preserve the loop counter.
+C $A129 Load cursor_position into HL.
+C $A12C Load A with the current object.
+C $A12D If it is a "Shadow Wood" or earlier object, jump to $A158.
+C $A132 If it is a wizard (object codes which are > 40), jump to $A158.
+C $A137 We must now be looking at a Magic Castle, a Dark Wood or a Wall so we load A with a random number.
+C $A13A If it's bigger than 2 then jump to $A158 because ... ???
+C $A13C Otherwise load HL with the cursor position.
+C $A142 Load DE with an offset into the 5th map table.
+C $A145 Point HL at the byte in the 5th table.
+C $A146 Load A with the byte.
+C $A147 Reset the byte at that location.
+C $A149 If the byte in A is not zero then jump to $A14E.
+C $A14C Otherwise set A to 1 to indicate ...?
+C $A14E Store the non-zero byte from A in the current entry in the 5th map.
+C $A152 Call $99F1 to display 7 frames of an explosion animation.
+C $A155 Call $C0D8 to set current map byte to 1, amongst other things.
+C $A158 Restore loop counter.
+C $A159 Increment cursor position.
+C $A160 Loop back to $A128.
+C $A162 Set cursor position to the centre of the playing area ???
+C $A168 Save cursor position in D_ADD $AC14.
+C $A16B Call $C703 to convert an address into coordinates.
+C $A16E Store cursor position.
+C $A171 Return.
 
 @ $A172 label=STRENG
 g $A172 STRENG
@@ -1668,9 +2160,38 @@ C $A187 Return.
 g $A188 sprite pointer for explosion routine
 W $A188
 
-c $A18A routine20
-@ $A18A label=routine20
+c $A18A spell_do_twirl
+@ $A18A label=spell_do_twirl
 R $A18A IX Spell address
+D $A18A This routine displays a twirling animation at the cursor coordinates when the spell is cast.
+C $A18A Look up the value that represents double the current spell's maximum casting distance.
+C $A18D If it is 0 then jump ahead to #R$A1A5.
+C $A190 Otherwise, play #R$912B.
+C $A199 Set #R$B60B to 3 because #R$A199 Set #R$B60B to 3 because #R$B60D expects the caller to set this...
+C $A19E Call #R$B626 to display "lightning bolt" animation from the wizard to the target.
+C $A1A1 Call #R$C0DD to update map table information and draw the border.
+C $A1A4 Wait for an interrupt.
+C $A1A5 Disable interrupts.
+C $A1A6 Set ATTR T to bright cyan on black.
+C $A1AB Play #R$910D.
+C $A1B4 The table at #R$A1E8 is a set of 18 pointers to the ten possible frames of animation. Here, we set the #R$A1E6 variable so that it points to the first of these pointers.
+C $A1BA Copy cursor position to unknown66.
+C $A1C0 Call routine to convert the cursor coordinates in #R$DF4C into game board object into coordinates in HL as (L, H) and DE will contain the address of #R$E01F for later use at #R$A1D3.
+C $A1C6 Set loop counter to 18 for the 18 pointers to frames of animation in the twirl sprites table at #R$A1E8.
+C $A1C8 Preserve loop counter.
+C $A1C9 Set HL so it contains the address of the next pointer to the frame of animation, e.g. on the first pass HL will contain #R$A1E8 which is the pointer to #R$A20C.;
+C $A1CC Load the two bytes of the address of the next frame of animation into DE, e.g. after the first pass DE will hold the address #$A20C.
+C $A1CF DE is pointing at the frame we want to display and HL is pointing at the pointer to a frame so we want to save that. Save for today and tomorrow will look after itself.
+C $A1D0 Store the address of the pointer to the next animation frame in the twirl_sprite_pointer variable.
+C $A1D3 After exchanging registers DE has the pointer to the next frame and HL contains the address of the current frame to display.
+C $A1D4 Store the current frame to display in #R$DF4A.
+C $A1D7 Display the current frame.
+C $A1DA Play the current sound effect #R$912B again.
+C $A1DD Restore the loop counter and for 18 iterations.
+C $A1E0 Call #R$C0DD to update map table information and draw the border.
+C $A1E3 Enable interrupts and wait for one.
+C $A1E5 Return.
+
 C $A18A If max distance byte of spell is zero jump to #R$A1A5.
 C $A190 Else play #R$912B.
 C $A199 Set #R$B60B to 3 ???
@@ -2273,8 +2794,8 @@ g $AC09 unknown23
 g $AC0A unknown24
 W $AC0A
 
-@ $AC0C label=unknown25
-g $AC0C unknown25
+@ $AC0C label=temp_object_id
+g $AC0C temp_object_id
 
 @ $AC0D label=unknown26
 g $AC0D unknown26
@@ -2286,8 +2807,8 @@ g $AC0E current player (0-7)
 D $AC0F Number of players in the current game.
 g $AC0F NO_PLA
 
-@ $AC10 label=unknown27
-g $AC10 unknown27
+@ $AC10 label=temp_object_properties
+g $AC10 temp_object_properties
 
 @ $AC11 label=unknown28
 g $AC11 unknown28
@@ -2300,8 +2821,10 @@ W $AC12
 g $AC14 D_ADD
 W $AC14
 
-@ $AC16 label=unknown_table_3
-g $AC16 unknown table 3
+@ $AC16 label=player_buffs
+g $AC16 player_buffs
+D $AC16 Each byte in this table represents the modifiers for each wizard. Bits 0,1=Magic Bow; Bit 1=Magic Knife; Bit 2=Magic Sword; Bit 3=Shadow Form; Bit 4=Killed; Bit 5=Magic Wings; Bit 6=Magic Shield; Bits 6,7=Magic Armour.
+
 
 @ $AC1E label=unknown_table_4
 g $AC1E unknown table 4
@@ -2424,24 +2947,145 @@ g $B374 unknown41
 c $B375 routine26
 @ $B375 label=routine26
 
-@ $B3C3 label=unknown42
-g $B3C3 unknown42
+@ $B3C3 label=wizkill_temp_row_a
+g $B3C3 wizkill_temp_row_a
 
-@ $B3C4 label=unknown43
-g $B3C4 unknown43
+@ $B3C4 label=wizkill_temp_row_b
+g $B3C4 wizkill_temp_row_b
 
-@ $B3C5 label=unknown44
-g $B3C5 unknown44
+@ $B3C5 label=wizkill_temp_col_a
+g $B3C5 wizkill_temp_col_a
 
-@ $B3C6 label=unknown45
-g $B3C6 unknown45
+@ $B3C6 label=wizkill_temp_col_b
+g $B3C6 wizkill_temp_col_b
 
-@ $B3C7 label=unknown46
-g $B3C7 unknown46
+@ $B3C7 label=wizkill_temp_coords
+g $B3C7 wizkill_temp_coords
 W $B3C7
 
 c $B3C9 WIZKIL
 @ $B3C9 label=WIZKIL
+D $B3C9 Display the coloured "starburst" when a wizard dies.
+C $B3C9 Disable interrupts.
+C $B3CA Increment the number of dead wizards.
+C $B3CE Play #R$C2A7.
+C $B3D4 Load HL with map address of dead wizard.
+C $B3D7 Load C with the wizard code for the newly deceased wielder of nature's forces.
+C $B3D8 We want to get the "dead sprite" so first calculate an offset for the #R$E3E0.
+C $B3DD Load HL with the address for the blank sprite at #R$E440.
+C $B3E0 Add the offset so that HL contains the correct dead wizard pointer, #R$E430 to #R$E43E.
+C $B3E1 Load DE with the address of our splattered wizard in the wizard data table.
+C $B3E4 Now load HL with the address of that wizard's sprite.
+C $B3E8 Load DE with the address of the sprite data for the current (& sadly no longer with us) wizard.
+C $B3EB Exchange so that HL is the address of the sprite data for the wizard (e.g. FD34) and DE has the address of the data block for the current wizard (e.g. #R$EA39)
+C $B3EC Copy the address of the wizard's sprite data into #R$DF4A.
+C $B3EF Set loop counter for display colour.
+C $B3F1 Preserve loop counter.
+C $B3F2 Load HL with map address of the dead wizard.
+C $B3F5 Copy the address of the dead wizard to #R$E005 and convert into screen coordinates in HL as (L, H).
+C $B3F8 Store the coordinates in #R$B3C7.
+C $B3FE Copy the row coordinate into #R$B3C3 and #R$B3C4.
+C $B405 Copy the column coordinate into #R$B3C3 and #R$B3C4.
+C $B40C Decrement the colour [so that the first colour used is white=7].
+C $B40D Set up the colour attribute value in ATTR-T [bright colour on a black background]
+C $B413 Set B with the number of columns in the map "???"
+C $B415 Preserve counter.
+C $B416 Load A with the row coordinate of the dead wizard.
+C $B419 Decrement the row coordinate.
+C $B41A If we are at the top of the map then jump to #R$B42A.
+C $B41C Otherwise copy the decremented row coord into #R$B3C3 so that we can print a sprite "north" of the corpse.
+C $B41F Set HL up with the old column and new row.
+C $B424 Store the updated coordinates in #R$DF4C and print the dead wizard's sprite there.
+C $B42A Load A with the old row coordinate.
+C $B42D Increment it.
+C $B42E If we are at the bottom of the map then jump to #R$B440.
+C $B432 Otherwise store the new row coordinate in #R$B3C4.
+C $B435 Set HL up with the new row and old column.
+C $B43A Store the updated coordinates in #R$DF4C and print the dead wizard's sprite "south" of the corpse.
+C $B440 Load A with the old column coordinate.
+C $B443 Decrement it.
+C $B444 If we are at the left of the screen then jump to #R$B454.
+C $B446 Otherwise store the new column number in #R$B3C5.
+C $B449 Set HL up with the old row and new column.
+C $B44E Store the updated coordinates in #R$DF4C and print the dead wizard's sprite "west" of the body.
+C $B454 Load A with the old column coordinate.
+C $B457 Increment it.
+C $B458 If we are at the right of the screen then jump to #R$B46A.
+C $B45C Otherwise store the new column number in #R$B3C6.
+C $B45F Set HL up with the old row and new column.
+C $B464 Store the updated coordinates in #R$DF4C and print the dead wizard's sprite "east" of the swelling flesh.
+C $B46A Load A with the old row coordinate.
+C $B46D If we are at the top or left of the map then jump to #R$B480.
+C $B479 Otherwise print a sprite "north-west" of the dead wizard and the gathering flies.
+C $B480 If we are at the top or right of the map then jump to #R$B496.
+C $B48F Otherwise print a sprite "north-east" of the dead wizard and his noxious fumes.
+C $B496 If we are at the bottom or left of the map then jump to #R$B4AC.
+C $B4A5 Otherwise print a sprite "south-west" of the dead wizard.
+C $B4AC If we are at the bottom or right of the map then jump to #R$B4C2.
+C $B4BB Otherwise print a sprite "south-east" of the dead wizard and his leaking fluids.
+C $B4C2 Play sound effect.
+C $B4C5 Restore colour counter and decrement.
+C $B4C7 If we haven't displayed in blue yet then jump to #R$B3C9.
+C $B4CF Point HL at cursor position of the KILLED WIZARD!!!!
+C $B4D2 Load object code of the brutally murdered wizard into A.
+C $B4D1 [XOR H is not in the debugger...!]
+C $B4D2 Subtract 41 to get player number associated with the BUTCHERED VICTIM and store in #R$AC00
+C $B4D8 Set object code to 0 - GANDALF, NOOOOOO!!!!
+C $B4DA Load HL with the address of the modifier for this wizard.
+C $B4E1 Set bit 4 to show this wizard, sadly, is NO MORE....
+C $B4E3 Point HL into #R$E340.
+C $B4EA Copy the byte from the #R$E340 to #R$E01F. BECAUSE THE WIZARD COULD HAVE BEEN TRAPPED AT THE TIME"???"
+C $B4EF Update map 1's empty slots, animation frames & draw border.
+C $B4F2 Wait for an intterupt.
+C $B4F3 Disable interrupts.
+C $B4F4 Play #R$C2C5.
+D $B4FA [Now all of the wizard's creations get canned, with the WOOP_D animation on each]
+C $B4FA Set B to 9 for the 9 frames of animation of #R$BF37.
+C $B4FC Set sprite pointer to #R$BFB7.
+C $B502 Set ATTR-T to $46 (bright yellow on black)
+C $B507 Preserve animation frame loop counter and copy to #R$ABFF
+C $B50C Set loop counter 2 = map size.
+C $B50E Copy the address of the map to #R$ABFD.
+C $B514 Preseve map loop counter.
+C $B515 If the current map slot is empty or a wizard then jump to #R$B5E8.
+C $B522 If the current map slot contains a dead creature then jump to #R$B535.
+C $B52B If the current map slot contains an "asleep" creature then jump to #R$B5E8. [not sure this is actually in the game]
+C $B535 If the current creature belongs to the dead wizard then jump to #R$B563.
+C $B545 If the current creature is not a Gooey Blob then jump to #R$B5E8.
+C $B54E If there is no wizard stuck in the blob then jump to #R$B5E8.
+C $B557 If the dead wizard code is NOT equal to the wizard ID in table 6 "???" then jump to #R$B5E8.
+C $B563 Convert the current map address into coordinates and store in #R$B56C.
+C $B56F Print the "WOOP" sprite at the current position.
+C $B572 Load 'animation frame loop counter' into A and decrement
+C $B576 If there are WOOP animation frames remaining "???" then jump to #R$B5E8.
+C $B578 Load HL with the address of the object's properties.
+C $B580 If the object belongs to the dead wizard then jump to #R$B599.
+C $B588 Set the bytes in #R$E2A0 and #R$E340 to 0.
+C $B597 Jump to #R$B5E8.
+C $B599 If the current map object is not a Gooey Blob then jump to #R$B5BE.
+C $B5A1 If a wizard is not mounted on this creature, or a creature trapped, then jump to #R$B5BE.
+C $B5A9 Otherwise the creature has gone so set the wizard ID in #R$E2A0 to 0 and copy his wizard ID into #R$E01F. [e.g. an enemy wizard was trapped in a Gooey Blob]
+C $B5AF Load the byte from #R$E340 into A. - " *** BY GOLLOP, is this table to store object codes for trapped creatures?!? I can't remember if a gooey blob outlives its wizard - if so, what happens? *** "
+C $B5B4 Set the byte in #R$E340 to 0.
+C $B5BB Copy the byte that was in #R$E340 to #R$E200.
+C $B5BC Jump to #R$B5E8.
+C $B5BE If there is no wizard ID in #R$E2A0 then nobody was mounted so jump to #R$B5D1.
+C $B5CB The wizard is no longer mounted so copy the wizard ID from #R$E2A0 into #R$E01F and jump to #R$B5E8.
+C $B5D1 Copy the object code from #R$E340 into #R$E01F.
+C $B5DD If the map position was empty then jump to #R$B5E8.
+C $B5E0 Set the animation frame for the current object to 4 (DEAD!)
+C $B5E8 Restore map loop counter.
+C $B5E9 Increment the map pointer in #R$ABFD.
+C $B5F0 Decrement the map loop counter.
+C $B5F1 Loop back to #R$B514.
+C $B5F4 Play sound effect.
+C $B5F7 Restore loop counter for animation frame.
+C $B5F8 Update #R$DF4A with the address of the next frame of animation.
+C $B602 Decrement the number of frames left to display.
+C $B603 Loop back to #R$B507 8 times.
+C $B606 Update maps and draw the border.
+C $B609 Wait for an interrupt.
+C $B60A Return.
 
 @ $B60B label=unknown48
 g $B60B unknown48
@@ -2801,10 +3445,23 @@ C $BDE5 Restore coordinates and return.
 
 c $BDE7 routine44
 @ $BDE7 label=routine44
+D $BDE7 Set up temporary variables.
+C $BDE7 Load HL with the current cursor position.
+C $BDEA Copy to #R$AC14.
+C $BDED Load A with the object at the cursor.
+C $BDF1 Save to #R$AC0C.
+C $BDF4 Load A with the object properties from table 4.
+C $BDF9 Save in #R$AC10.
+C $BDFC Load A with the mounted wizard/trapped creature from table 5.
+C $BE01 Save in #R$AC09.
+C $BE04 Load A with the corresponding byte from table 6. [owner ID of creature in Table 5 "???"]
+C $BE06 Save in #R$AC08.
+C $BE09 Return.
 
 c $BE0A GETCHR
 @ $BE0A label=GETCHR
 D $BE0A enter with object number in D and offset in object data entry in E
+D $BE0A I think this label means GET CHARACTERISTIC - i.e. return the value of a particular object attribute.
 C $BE0A preserve HL and BC
 C $BE0C set HL to address of first entry in object address table
 C $BE0F set BC to value in D (row number in object address table)
@@ -2859,7 +3516,7 @@ C $BEE3 restore BC, HL, DE, AF
 C $BEE7 return
 
 @ $BEE8 label=total_distance
-g $BEE8 Distance between to pairs of coordinates.
+g $BEE8 Distance between two pairs of coordinates.
 
 @ $BEE9 label=unknown75
 g $BEE9 unknown75
@@ -3273,10 +3930,57 @@ g $C679 unknown82
 
 c $C67A routine52
 @ $C67A label=routine52
+D $C67A This routine ignores objects that belong to the current wizard, the current wizard, empty slots, dead creatures, ...
+D $C67A My current best guess is that this is returning some sort of threat level based on distance from the current wizard.
+
+C $C67A Load HL with the address of a position in #R$E01F.
+C $C67D If the map position is empty then jump to #R$CD62 to return with A holding 0.
+C $C681 Point HL at the corresponding byte in #R$E160 [animation frame]
+C $C685 Load the animation byte.
+C $C686 If the object is "dead" then jump to #R$C6D2 and return with A holding 0.
+C $C68A Point HL into #R$E200.
+C $C68D Add offset into #R$E200 [object properties]
+C $C691 Load the byte from #R$E200 and mask off the owner bits.
+C $C694 If the object belongs to the current wizard then jump to #R$C6D2 to return with A holding 0..
+C $C69A We *finally* have a potential target/enemy so load HL again with the address of a position in #R$E01F.
+C $C69D Load the object's code from the map and copy into E.
+C $C69F Subtract 2 from E because object IDs start at 2 so that we get an offset into #R$C6D4.
+C $C6A3 Load HL with the address of #R$C6D4.
+C $C6A6 Add offset to HL based on object ID.
+C $C6A7 Copy entry from #R$C6D4 to #R$C679 - the "THREAT" from the current object "???"
+C $C6AB Load HL again with the address of a position in #R$E01F - i.e. an enemy or his creature.
+
+C $C6AE Convert display coordinates of the enemy or his creature into map position coordinates.
+C $C6B1 Store their coordinates in #R$BEE9.
+C $C6B4 Load memory address of current wizard into HL.
+C $C6B7 Convert display coordinates of current wizard into map position coordinates and store in #R$BEEB.
+
+C $C6BD Calculate the distance between the current wizard and the enemy target.
+C $C6C0 Load A with the distance between points.
+C $C6C3 Also load it into E.
+C $C6C4 Add 4 to the value loaded earlier from #R$C6D4 "???"
+C $C6C9 And add "???" to it.
+C $C6CD Subtract the distance to the target.
+C $C6CE If the distance is greater than the threat "???" then jump to #R$C6D2 to return 0.
+C $C6D1 Otherwise return with the current threat level "???"
+
+C $C6D1 Return.
+C $C6D2 Reset A.
+C $C6D3 Return.
+
 
 @ $C6D4 label=THRTAB
 b $C6D4 THRTAB
 
+c $C703 routine53
+@ $C703 label=routine53
+D $C703 Converts display coordinates into map position coordinates.
+C $C703 Store current wizard position in #R$E005.
+C $C706 Call #R$E007 to convert cursor position into coordinates (L, H).
+C $C708 Return if PO flags set "???"
+C $C709 Calculate the row number.
+C $C70C Calculate the column number.
+C $C70F Return.
 c $C703 routine53
 @ $C703 label=routine53
 
@@ -3298,6 +4002,18 @@ c $C7BC EN_AN
 
 c $C825 routine56
 @ $C825 label=routine56
+C $C825 Initialise the contents of #R$D3F2 to $FF00 etc.
+C $C82E Point #R$AC12 at #R$E01F.
+C $C834 Set loop counter to map size.
+C $C836 Preserve loop counter.
+C $C837 Load the current object code from the map.
+C $C83B If it is a wizard then call #R$C859 to ... "???"
+C $C840 Load HL with the address of the current position in the map.
+C $C843 Load A with the corresponding byte from #R$E2A0 [mounted wizards]
+C $C84A If the wizard is mounted then call #R$C859 to ... "???"
+C $C84D Increment the map pointer.
+C $C854 Loop back.
+C $C857 Return.
 
 @ $C858 label=unknown60
 g $C858 unknown60
@@ -3309,8 +4025,14 @@ c $C859 routine57
 g $C8B7 AIM
 W $C8B7
 
-c $C8B9 routine58
-@ $C8B9 label=routine58
+c $C8B9 target_wizard_routing
+@ $C8B9 label=target_wizard_routing
+D $C8B9 Sets the value of #R$C8B7 to be the map address of the target wizard. The spell will later be attempted to be cast in the slot next to the casting wizard which is in the direction of the target wizard.
+C $C8B9 Load E with the 2nd byte from #R$D3F2. This value is the code of an enemy wizard in whose direction a spell will be cast.
+C $C8BD Point HL at the map.
+C $C8C0 Add the map offset from E.
+C $C8C3 Store the map address of the target in #R$C8B7 so that the spell can be cast in an adjacent map slot in the direction of the target wizard.
+C $C8C6 Return.
 
 c $C8C7 routine59
 @ $C8C7 label=routine59
@@ -3518,6 +4240,7 @@ T $CFCB,$3C6,$1F,$09,$07,$20,$20,$20,$0E,$07,$15,$19,1,$0F,$14,$10,$20,$05,$05,$
 @ $D386 label=shadow_form_string
 
 @ $D391 label=temp_wizard_number
+D $D391 This variable is used in #R$BCA3 to store the number of the currently selected player.
 g $D391 temp_wizard_number ???
 
 c $D392 Highlight objects belonging to #R$D391.
@@ -3556,6 +4279,36 @@ b $D3F2 INBUF
 
 c $D52E routine72
 @ $D52E label=routine72
+D $D52E Selects the target of a spell.
+C $D52E Call #R$97D1 to find the coordinates of the current player.
+C $D531 Set IM2.
+C $D534 Set ATTR P to black on black.
+C $D539 Set MASK P to $FF so that all attributes are taken from the screen.
+C $D53E Call #R$C0DD to update the maps and draw the border.
+C $D541 Enable interrupts.
+C $D542 Wait for an interrupt.
+C $D543 Set P FLAG to 3 for "OVER 1" printing.
+C $D548 Clear the bottom row of the screen.
+C $D54B Load B with the number of attempts for this spell.
+C $D54F Preserve this value.
+C $D550 Call #R$BC96 to handle keyboard input on the map.
+C $D553 Call KEYBOARD in ROM.
+C $D556 If they pressed 'S' to select an object then jump to #R$D567.
+C $D55A If they pressed 'K' to cancel then jump to #R$D550 to get another key.
+C $D55E Restore the number of attempts for this spell.
+C $D55F Play #R$C2B1.
+C $D565 Enable interrupts.
+C $D566 Return.
+C $D567 Wait for no key to be pressed.
+C $D56A Call #R$9786 to see if the target is in range.
+C $D56D If the object is in range then jump to #R$9877 to process the spell.
+C $D570 Otherwise clear the bottom row of the screen.
+C $D573 Set print coordinates to (0,22).
+C $D576 Set ATTR T to bright cyan on black.
+C $D57B Display #R$CEA7 because the target is out of range.
+C $D580 Wait for no key to be pressed.
+C $D583 Wait for a key to be pressed.
+C $D586 Jump back to #R$D550.
 
 c $D588 routine73
 @ $D588 label=routine73
@@ -3570,18 +4323,70 @@ s $D651
 
 c $D652 routine76
 @ $D652 label=routine76
+D $D652 Add Gooey Blob or Magic Fire to the map? DOES THIS ROUTINE EVER GET CALLED "???"
+C $D652 Load HL with the address of the cursor.
+C $D655 If the current spell is for Gooey Blob or Magic Fire then jump to #R$D669.
+C $D660 Otherwise store the object code in #R$E340.
+C $D666 Load the current spell into A.
+C $D669 Copy the current spell into the map at the cursor position.
+C $D66D Set the animation timeout to 1.
+C $D673 Set the animation frame to 0.
+C $D677 Set the owner to the current player.
+C $D67C Set Z based on value of #R$9166 "???"
+C $D682 Set illusion bit "???"
+C $D684 Wait for an interrupt.
+C $D685 Return.
 
 c $D686 routine77
 @ $D686 label=routine77
 
 c $D702 routine78
 @ $D702 label=routine78
+D $D702 Subroutines of the #R$99F1.
+C $D702 Load A with the value of #R$AC2E.
+C $D705 If the player is computer-controlled then jump to #R$9A95.
+C $D709 Call #R$BC96 to handle the keyboard and enable displaying information about objects on screen.
+C $D70C Call KEYBOARD in ROM.
+C $D70F If 'S' was pressed to select an object then jump to #R$D71F.
+C $D713 Otherwise if anything other than 'K' was pressed jump back to #R$D709 to get another key.
+C $D717 'K' was pressed to cancel the current operation so play #R$C2B1.
+C $D71D Enable interrupts.
+C $D71E Return.
+C $D71F Wait for no key to be pressed.
+C $D722 Load HL with the cursor position.
+C $D725 Load A with the current object.
+C $D726 If there is nothing there then jump to #R$D709 to keep going.
+C $D729 If the object code is greater than or equal to 34 (Gooey blob onwards) then jump to #R$99F1 as these cannot be disbelieved.
+C $D72E Otherwise jump to #R$99F1 to cast the disbelieve spell on the target.
+C $D731 Return.
 
 c $D732 routine79
 @ $D732 label=routine79
 
 c $D763 routine80
 @ $D763 label=routine80
+D $D763 Displays explosion animation and sound effect.
+C $D763 Play #R$9121.
+C $D76C Set ATTR T to bright yellow on black.
+C $D771 Set pointer for explosion animation.
+C $D777 Load HL with cursor coordinates.
+C $D77A Store a copy in #R$E005.
+C $D77D Call #R$E007 to get game board object into coordinates in HL.
+C $D780 Store them in #R$DF4C.
+C $D783 Set loop counter to 7.
+C $D786 Disable interrupts.
+C $D787 Load HL with the explosion animation pointer.
+C $D78A Copy to #R$DF4A.
+C $D78D Print the current explosion animation frame.
+C $D790 Play sound effect.
+C $D793 Set HL to point to the next animation frame.
+C $D79A Store pointer to next animation frame in #R$A188.
+C $D79D Restore loop counter.
+C $D79E Decrement and loop.
+C $D7A0 Call #R$C0D8.
+C $D7A3 Enable interrupts.
+C $D7A4 Wait for an interrupt.
+C $D7A5 Return.
 
 c $D7A6 routine81
 @ $D7A6 label=routine81
@@ -3795,17 +4600,17 @@ g $E005 Temporary pointer to object table entry.
 W $E005
 
 c $E007 Calculate Spectrum screen coordinates for an entry in #R$E01F.
-@ $E007 label=address_to_coordinate
+@ $E007 label=address_to_udg_coord
 C $E007 Load #R$E005 into HL.
 C $E00A Clear carry flag.
 C $E00B Subtract address of #R$E01F to get position in table.
 C $E010 Copy offset into A and clear lower nibble.
 C $E013 Divide by 8 to get row and store in H.
-C $E010 Multiply offset by 2 and mask bits to get column and store in L.
 C $E01C Increment both coordinates to account for border and return.
 
 @ $E01F label=map_object_table
 D $E01F Table is 16 columns by 10 rows, but rightmost column ($E0xE) is unused. This holds the object number for each map position.
+D $E01F Holds the IDs of objects to be *displayed* on the game board. See #R$E2A0.
 g $E01F map_object_table
 B $E01F Object codes for each map position.
 B $E0BF End of table marker.
@@ -3822,10 +4627,12 @@ B $E160 Frame numbers $00 to $03, or $04 for dead.
 @ $E200 label=map_object_properties_table
 g $E200 map_object_properties_table
 D $E200 Table is 16 columns by 10 rows. Bits 0-2 hold the wizard number that owns the object.
+D $E200 Bit 4 is the ILLUSION flag for this creature.
 
-@ $E2A0 label=fifth_map_table
-g $E2A0 fifth_map_table
+@ $E2A0 label=map_mounts_table
+g $E2A0 map_mounts_table
 D $E2A0 Table is 16 columns by 10 rows.
+D $E2A0 This table holds the IDs of wizards who are mounted on the objects in #R$E01F.
 
 @ $E340 label=sixth_map_table
 g $E340 sixth_map_table
