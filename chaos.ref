@@ -25,3 +25,7 @@ CodeFiles={address:04X}.html
 [Index:Reference:Reference]
 Facts
 Bugs
+
+[Resources]
+logo.png=images
+sounds/*.mp3=sounds
