@@ -4,7 +4,7 @@
 @ $7D00 expand=#DEF(#MPRINTLINK(a) #R#(#DPEEK(#EVAL($CDD3+($a*4)))))
 @ $7D00 expand=#DEF(#MTWOPRINTLINK(a) #R#(#DPEEK(#EVAL($8809+($a*4)))))
 @ $7D00 expand=#DEF(#SPRITE(a) #UDGARRAY#(2,#PEEK($a+2),4;#DPEEK($a)-#EVAL(#DPEEK($a)+$1F)-8))
-@ $7D00 expand=#DEF(#SOUNDEFFECT()(a) #HTML(<audio controls src="../sounds/$a"></audio>))
+@ $7D00 expand=#DEF(#SOUNDEFFECT()(a) #AUDIO(/sounds/$a))
 
 @ $7D00 label=start
 c $7D00 Start.
