@@ -323,7 +323,7 @@ C $8355 Read byte from that address into A and Return.
 c $8357 routine04 - SpellModifier casting routine
 D $8357 This is called by spells that the wizard casts on himself.
 C $8357 If player is human, display wizard name, spell being cast, and spell casting range.
-@ $8360 label=SpellModifier_AIEntry
+@ $8360 label=routine04_AIEntry
 C $8360 Call #R$9760 to determine if a spell succeeds and then updates the global Chaos/Law balance
 C $8363 Call #R$97D1 to calculate the coordinates of the current player
 C $8366 Call #R$A18A to display the twirling effect on the target of the spell
@@ -4004,8 +4004,8 @@ c $C64C SORT
 @ $C679 label=unknown82
 g $C679 unknown82
 
-c $C67A ai_find_target
-@ $C67A label=ai_find_target
+c $C67A Targeting routine for computer player
+@ $C67A label=AI_FindTarget
 D $C67A This routine ignores objects that belong to the current wizard, the current wizard, empty slots, dead creatures, ...
 D $C67A My current best guess is that this is returning some sort of threat level based on distance from the current wizard.
 
