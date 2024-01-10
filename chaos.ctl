@@ -306,7 +306,6 @@ C $8355 Read byte from that address into A and Return.
 c $8357 routine04
 D $8357 This is called by spells that the wizard casts on himself.
 C $8357 If player is human, display wizard name, spell being cast, and spell casting range.
-@ $8360 label=Spell_Buffs_AI_Entry
 C $8360 Call #R$9760 to determine if a spell succeeds and then updates the global Chaos/Law balance.
 C $8363 Call #R$97D1 to calculate the coordinates of the current player.
 C $8366 Call #R$A18A to display the twirling effect on the target of the spell.
@@ -520,16 +519,16 @@ C $8730 If #R$872B < 30 then jump back to #R$871A.
 C $8735 Display wizard name, spell being cast, and spell casting range.
 C $8738 Call #R$8741 and return.
 
-@ $873C label=turmoil_temp_object_id
-g $873C turmoil_temp_object_id
-@ $873D label=turmoil_temp_flags
-g $873D turmoil_temp_flags
-@ $873E label=turmoil_temp_mount
-g $873E turmoil_temp_mount
-@ $873F label=turmoil_temp_corpse
-g $873F turmoil_temp_anim_corpse
-@ $8740 label=turmoil_temp_anim_frame
-g $8740 turmoil_temp_anim_frame
+@ $873C label=CRE000
+g $873C CRE000
+@ $873D label=FLA481
+g $873D FLA481
+@ $873E label=HID641
+g $873E HID641
+@ $873F label=BOD801
+g $873F BOD801
+@ $8740 label=FRA321
+g $8740 FRA321
 
 @ $8741 label=TUR_DO
 c $8741 TUR_DO
@@ -2821,10 +2820,9 @@ W $AC12
 g $AC14 D_ADD
 W $AC14
 
-@ $AC16 label=player_buffs
-g $AC16 player_buffs
+@ $AC16 label=unknown_table_3
+g $AC16 unknown table 3
 D $AC16 Each byte in this table represents the modifiers for each wizard. Bits 0,1=Magic Bow; Bit 1=Magic Knife; Bit 2=Magic Sword; Bit 3=Shadow Form; Bit 4=Killed; Bit 5=Magic Wings; Bit 6=Magic Shield; Bits 6,7=Magic Armour.
-
 
 @ $AC1E label=unknown_table_4
 g $AC1E unknown table 4
@@ -2947,20 +2945,20 @@ g $B374 unknown41
 c $B375 routine26
 @ $B375 label=routine26
 
-@ $B3C3 label=wizkill_temp_row_a
-g $B3C3 wizkill_temp_row_a
+@ $B3C3 label=unknown42
+g $B3C3 unknown42
 
-@ $B3C4 label=wizkill_temp_row_b
-g $B3C4 wizkill_temp_row_b
+@ $B3C4 label=unknown43
+g $B3C4 unknown43
 
-@ $B3C5 label=wizkill_temp_col_a
-g $B3C5 wizkill_temp_col_a
+@ $B3C5 label=unknown44
+g $B3C5 unknown44
 
-@ $B3C6 label=wizkill_temp_col_b
-g $B3C6 wizkill_temp_col_b
+@ $B3C6 label=unknown45
+g $B3C6 unknown45
 
-@ $B3C7 label=wizkill_temp_coords
-g $B3C7 wizkill_temp_coords
+@ $B3C7 label=unknown46
+g $B3C7 unknown46
 W $B3C7
 
 c $B3C9 WIZKIL
@@ -4025,8 +4023,8 @@ c $C859 routine57
 g $C8B7 AIM
 W $C8B7
 
-c $C8B9 target_wizard_routing
-@ $C8B9 label=target_wizard_routing
+c $C8B9 routine58
+@ $C8B9 label=routine58
 D $C8B9 Sets the value of #R$C8B7 to be the map address of the target wizard. The spell will later be attempted to be cast in the slot next to the casting wizard which is in the direction of the target wizard.
 C $C8B9 Load E with the 2nd byte from #R$D3F2. This value is the code of an enemy wizard in whose direction a spell will be cast.
 C $C8BD Point HL at the map.
@@ -4600,12 +4598,13 @@ g $E005 Temporary pointer to object table entry.
 W $E005
 
 c $E007 Calculate Spectrum screen coordinates for an entry in #R$E01F.
-@ $E007 label=address_to_udg_coord
+@ $E007 label=address_to_coordinate
 C $E007 Load #R$E005 into HL.
 C $E00A Clear carry flag.
 C $E00B Subtract address of #R$E01F to get position in table.
 C $E010 Copy offset into A and clear lower nibble.
 C $E013 Divide by 8 to get row and store in H.
+C $E010 Multiply offset by 2 and mask bits to get column and store in L.
 C $E01C Increment both coordinates to account for border and return.
 
 @ $E01F label=map_object_table
@@ -4629,8 +4628,8 @@ g $E200 map_object_properties_table
 D $E200 Table is 16 columns by 10 rows. Bits 0-2 hold the wizard number that owns the object.
 D $E200 Bit 4 is the ILLUSION flag for this creature.
 
-@ $E2A0 label=map_mounts_table
-g $E2A0 map_mounts_table
+@ $E2A0 label=fifth_map_table
+g $E2A0 fifth_map_table
 D $E2A0 Table is 16 columns by 10 rows.
 D $E2A0 This table holds the IDs of wizards who are mounted on the objects in #R$E01F.
 
